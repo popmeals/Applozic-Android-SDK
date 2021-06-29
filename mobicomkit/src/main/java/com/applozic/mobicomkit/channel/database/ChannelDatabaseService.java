@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
@@ -43,9 +44,24 @@ public class ChannelDatabaseService {
         this.dbHelper = MobiComDatabaseHelper.getInstance(ApplozicService.getContext(context));
     }
 
+    @VisibleForTesting
+    private ChannelDatabaseService(Context context, MobiComDatabaseHelper dbHelper) {
+        this.context = ApplozicService.getContext(context);
+        this.mobiComUserPreference = MobiComUserPreference.getInstance(ApplozicService.getContext(context));
+        this.dbHelper = dbHelper;
+    }
+
     public synchronized static ChannelDatabaseService getInstance(Context context) {
         if (channelDatabaseService == null) {
             channelDatabaseService = new ChannelDatabaseService(ApplozicService.getContext(context));
+        }
+        return channelDatabaseService;
+    }
+
+    @VisibleForTesting
+    public synchronized static ChannelDatabaseService getTestInstance(Context context, MobiComDatabaseHelper dbHelper) {
+        if (channelDatabaseService == null) {
+            channelDatabaseService = new ChannelDatabaseService(ApplozicService.getContext(context), dbHelper);
         }
         return channelDatabaseService;
     }
@@ -56,6 +72,7 @@ public class ChannelDatabaseService {
         channelUserMapper.setKey(cursor.getInt(cursor.getColumnIndex(MobiComDatabaseHelper.CHANNEL_KEY)));
         channelUserMapper.setUnreadCount(cursor.getShort(cursor.getColumnIndex(MobiComDatabaseHelper.UNREAD_COUNT)));
         channelUserMapper.setRole(cursor.getInt(cursor.getColumnIndex(MobiComDatabaseHelper.ROLE)));
+        channelUserMapper.setStatus(cursor.getShort(cursor.getColumnIndex(MobiComDatabaseHelper.STATUS)));
         channelUserMapper.setParentKey(cursor.getInt(cursor.getColumnIndex(MobiComDatabaseHelper.PARENT_GROUP_KEY)));
         return channelUserMapper;
     }

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -31,6 +32,7 @@ import java.util.Map;
  *
  * Created by devashish on 24/1/15.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class BroadcastService {
 
     private static final String TAG = "BroadcastService";
@@ -365,6 +367,7 @@ public class BroadcastService {
         return intentFilter;
     }
 
+    //ApplozicInternal: default, see what instructions utils does
     public static void sendBroadcast(Context context, Intent intent) {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

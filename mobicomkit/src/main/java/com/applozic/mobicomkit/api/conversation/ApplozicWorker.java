@@ -9,6 +9,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicommons.commons.core.utils.DateUtils;
@@ -20,6 +21,7 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
  *
  * Created by sunil on 26/12/15.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible
 public class ApplozicWorker extends Worker {
     private static final String TAG = "ApplozicWorker";
 

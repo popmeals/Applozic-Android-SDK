@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+//ApplozicInternal: default
 public class JWTPayload {
     final String iss;
     final String sub;

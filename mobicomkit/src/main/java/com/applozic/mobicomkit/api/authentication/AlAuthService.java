@@ -11,15 +11,17 @@ import com.applozic.mobicomkit.listners.AlCallback;
 import com.applozic.mobicommons.task.AlTask;
 
 public class AlAuthService {
-
+    //ApplozicInternal: private
     public static boolean isTokenValid(long createdAtTime, int validUptoMins) {
         return (System.currentTimeMillis() - createdAtTime) / 60000 < validUptoMins;
     }
 
+    //ApplozicInternal: private
     public static void refreshToken(Context context, AlCallback callback) {
         AlTask.execute(new RefreshAuthTokenTask(context, callback));
     }
 
+    //ApplozicInternal: default
     public static boolean isTokenValid(Context context) {
         if (context == null) {
             return true;
@@ -44,6 +46,7 @@ public class AlAuthService {
         return true;
     }
 
+    //ApplozicInternal: default
     public static void verifyToken(Context context, String loadingMessage, AlCallback callback) {
         if (context == null) {
             return;
@@ -70,6 +73,7 @@ public class AlAuthService {
         }
     }
 
+    //ApplozicInternal: private
     public static void refreshToken(Context context, String loadingMessage, final AlCallback callback) {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity(context));
         progressDialog.setMessage(loadingMessage);
@@ -99,6 +103,7 @@ public class AlAuthService {
         });
     }
 
+    //ApplozicInternal: private
     public static Activity getActivity(Context context) {
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {

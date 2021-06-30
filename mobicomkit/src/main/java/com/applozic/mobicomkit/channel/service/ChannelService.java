@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import androidx.annotation.VisibleForTesting;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -44,7 +45,7 @@ public class ChannelService {
 
     public static boolean isUpdateTitle = false;
     private static ChannelService channelService;
-    public Context context;
+    public Context context; //ApplozicInternal: private
     private ChannelDatabaseService channelDatabaseService;
     private ChannelClientService channelClientService;
     private BaseContactService baseContactService;
@@ -144,6 +145,7 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal //ApplozicInternal: or rename
     public void processChannelFeedList(ChannelFeed[] channelFeeds, boolean isUserDetails) {
         if (channelFeeds != null && channelFeeds.length > 0) {
             for (ChannelFeed channelFeed : channelFeeds) {
@@ -152,7 +154,7 @@ public class ChannelService {
         }
     }
 
-
+    //ApplozicInternal: private
     public void processChannelFeed(ChannelFeed channelFeed, boolean isUserDetails) {
         if (channelFeed != null) {
             Set<String> memberUserIds = null;
@@ -241,6 +243,7 @@ public class ChannelService {
         return channelDatabaseService.getAllChannels();
     }
 
+    @ApplozicInternal
     public synchronized void syncChannels(boolean isMetadataUpdate) {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         SyncChannelFeed syncChannelFeed = channelClientService.getChannelFeed(userpref

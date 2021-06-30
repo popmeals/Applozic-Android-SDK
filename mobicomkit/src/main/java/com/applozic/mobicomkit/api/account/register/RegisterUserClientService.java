@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
@@ -33,12 +34,11 @@ import java.util.TimeZone;
  * Created by devashish on 2/2/15.
  */
 public class RegisterUserClientService extends MobiComKitClientService {
-
     private static final String CREATE_ACCOUNT_URL = "/rest/ws/register/client?";
     private static final String UPDATE_ACCOUNT_URL = "/rest/ws/register/update?";
     private static final String CHECK_PRICING_PACKAGE = "/rest/ws/application/pricing/package";
     private static final String REFRESH_TOKEN_URL = "/rest/ws/register/refresh/token";
-    public static final Short MOBICOMKIT_VERSION_CODE = 112;
+    public static final @ApplozicInternal Short MOBICOMKIT_VERSION_CODE = 112;
     private static final String TAG = "RegisterUserClient";
     private static final String INVALID_APP_ID = "INVALID_APPLICATIONID";
     private HttpRequestUtils httpRequestUtils;
@@ -49,22 +49,28 @@ public class RegisterUserClientService extends MobiComKitClientService {
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
+    //ApplozicInternal: private
     public String getCreateAccountUrl() {
         return getBaseUrl() + CREATE_ACCOUNT_URL;
     }
 
+    //ApplozicInternal: private
     public String getPricingPackageUrl() {
         return getBaseUrl() + CHECK_PRICING_PACKAGE;
     }
 
+    //ApplozicInternal: private
     public String getUpdateAccountUrl() {
         return getBaseUrl() + UPDATE_ACCOUNT_URL;
     }
 
+    //ApplozicInternal: private
     public String getRefreshTokenUrl() {
         return getBaseUrl() + REFRESH_TOKEN_URL;
     }
 
+    //Cleanup: can be removed
+    @ApplozicInternal
     public RegistrationResponse createAccount(User user) throws Exception {
         if (user.getDeviceType() == null) {
             user.setDeviceType(Short.valueOf("1"));
@@ -208,6 +214,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return false;
     }
 
+    //Cleanup: can be removed
     public RegistrationResponse createAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
         String url = mobiComUserPreference.getUrl();
@@ -217,6 +224,8 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return updateAccount(email, userId, phoneNumber, displayName, imageLink, pushNotificationId);
     }
 
+    //Cleanup: can be removed
+    @ApplozicInternal
     private RegistrationResponse updateAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
         User user = new User();
         user.setUserId(userId);
@@ -233,6 +242,8 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return registrationResponse;
     }
 
+    //Cleanup: can be removed, is used in just the PushNotificationTask
+    //ApplozicInternal: default
     public RegistrationResponse updatePushNotificationId(final String pushNotificationId) throws Exception {
         MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
         //Note: In case if gcm registration is done before login then only updating in pref
@@ -316,6 +327,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return user;
     }
 
+    //ApplozicInternal: default
     public void syncAccountStatus() {
         try {
             String response = httpRequestUtils.getResponse(getPricingPackageUrl(), "application/json", "application/json");

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+//ApplozicInternal: default
 public class BaseClaim implements Claim {
     @Nullable
     @Override

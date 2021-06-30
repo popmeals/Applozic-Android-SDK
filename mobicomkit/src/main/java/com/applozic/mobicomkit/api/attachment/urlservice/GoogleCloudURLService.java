@@ -10,8 +10,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import static com.applozic.mobicomkit.api.attachment.FileClientService.CUSTOM_STORAGE_SERVICE_END_POINT;
-
+//ApplozicInternal: default
 public class GoogleCloudURLService implements URLService {
 
     private MobiComKitClientService mobiComKitClientService;
@@ -19,13 +18,13 @@ public class GoogleCloudURLService implements URLService {
     private static final String GET_SIGNED_URL = "/files/url?key=";
     private static final String UPLOAD_URL = "/files/upload";
 
-
+    //ApplozicInternal: default
     public GoogleCloudURLService(Context context) {
         mobiComKitClientService = new MobiComKitClientService(context);
         httpRequestUtils = new HttpRequestUtils(context);
     }
 
-
+    //ApplozicInternal: default
     @Override
     public HttpURLConnection getAttachmentConnection(Message message) throws IOException {
 
@@ -37,17 +36,19 @@ public class GoogleCloudURLService implements URLService {
         }
     }
 
+    //ApplozicInternal: default
     @Override
     public String getThumbnailURL(Message message) throws IOException {
         return httpRequestUtils.getResponse(mobiComKitClientService.getFileBaseUrl() + GET_SIGNED_URL + message.getFileMetas().getThumbnailBlobKey(), "application/json", "application/json",true);
     }
 
-
+    //ApplozicInternal: default
     @Override
     public String getFileUploadUrl() {
         return mobiComKitClientService.getFileBaseUrl() + UPLOAD_URL;
     }
 
+    //ApplozicInternal: default
     @Override
     public String getImageUrl(Message message) {
         return message.getFileMetas().getUrl();

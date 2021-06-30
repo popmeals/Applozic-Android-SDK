@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class AppContactService implements BaseContactService {
 
+    //ApplozicInternal: private all
     private static final String TAG = "AppContactService";
     ContactDatabase contactDatabase;
     Context context;

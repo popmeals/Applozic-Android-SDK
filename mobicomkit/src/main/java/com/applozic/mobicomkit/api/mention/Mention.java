@@ -5,6 +5,9 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
+
+@ApplozicInternal
 public class Mention {
     private final CharSequence userId;
     private final CharSequence displayName;

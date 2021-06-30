@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.conversation;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.listners.MessageListHandler;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * Created by reytum on 27/11/17.
  */
-
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class MessageListTask extends AlAsyncTask<Void, List<Message>> {
 
     private WeakReference<Context> context;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 
 import com.applozic.mobicommons.ALSpecificSettings;
@@ -20,8 +21,9 @@ import java.net.URLConnection;
 /**
  * Created by devashish on 27/12/14.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default if possible (add to root maybe)
 public class MobiComKitClientService {
-
+    //ApplozicInternal: all to private
     public static final String BASE_URL_METADATA = "com.applozic.server.url";
     public static final String KM_BASE_URL_METADATA = "io.kommunicate.server.url";
     public static final String MQTT_BASE_URL_METADATA = "com.applozic.mqtt.server.url";
@@ -29,7 +31,7 @@ public class MobiComKitClientService {
     public static String APPLICATION_KEY_HEADER = "Application-Key";
     public static String APP_MOUDLE_NAME_KEY_HEADER = "App-Module-Name";
     public static String APPLICATION_KEY_HEADER_VALUE_METADATA = "com.applozic.application.key";
-    public static String GIPHY_API_METADATA_KEY = "com.giphy.api.key";
+    public @ApplozicInternal static String GIPHY_API_METADATA_KEY = "com.giphy.api.key";
     public static String APP_MODULE_NAME_META_DATA_KEY = "com.applozic.module.key";
     protected Context context;
     protected String DEFAULT_URL = "https://apps.applozic.com";
@@ -49,6 +51,7 @@ public class MobiComKitClientService {
         this.context = ApplozicService.getContext(context);
     }
 
+    //ApplozicInternal: default
     public static String getApplicationKey(Context context) {
         String applicationKey = Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
         if (!TextUtils.isEmpty(applicationKey)) {
@@ -57,10 +60,12 @@ public class MobiComKitClientService {
         return Utils.getMetaDataValue(ApplozicService.getContext(context), APPLICATION_KEY_HEADER_VALUE_METADATA);
     }
 
+    //ApplozicInternal: default
     public static String getAppModuleName(Context context) {
         return Utils.getMetaDataValue(ApplozicService.getContext(context), APP_MODULE_NAME_META_DATA_KEY);
     }
 
+    //ApplozicInternal: protected
     public String getBaseUrl() {
         String SELECTED_BASE_URL = MobiComUserPreference.getInstance(context).getUrl();
 
@@ -81,6 +86,7 @@ public class MobiComKitClientService {
         return DEFAULT_URL;
     }
 
+    //ApplozicInternal: protected
     public String getKmBaseUrl() {
         String kmCustomUrl = ALSpecificSettings.getInstance(context).getKmBaseUrl();
 
@@ -108,6 +114,7 @@ public class MobiComKitClientService {
         return DEFAULT_MQTT_URL;
     }
 
+    //ApplozicInternal: protected
     public PasswordAuthentication getCredentials() {
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
         if (!userPreferences.isRegistered()) {
@@ -116,6 +123,7 @@ public class MobiComKitClientService {
         return new PasswordAuthentication(userPreferences.getUserId(), userPreferences.getDeviceKeyString().toCharArray());
     }
 
+    //ApplozicInternal: default
     public HttpURLConnection openHttpConnection(String urlString) throws IOException {
         HttpURLConnection httpConn;
 
@@ -137,6 +145,7 @@ public class MobiComKitClientService {
         return httpConn;
     }
 
+    //ApplozicInternal: protected
     public String getFileUrl() {
         String fileDownloadURL = Utils.getMetaDataValue(context.getApplicationContext(), FILE_DOWNLOAD_METADATA_KEY);
         if (!TextUtils.isEmpty(fileDownloadURL)) {
@@ -145,6 +154,7 @@ public class MobiComKitClientService {
         return getFileBaseUrl() + FILE_URL;
     }
 
+    //ApplozicInternal: protected
     public String getFileBaseUrl() {
         String fileURL = Utils.getMetaDataValue(context.getApplicationContext(), FILE_BASE_URL_METADATA_KEY);
         return (TextUtils.isEmpty(fileURL) ? FILE_BASE_URL : fileURL);

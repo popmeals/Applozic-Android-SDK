@@ -12,6 +12,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.ApplozicMqttService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -24,6 +25,7 @@ import com.applozic.mobicommons.people.contact.Contact;
  *
  * Created by sunil on 30/12/15.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible (maybe keep it at the root)
 public class ApplozicMqttWorker extends Worker {
     public static final String TAG = "ApplozicMqttWorker";
 

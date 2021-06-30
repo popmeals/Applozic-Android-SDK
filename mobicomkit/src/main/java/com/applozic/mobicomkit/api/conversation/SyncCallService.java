@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.ConversationRunnables;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
@@ -30,11 +31,12 @@ import java.util.TimeZone;
  *
  * Created on 12/2/15.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class SyncCallService {
 
     private static final String TAG = "SyncCall";
 
-    public static boolean refreshView = false;
+    public @ApplozicInternal static boolean refreshView = false;
     private static SyncCallService syncCallService;
     private Context context;
     private MobiComMessageService mobiComMessageService;
@@ -54,6 +56,7 @@ public class SyncCallService {
         this.messageDatabaseService = new MessageDatabaseService(context);
     }
 
+    @ApplozicInternal
     public static SyncCallService getInstance(Context context) {
         if (syncCallService == null) {
             syncCallService = new SyncCallService(context);

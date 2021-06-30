@@ -3,11 +3,11 @@ package com.applozic.mobicomkit.api.conversation;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserService;
@@ -43,6 +43,7 @@ import java.util.Timer;
  */
 public class MobiComMessageService {
 
+    //ApplozicInternal: all private
     public static final long DELAY = 60000L;
     private static final String TAG = "MobiComMessageService";
     public static Map<String, Uri> map = new HashMap<String, Uri>();
@@ -74,6 +75,7 @@ public class MobiComMessageService {
         loggedInUserId = MobiComUserPreference.getInstance(context).getUserId();
     }
 
+    //ApplozicInternal: private, MessageSendTimer is not used
     public Message processMessage(final Message messageToProcess, String tofield, int index) {
         if (Message.MetaDataType.HIDDEN.getValue().equals(messageToProcess.getMetaDataValueForKey(Message.MetaDataType.KEY.getValue()))) {
             MessageWorker.enqueueWork(context, messageToProcess, null, null);
@@ -138,6 +140,7 @@ public class MobiComMessageService {
         return message;
     }
 
+    //ApplozicInternal: private
     public Message prepareMessage(Message messageToProcess, String tofield) {
         Message message = new Message(messageToProcess);
         message.setMessageId(messageToProcess.getMessageId());
@@ -156,6 +159,7 @@ public class MobiComMessageService {
         return message;
     }
 
+    //ApplozicInternal: private
     public Contact addMTMessage(Message message, int index) {
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
         Contact receiverContact = null;
@@ -229,6 +233,7 @@ public class MobiComMessageService {
         return receiverContact;
     }
 
+    //ApplozicInternal: private
     public void sendNotification(Message message, int index) {
         if (message.isHidden()) {
             return;
@@ -239,6 +244,7 @@ public class MobiComMessageService {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    //ApplozicInternal: private
     public void processOpenGroupAttachmentMessage(Message message) {
         processMessage(message, message.getTo(), 0);
     }
@@ -252,6 +258,7 @@ public class MobiComMessageService {
      * 5) Delivered message status
      * 6) Contact details
      */
+    @ApplozicInternal
     public synchronized void syncMessages() {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         boolean syncChannel = false;
@@ -309,6 +316,7 @@ public class MobiComMessageService {
         }
     }
 
+    @ApplozicInternal
     public synchronized void syncMessageForMetadataUpdate() {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         SyncMessageFeed syncMessageFeed = messageClientService.getMessageFeed(userpref.getLastSyncTimeForMetadataUpdate(), true);
@@ -326,6 +334,7 @@ public class MobiComMessageService {
         }
     }
 
+    @ApplozicInternal
     public MessageInfoResponse getMessageInfoResponse(String messageKey) {
         MessageInfoResponse messageInfoResponse = messageClientService.getMessageInfoList(messageKey);
         return messageInfoResponse;
@@ -345,10 +354,12 @@ public class MobiComMessageService {
         }
     }
 
+    @ApplozicInternal
     public boolean isMessagePresent(String key) {
         return messageDatabaseService.isMessagePresent(key);
     }
 
+    //ApplozicInternal: private
     public void processUserDetailFromMessages(List<Message> messages) {
         try {
             if (!ApplozicClient.getInstance(context).isHandleDisplayName()) {
@@ -370,6 +381,7 @@ public class MobiComMessageService {
         }
     }
 
+    @ApplozicInternal
     public synchronized void updateDeliveryStatusForContact(String contactId, boolean markRead) {
         int rows = messageDatabaseService.updateMessageDeliveryReportForContact(contactId, markRead);
         Utils.printLog(context, TAG, "Updated delivery report of " + rows + " messages for contactId: " + contactId);
@@ -381,6 +393,7 @@ public class MobiComMessageService {
         }
     }
 
+    @ApplozicInternal
     public synchronized void updateDeliveryStatus(String key, boolean markRead) {
         //Todo: Check if this is possible? In case the delivery report reaches before the sms is reached, then wait for the sms.
         Utils.printLog(context, TAG, "Got the delivery report for key: " + key);
@@ -411,6 +424,7 @@ public class MobiComMessageService {
         mtMessages.remove(key);
     }
 
+    @ApplozicInternal
     public ApiResponse getUpdateMessageMetadata(String key, Map<String, String> metadata) {
         return messageClientService.updateMessageMetadata(key, metadata);
     }
@@ -428,10 +442,12 @@ public class MobiComMessageService {
         messageDatabaseService.createMessage(sms);
     }
 
+    @ApplozicInternal
     public String getMessageDeleteForAllResponse(String messageKey, boolean deleteForAll) throws Exception {
         return messageClientService.getMessageDeleteForAllResponse(messageKey, deleteForAll);
     }
 
+    @ApplozicInternal
     public synchronized void syncMessageDataAndSendBroadcastFor(Message message) {
 
         if (!baseContactService.isContactPresent(message.getContactIds())) {

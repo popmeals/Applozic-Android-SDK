@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.applozic.mobicomkit.AlUserUpdate;
 import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
@@ -39,8 +40,9 @@ import java.util.Set;
 /**
  * Created by devashish on 24/12/14.
  */
+@ApplozicInternal //ApplozicInternal: default
 public class UserClientService extends MobiComKitClientService {
-
+    //ApplozicInternal: all need to be private
     public static final String APP_VERSION_UPDATE_URL = "/rest/ws/register/version/update";
     public static final String USER_INFO_URL = "/rest/ws/user/info?";
     public static final Short MOBICOMKIT_VERSION_CODE = 109;
@@ -68,58 +70,72 @@ public class UserClientService extends MobiComKitClientService {
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
+    //ApplozicInternal: private
     public String getUserProfileUpdateUrl() {
         return getBaseUrl() + USER_PROFILE_UPDATE_URL;
     }
 
+    //ApplozicInternal: private
     public String getAppVersionUpdateUrl() {
         return getBaseUrl() + APP_VERSION_UPDATE_URL;
     }
 
+    //ApplozicInternal: private
     public String getUpdateUserDisplayNameUrl() {
         return getBaseUrl() + USER_DISPLAY_NAME_UPDATE;
     }
 
+    //ApplozicInternal: private
     public String getUserInfoUrl() {
         return getBaseUrl() + USER_INFO_URL;
     }
 
+    //ApplozicInternal: private
     public String getBlockUserUrl() {
         return getBaseUrl() + BLOCK_USER_URL;
     }
 
+    //ApplozicInternal: private
     public String getBlockUserSyncUrl() {
         return getBaseUrl() + BLOCK_USER_SYNC_URL;
     }
 
+    //ApplozicInternal: private
     public String getUnBlockUserSyncUrl() {
         return getBaseUrl() + UNBLOCK_USER_SYNC_URL;
     }
 
+    //ApplozicInternal: private
     public String getUserDetailsListUrl() {
         return getBaseUrl() + USER_DETAILS_URL;
     }
 
+    //ApplozicInternal: private
     public String getOnlineUserListUrl() {
         return getBaseUrl() + ONLINE_USER_LIST_URL;
     }
 
+    //ApplozicInternal: private
     public String getRegisteredUserListUrl() {
         return getBaseUrl() + REGISTERED_USER_LIST_URL;
     }
 
+    //ApplozicInternal: private
     public String getUserDetailsListPostUrl() {
         return getBaseUrl() + USER_DETAILS_LIST_POST_URL;
     }
 
+    //ApplozicInternal: private
     public String getUserReadUrl() {
         return getBaseUrl() + USER_READ_URL;
     }
 
+    //ApplozicInternal: private
     public String getUpdateUserPasswordUrl() {
         return getBaseUrl() + UPDATE_USER_PASSWORD;
     }
 
+    //ApplozicInternal: private
     public String getUserLogout() {
         return getBaseUrl() + USER_LOGOUT;
     }
@@ -136,10 +152,12 @@ public class UserClientService extends MobiComKitClientService {
         return getBaseUrl() + USER_SEARCH_URL;
     }
 
+    @ApplozicInternal //ApplozicInternal: default
     public ApiResponse logout() {
         return logout(false);
     }
 
+    @ApplozicInternal //ApplozicInternal: default
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
         final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
@@ -156,6 +174,7 @@ public class UserClientService extends MobiComKitClientService {
         ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
     }
 
+    @ApplozicInternal //ApplozicInternal: default
     public ApiResponse logout(boolean fromLogin) {
         Utils.printLog(context, TAG, "Al Logout call !!");
         ApiResponse apiResponse = userLogoutResponse();
@@ -180,6 +199,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: private
     public ApiResponse userLogoutResponse() {
         String response = "";
         ApiResponse apiResponse = null;
@@ -194,6 +214,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    @ApplozicInternal
     public void updateCodeVersion(final String deviceKeyString) {
         String url = getAppVersionUpdateUrl() + "?appVersionCode=" + MOBICOMKIT_VERSION_CODE + "&deviceKey=" + deviceKeyString;
         String response = httpRequestUtils.getResponse(url, "text/plain", "text/plain");
@@ -201,6 +222,7 @@ public class UserClientService extends MobiComKitClientService {
 
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getUserInfo(Set<String> userIds) throws JSONException, UnsupportedEncodingException {
 
         if (userIds == null && userIds.isEmpty()) {
@@ -228,6 +250,7 @@ public class UserClientService extends MobiComKitClientService {
         return info;
     }
 
+    //ApplozicInternal: default
     public ApiResponse updateUserDisplayName(final String userId, final String displayName) {
         String parameters = "";
         try {
@@ -245,6 +268,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public ApiResponse userBlock(String userId, boolean block) {
         String response = "";
         ApiResponse apiResponse = null;
@@ -259,6 +283,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: private
     public ApiResponse userUnBlock(String userId) {
         String response = "";
         ApiResponse apiResponse = null;
@@ -273,6 +298,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: default
     public SyncBlockUserApiResponse getSyncUserBlockList(String lastSyncTime) {
         try {
             String url = getBlockUserSyncUrl() + "?lastSyncTime=" + lastSyncTime;
@@ -288,6 +314,7 @@ public class UserClientService extends MobiComKitClientService {
         }
     }
 
+    //ApplozicInternal: default
     public String getUserDetails(Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
@@ -310,7 +337,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-
+    //ApplozicInternal: default
     public String postUserDetailsByUserIds(Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
@@ -358,6 +385,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public Map<String, String> getOnlineUserList(int numberOfUser) {
         Map<String, String> info = new HashMap<String, String>();
         try {
@@ -379,6 +407,7 @@ public class UserClientService extends MobiComKitClientService {
         return info;
     }
 
+    //ApplozicInternal: default
     public String getRegisteredUsers(Long startTime, int pageSize) {
         String response = null;
         try {
@@ -393,6 +422,7 @@ public class UserClientService extends MobiComKitClientService {
         return response;
     }
 
+    //ApplozicInternal: default
     public ApiResponse updateDisplayNameORImageLink(String displayName, String profileImageLink, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
         AlUserUpdate userUpdate = new AlUserUpdate();
         try {
@@ -426,6 +456,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
         if (userId == null || notificationAfterTime == null) {
             return null;
@@ -448,6 +479,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public MuteUserResponse[] getMutedUserList() {
         try {
             String response = httpRequestUtils.getResponse(getMutedUserListUrl(), "application/json", "application/json");
@@ -463,6 +495,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public ApiResponse getUserReadServerCall() {
         String response = null;
         ApiResponse apiResponse = null;
@@ -478,6 +511,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: default
     public String updateUserPassword(String oldPassword, String newPassword) {
         if (TextUtils.isEmpty(oldPassword) || TextUtils.isEmpty(newPassword)) {
             return null;
@@ -499,6 +533,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public ApiResponse getUsersBySearchString(String searchString) throws ApplozicException {
         if (TextUtils.isEmpty(searchString)) {
             return null;

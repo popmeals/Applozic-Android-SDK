@@ -152,6 +152,7 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
         void onFailure(String response, Exception e, Context context);
     }
 
+    //ApplozicInternal: private
     public ChannelModel getChannelInfoByParameters(String parameters) {
         String response = "";
         HttpRequestUtils httpRequestUtils = new HttpRequestUtils(context);

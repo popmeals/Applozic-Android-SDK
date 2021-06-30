@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider;
@@ -45,18 +46,19 @@ import java.util.ArrayList;
 public class FileClientService extends MobiComKitClientService {
 
     //Todo: Make the base folder configurable using either strings.xml or properties file
+    //ApplozicInternal: default, make all private unless specified
     public static final String MOBI_COM_IMAGES_FOLDER = "/image";
     public static final String MOBI_COM_VIDEOS_FOLDER = "/video";
     public static final String MOBI_COM_CONTACT_FOLDER = "/contact";
     public static final String MOBI_COM_OTHER_FILES_FOLDER = "/other";
     public static final String MOBI_COM_THUMBNAIL_SUFIX = "/.Thumbnail";
-    public static final String FILE_UPLOAD_URL = "/rest/ws/aws/file/url";
+    @ApplozicInternal public static final String FILE_UPLOAD_URL = "/rest/ws/aws/file/url";
     public static final String IMAGE_DIR = "image";
     public static final String AL_UPLOAD_FILE_URL = "/rest/ws/upload/file";
     public static final String CUSTOM_STORAGE_SERVICE_END_POINT = "/rest/ws/upload/image";
     //    public static final String S3_SIGNED_URL_END_POINT = "/rest/ws/upload/file";
-    public static final String S3_SIGNED_URL_END_POINT = "/rest/ws/upload/image";
-    public static final String S3_SIGNED_URL_PARAM = "aclsPrivate";
+    public static final String S3_SIGNED_URL_END_POINT = "/rest/ws/upload/image"; //ApplozicInternal: default
+    public static final String S3_SIGNED_URL_PARAM = "aclsPrivate"; //ApplozicInternal: default
     public static final String THUMBNAIL_URL = "/files/";
     private static final int MARK = 1024;
     private static final String TAG = "FileClientService";
@@ -70,6 +72,8 @@ public class FileClientService extends MobiComKitClientService {
         this.mobiComKitClientService = new MobiComKitClientService(context);
     }
 
+    //ApplozicInternal: rename to getApplozicInternalFilePath
+    @ApplozicInternal
     public static File getFilePath(String fileName, Context context, String contentType, boolean isThumbnail) {
         File filePath;
         File dir = null;
@@ -102,10 +106,12 @@ public class FileClientService extends MobiComKitClientService {
         return filePath;
     }
 
+    @ApplozicInternal
     public static File getFilePath(String fileName, Context context, String contentType) {
         return getFilePath(fileName, context, contentType, false);
     }
 
+    //ApplozicInternal: private
     public String profileImageUploadURL() {
         return getBaseUrl() + AL_UPLOAD_FILE_URL;
     }
@@ -129,6 +135,7 @@ public class FileClientService extends MobiComKitClientService {
         return FileUtils.getName(message.getFileMetas().getName()) + message.getCreatedAtTime() + "." + thumbnailExtension;
     }
 
+    @ApplozicInternal
     public Bitmap downloadAndSaveThumbnailImage(Context context, Message message, int reqWidth, int reqHeight) {
         HttpURLConnection connection = null;
         try {
@@ -191,7 +198,7 @@ public class FileClientService extends MobiComKitClientService {
     /**
      * @param message
      */
-
+    @ApplozicInternal
     public void loadContactsvCard(Message message) {
         File file = null;
         HttpURLConnection connection = null;
@@ -247,6 +254,7 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
+    //ApplozicInternal: default
     public String downloadGif(String url) {
         InputStream input = null;
         OutputStream output = null;
@@ -293,6 +301,7 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
+    @ApplozicInternal
     public Bitmap loadMessageImage(Context context, String url) {
         try {
             Bitmap attachedImage = null;
@@ -315,6 +324,7 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    @ApplozicInternal
     public String uploadBlobImage(String path, Handler handler, String oldMessageKey) throws
             UnsupportedEncodingException {
         try {
@@ -333,11 +343,13 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: private
     public String getUploadURL() {
         String fileUrl = new URLServiceProvider(context).getFileUploadUrl();
         return fileUrl;
     }
 
+    //ApplozicInternal: default
     public Bitmap downloadBitmap(Contact contact, Channel channel) {
         HttpURLConnection connection = null;
         MarkStream inputStream = null;
@@ -389,6 +401,7 @@ public class FileClientService extends MobiComKitClientService {
 
     }
 
+    //ApplozicInternal: private
     public String getThumbnailParentDir(String filePath) {
         String[] parts = getParts(filePath);
         String thumbnailDir = "";
@@ -404,7 +417,7 @@ public class FileClientService extends MobiComKitClientService {
      * This path is supposed to be the same as the path where video thumbnails are downloaded.
      * see {@link FileClientService#downloadAndSaveThumbnailImage(Context, Message, int, int)}
      */
-    public String getThumbnailPath(String filePath) {
+    public String getThumbnailPath(String filePath) { //ApplozicInternal: default
         String thumbnailParentDir = getThumbnailParentDir(filePath);
         File dir = new File(thumbnailParentDir);
         if (!dir.exists()) {
@@ -414,6 +427,7 @@ public class FileClientService extends MobiComKitClientService {
         return thumbnailParentDir + getVideoThumbnailFileNameForLocalGeneration(filePath);
     }
 
+    //ApplozicInternal: default
     public Bitmap createThumbnailFileInLocalStorageAndReturnBitmap(String filePath) {
         Bitmap videoThumbnail;
         OutputStream fOut;
@@ -436,6 +450,7 @@ public class FileClientService extends MobiComKitClientService {
      * This methods aims to save the video thumbnail in the same location where it will save downloaded thumbnails from the server.
      * see {@link FileClientService#downloadAndSaveThumbnailImage(Context, Message, int, int)}
      */
+    @ApplozicInternal
     public Bitmap getOrCreateVideoThumbnail(String filePath) {
         String videoThumbnailPath = getThumbnailPath(filePath);
 
@@ -449,6 +464,7 @@ public class FileClientService extends MobiComKitClientService {
         return videoThumbnail;
     }
 
+    @ApplozicInternal
     public String uploadProfileImage(String path) throws UnsupportedEncodingException {
         try {
             ApplozicMultipartUtility multipart = new ApplozicMultipartUtility(profileImageUploadURL(), "UTF-8", context);
@@ -460,6 +476,7 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    @ApplozicInternal
     public Bitmap loadMessageImage(Context context, Conversation conversation) {
         try {
             if (conversation == null) {
@@ -486,6 +503,7 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: private
     public Bitmap downloadProductImage(Conversation conversation) {
         TopicDetail topicDetail = (TopicDetail) GsonUtils.getObjectFromJson(conversation.getTopicDetail(), TopicDetail.class);
         if (TextUtils.isEmpty(topicDetail.getLink())) {
@@ -536,6 +554,7 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    @ApplozicInternal
     public void writeFile(Uri uri, File file) {
         InputStream in = null;
         OutputStream out = null;

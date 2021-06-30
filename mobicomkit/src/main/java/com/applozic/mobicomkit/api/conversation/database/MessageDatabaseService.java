@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import androidx.annotation.VisibleForTesting;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.attachment.FileMeta;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -34,16 +35,16 @@ import java.util.Map;
  * Time: 8:40 PM
  */
 public class MessageDatabaseService {
-
     private static final String TAG = "MessageDatabaseService";
 
+    //ApplozicInternal: default
     public static List<Message> recentlyAddedMessage = new ArrayList<Message>();
     private Context context = null;
     private MobiComDatabaseHelper dbHelper;
     private boolean hideActionMessages = false;
     private boolean skipDeletedGroups;
 
-
+    @ApplozicInternal
     public MessageDatabaseService(Context context) {
         this.context = ApplozicService.getContext(context);
         this.dbHelper = MobiComDatabaseHelper.getInstance(context);
@@ -59,6 +60,7 @@ public class MessageDatabaseService {
         skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
     }
 
+    //ApplozicInternal: private
     public static Message getMessage(Cursor cursor) {
         Message message = new Message();
         message.setMessageId(cursor.getLong(cursor.getColumnIndex("id")));
@@ -137,6 +139,7 @@ public class MessageDatabaseService {
         return message;
     }
 
+    //ApplozicInternal: private
     public static List<Message> getMessageList(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
         try {
@@ -163,6 +166,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
+    //ApplozicInternal: private
     public static List<Message> getLatestMessageList(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
         try {
@@ -187,6 +191,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
+    //ApplozicInternal: private
     public static List<Message> getLatestMessageListForNotification(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
         try {
@@ -280,6 +285,7 @@ public class MessageDatabaseService {
         return MessageDatabaseService.getLatestMessageListForNotification(cursor);
     }
 
+    @ApplozicInternal
     public List<Message> getPendingMessages() {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -293,6 +299,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
+    @ApplozicInternal
     public List<Message> getPendingDeleteMessages() {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -304,6 +311,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
+    //ApplozicInternal: private
     public long getMinCreatedAtFromMessageTable() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         final Cursor cursor = db.rawQuery("select min(createdAt) as createdAt from sms", null);
@@ -322,6 +330,7 @@ public class MessageDatabaseService {
         }
     }
 
+    //ApplozicInternal: private
     public Message getMessage(String contactNumber, String message) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String structuredNameWhere = "";
@@ -348,6 +357,7 @@ public class MessageDatabaseService {
         }
     }
 
+    //ApplozicInternal: default
     public boolean isMessagePresent(String key) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.rawQuery(

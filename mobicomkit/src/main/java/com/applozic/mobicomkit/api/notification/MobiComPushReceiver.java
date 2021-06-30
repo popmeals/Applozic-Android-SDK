@@ -7,6 +7,7 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -28,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+public class MobiComPushReceiver {
 
-public class
-MobiComPushReceiver {
-
+    //ApplozicInternal: private all
     public static final String MTCOM_PREFIX = "APPLOZIC_";
     public static final List<String> notificationKeyList = new ArrayList<String>();
     public static final String BLOCKED_TO = "BLOCKED_TO";
@@ -77,6 +78,7 @@ MobiComPushReceiver {
         notificationKeyList.add("APPLOZIC_39");//34 for group mute notification
     }
 
+    //ApplozicInternal: private
     public static boolean isMobiComPushNotification(Intent intent) {
         Log.d(TAG, "checking for Applozic notification.");
         if (intent == null) {
@@ -85,6 +87,7 @@ MobiComPushReceiver {
         return isMobiComPushNotification(intent.getExtras());
     }
 
+    //ApplozicInternal: private
     public static boolean isMobiComPushNotification(Bundle bundle) {
         //This is to identify collapse key sent in notification..
         if (bundle == null) {

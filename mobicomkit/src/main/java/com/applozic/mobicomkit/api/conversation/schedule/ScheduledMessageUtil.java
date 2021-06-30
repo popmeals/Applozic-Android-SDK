@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
 
@@ -16,6 +17,7 @@ import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
  * Date: 1/26/14
  * Time: 12:32 AM
  */
+@ApplozicInternal
 public class ScheduledMessageUtil {
     Context context = null;
     private Class intentClass;

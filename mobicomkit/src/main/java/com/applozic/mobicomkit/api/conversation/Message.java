@@ -16,6 +16,8 @@ import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.channel.ChannelMetadata;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -745,6 +747,16 @@ public class Message extends JsonMarker {
             type = "text";
         }
         return type;
+    }
+
+    public List<String> getSenderIdListFor() {
+        if (!TextUtils.isEmpty(getTo())) {
+            return Arrays.asList(getTo().split("\\s*,\\s*"));
+        } else if (!TextUtils.isEmpty(getContactIds())) {
+            return Arrays.asList(getContactIds().split("\\s*,\\s*"));
+        }
+
+        return new ArrayList<>();
     }
 
     public enum Source {

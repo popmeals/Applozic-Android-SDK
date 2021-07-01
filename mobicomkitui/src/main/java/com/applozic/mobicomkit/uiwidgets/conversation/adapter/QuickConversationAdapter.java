@@ -141,19 +141,9 @@ public class QuickConversationAdapter extends RecyclerView.Adapter implements Fi
         return null;
     }
 
-    private List<String> getSenderIdListFor(Message message) {
-        if (!TextUtils.isEmpty(message.getTo())) {
-            return Arrays.asList(message.getTo().split("\\s*,\\s*"));
-        } else if (!TextUtils.isEmpty(message.getContactIds())) {
-            return Arrays.asList(message.getContactIds().split("\\s*,\\s*"));
-        }
-
-        return new ArrayList<>();
-    }
-
     private String getSenderNameWithSeparator(Message message) {
         final String SEPARATOR = ": ";
-        List<String> senderIds = getSenderIdListFor(message);
+        List<String> senderIds = message.getSenderIdListFor();
 
         if (senderIds != null && !senderIds.isEmpty()) {
             String senderUserId = senderIds.get(0);

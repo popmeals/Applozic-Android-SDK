@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.attachment.FileMeta;
@@ -45,6 +47,14 @@ public class MessageDatabaseService {
     public MessageDatabaseService(Context context) {
         this.context = ApplozicService.getContext(context);
         this.dbHelper = MobiComDatabaseHelper.getInstance(context);
+        hideActionMessages = ApplozicClient.getInstance(context).isActionMessagesHidden();
+        skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
+    }
+
+    @VisibleForTesting
+    public MessageDatabaseService(Context context, MobiComDatabaseHelper dbHelper) {
+        this.context = ApplozicService.getContext(context);
+        this.dbHelper = dbHelper;
         hideActionMessages = ApplozicClient.getInstance(context).isActionMessagesHidden();
         skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
     }

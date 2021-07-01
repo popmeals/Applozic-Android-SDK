@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
@@ -39,6 +40,12 @@ public class ContactDatabase {
         this.dbHelper = MobiComDatabaseHelper.getInstance(ApplozicService.getContext(context));
     }
 
+    @VisibleForTesting
+    public ContactDatabase(Context context, MobiComDatabaseHelper dbHelper) {
+        this.context = ApplozicService.getContext(context);
+        this.userPreferences = MobiComUserPreference.getInstance(ApplozicService.getContext(context));
+        this.dbHelper = dbHelper;
+    }
 
     public Contact getContact(Cursor cursor) {
         return getContact(cursor, null);
@@ -366,7 +373,8 @@ public class ContactDatabase {
      * @param contact
      * @return
      */
-    private String getFullNameForUpdate(Contact contact) {
+    @VisibleForTesting
+    public String getFullNameForUpdate(Contact contact) {
 
         String fullName = contact.getDisplayName();
         if (TextUtils.isEmpty(contact.getFullName())) {

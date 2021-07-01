@@ -707,6 +707,46 @@ public class Message extends JsonMarker {
         return ((ApplozicClient.getInstance(context).isActionMessagesHidden() && isActionMessage()) || hasHideKey());
     }
 
+    public String getMessageType() {
+        String type = null;
+
+        if (getContentType() == ContentType.LOCATION.getValue()) {
+            type = "location";
+        } else if (getContentType() == ContentType.AUDIO_MSG.getValue()) {
+            type = "audio";
+        } else if (getContentType() == ContentType.VIDEO_MSG.getValue()) {
+            type = "video";
+        } else if (getContentType() == ContentType.ATTACHMENT.getValue()) {
+            if (getFilePaths() != null) {
+                String filePath = getFilePaths().get(getFilePaths().size() - 1);
+                String mimeType = FileUtils.getMimeType(filePath);
+
+                if (mimeType != null) {
+                    if (mimeType.startsWith("image")) {
+                        type = "image";
+                    } else if (mimeType.startsWith("audio")) {
+                        type = "audio";
+                    } else if (mimeType.startsWith("video")) {
+                        type = "video";
+                    }
+                }
+            } else if (getFileMetas() != null) {
+                if (getFileMetas().getContentType().contains("image")) {
+                    type = "image";
+                } else if (getFileMetas().getContentType().contains("audio")) {
+                    type = "audio";
+                } else if (getFileMetas().getContentType().contains("video")) {
+                    type = "video";
+                }
+            }
+        } else if (getContentType() == ContentType.CONTACT_MSG.getValue()) {
+            type = "contact";
+        } else {
+            type = "text";
+        }
+        return type;
+    }
+
     public enum Source {
 
         DEVICE_NATIVE_APP(Short.valueOf("0")), WEB(Short.valueOf("1")), MT_MOBILE_APP(Short.valueOf("2")), API(Short.valueOf("3"));

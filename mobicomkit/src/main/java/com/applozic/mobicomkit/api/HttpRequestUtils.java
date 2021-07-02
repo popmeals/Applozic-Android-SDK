@@ -48,7 +48,10 @@ public class HttpRequestUtils {
     }
 
     public String postDataForAuthToken(String urlString, String contentType, String accept, String data, String userId) throws Exception {
-        Utils.printLog(context, TAG, "Calling url: " + urlString);
+        Utils.printLog(context, TAG, "Calling url (POST) with exception: " + urlString);
+        Utils.printLog(context, TAG, "(POST) Json: " + data);
+        Utils.printLog(context, TAG, "(POST) User Id: " + userId);
+
         HttpURLConnection connection;
         URL url;
         try {
@@ -102,7 +105,7 @@ public class HttpRequestUtils {
                     br.close();
                 }
             }
-            Utils.printLog(context, TAG, "Response : " + sb.toString());
+            Utils.printLog(context, TAG, "(POST) Response : " + sb.toString());
             if (!TextUtils.isEmpty(sb.toString())) {
                 if (!TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getEncryptionKey())) {
                     return EncryptionUtils.decrypt(MobiComUserPreference.getInstance(context).getEncryptionKey(), sb.toString());
@@ -116,12 +119,15 @@ public class HttpRequestUtils {
         } finally {
             isRefreshTokenInProgress = false;
         }
-        Utils.printLog(context, TAG, "Http call failed");
+        Utils.printLog(context, TAG, "(POST) Http call failed...");
         return null;
     }
 
     public String postData(String urlString, String contentType, String accept, String data, String userId) throws Exception {
-        Utils.printLog(context, TAG, "Calling url: " + urlString);
+        Utils.printLog(context, TAG, "Calling url (POST) with exception: " + urlString);
+        Utils.printLog(context, TAG, "(POST) Json: " + data);
+        Utils.printLog(context, TAG, "(POST) User Id: " + userId);
+
         HttpURLConnection connection;
         URL url;
         try {
@@ -175,7 +181,7 @@ public class HttpRequestUtils {
                     br.close();
                 }
             }
-            Utils.printLog(context, TAG, "Response : " + sb.toString());
+            Utils.printLog(context, TAG, "(POST) Response : " + sb.toString());
             if (!TextUtils.isEmpty(sb.toString())) {
                 if (!TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getEncryptionKey())) {
                     return EncryptionUtils.decrypt(MobiComUserPreference.getInstance(context).getEncryptionKey(), sb.toString());
@@ -189,7 +195,7 @@ public class HttpRequestUtils {
         } finally {
             isRefreshTokenInProgress = false;
         }
-        Utils.printLog(context, TAG, "Http call failed");
+        Utils.printLog(context, TAG, "(POST) Http call failed...");
         return null;
     }
 
@@ -198,6 +204,10 @@ public class HttpRequestUtils {
     }
 
     public String postJsonToServer(String stringUrl, String data, String userId) throws Exception {
+        Utils.printLog(context, TAG, "Calling url (POST) with exception: " + stringUrl);
+        Utils.printLog(context, TAG, "(POST) Json: " + data);
+        Utils.printLog(context, TAG, "(POST) User Id: " + userId);
+
         HttpURLConnection connection;
         URL url = new URL(stringUrl);
         connection = (HttpURLConnection) url.openConnection();
@@ -218,7 +228,7 @@ public class HttpRequestUtils {
             InputStream inputStream = connection.getInputStream();
             br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         } else {
-            Utils.printLog(context, TAG, "Response code for post json is :" + connection.getResponseCode());
+            Utils.printLog(context, TAG, "Response code for (POST) json is :" + connection.getResponseCode());
         }
         StringBuilder sb = new StringBuilder();
         try {
@@ -236,7 +246,7 @@ public class HttpRequestUtils {
                 br.close();
             }
         }
-        Utils.printLog(context, TAG, "Response: " + sb.toString());
+        Utils.printLog(context, TAG, "Response (POST): " + sb.toString());
         return sb.toString();
     }
 
@@ -249,7 +259,7 @@ public class HttpRequestUtils {
     }
 
     public String getResponseWithException(String urlString, String contentType, String accept, boolean isFileUpload, String userId) throws Exception {
-        Utils.printLog(context, TAG, "Calling url: " + urlString);
+        Utils.printLog(context, TAG, "Calling url (GET) with exception: " + urlString);
 
         HttpURLConnection connection = null;
         URL url;
@@ -279,7 +289,7 @@ public class HttpRequestUtils {
                 InputStream inputStream = connection.getInputStream();
                 br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             } else {
-                Utils.printLog(context, TAG, "Response code for getResponse is  :" + connection.getResponseCode());
+                Utils.printLog(context, TAG, "(GET) Response code for getResponse is  :" + connection.getResponseCode());
             }
 
             StringBuilder sb = new StringBuilder();
@@ -299,7 +309,7 @@ public class HttpRequestUtils {
                 }
             }
 
-            Utils.printLog(context, TAG, "Response :" + sb.toString());
+            Utils.printLog(context, TAG, "Response (GET):" + sb.toString());
 
             if (!TextUtils.isEmpty(sb.toString())) {
                 if (!TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getEncryptionKey())) {
@@ -308,7 +318,7 @@ public class HttpRequestUtils {
             }
             return sb.toString();
         } catch (ConnectException e) {
-            Utils.printLog(context, TAG, "failed to connect Internet is not working");
+            Utils.printLog(context, TAG, "(GET) Failed to connect Internet is not working...");
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
@@ -329,7 +339,7 @@ public class HttpRequestUtils {
     }
 
     public String getResponse(String urlString, String contentType, String accept, boolean isFileUpload, String userId) {
-        Utils.printLog(context, TAG, "Calling url: " + urlString);
+        Utils.printLog(context, TAG, "Calling url (GET): " + urlString);
 
         HttpURLConnection connection = null;
         URL url;
@@ -359,7 +369,7 @@ public class HttpRequestUtils {
                 InputStream inputStream = connection.getInputStream();
                 br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             } else {
-                Utils.printLog(context, TAG, "Response code for getResponse is  :" + connection.getResponseCode());
+                Utils.printLog(context, TAG, "(GET) Response code for getResponse is  :" + connection.getResponseCode());
             }
 
             StringBuilder sb = new StringBuilder();
@@ -378,7 +388,7 @@ public class HttpRequestUtils {
                 }
             }
 
-            Utils.printLog(context, TAG, "Response :" + sb.toString());
+            Utils.printLog(context, TAG, "Response (GET):" + sb.toString());
 
             if (!TextUtils.isEmpty(sb.toString())) {
                 if (!TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getEncryptionKey())) {
@@ -387,7 +397,7 @@ public class HttpRequestUtils {
             }
             return sb.toString();
         } catch (ConnectException e) {
-            Utils.printLog(context, TAG, "failed to connect Internet is not working");
+            Utils.printLog(context, TAG, "(GET) Failed to connect Internet is not working...");
         } catch (Exception e) {
             e.printStackTrace();
         } catch (Throwable e) {

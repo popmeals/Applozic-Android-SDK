@@ -24,6 +24,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
+import com.applozic.mobicomkit.api.conversation.MessageSyncTask;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
 import com.applozic.mobicomkit.api.conversation.SyncCallService;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
@@ -504,8 +505,9 @@ public class MobiComQuickConversationFragment extends Fragment implements Search
         if (swipeLayout != null) {
             swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 public void onRefresh() {
-                    SyncMessages syncMessages = new SyncMessages();
-                    AlTask.execute(syncMessages);
+                    AlTask.execute(new MessageSyncTask(getActivity(), () -> {
+                        swipeLayout.setRefreshing(false);
+                    }));
                 }
             });
         }
@@ -866,23 +868,6 @@ public class MobiComQuickConversationFragment extends Fragment implements Search
                 loadMore = true;
             }
             isAlreadyLoading = false;
-        }
-    }
-
-    private class SyncMessages extends AlAsyncTask<Integer, Long> {
-        SyncMessages() {
-        }
-
-        @Override
-        protected Long doInBackground() {
-            syncCallService.syncMessages(null);
-            return 1l;
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-            swipeLayout.setRefreshing(false);
         }
     }
 }

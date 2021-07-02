@@ -759,6 +759,19 @@ public class Message extends JsonMarker {
         return new ArrayList<>();
     }
 
+    public boolean isNormalAttachment() {
+        if (getFileMetas() != null) {
+            return !(getFileMetas().getContentType().contains("image") || getFileMetas().getContentType().contains("video") || isContactMessage());
+        } else if (getFilePaths() != null) {
+            String filePath = getFilePaths().get(0);
+            final String mimeType = FileUtils.getMimeType(filePath);
+            if (mimeType != null) {
+                return !(mimeType.contains("image") || mimeType.contains("video") || isContactMessage());
+            }
+        }
+        return false;
+    }
+
     public enum Source {
 
         DEVICE_NATIVE_APP(Short.valueOf("0")), WEB(Short.valueOf("1")), MT_MOBILE_APP(Short.valueOf("2")), API(Short.valueOf("3"));

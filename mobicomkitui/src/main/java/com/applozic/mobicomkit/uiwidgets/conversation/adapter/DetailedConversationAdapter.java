@@ -760,7 +760,7 @@ public class DetailedConversationAdapter extends RecyclerView.Adapter implements
                                     }
                                 }
                             }
-                            if (isNormalAttachment(message)) {
+                            if (message.isNormalAttachment()) {
                                 myHolder.videoIcon.setVisibility(View.GONE);
                                 myHolder.attachedFile.setVisibility(View.GONE);
                                 myHolder.mainAttachmentLayout.setVisibility(View.GONE);
@@ -1400,19 +1400,6 @@ public class DetailedConversationAdapter extends RecyclerView.Adapter implements
         if (contact != null) {
             contact = contactService.getContactById(contact.getContactIds());
         }
-    }
-
-    private boolean isNormalAttachment(Message message) {
-        if (message.getFileMetas() != null) {
-            return !(message.getFileMetas().getContentType().contains("image") || message.getFileMetas().getContentType().contains("video") || message.isContactMessage());
-        } else if (message.getFilePaths() != null) {
-            String filePath = message.getFilePaths().get(0);
-            final String mimeType = FileUtils.getMimeType(filePath);
-            if (mimeType != null) {
-                return !(mimeType.contains("image") || mimeType.contains("video") || message.isContactMessage());
-            }
-        }
-        return false;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {

@@ -896,4 +896,42 @@ public class ChannelService {
         }
         return channelList;
     }
+
+    /**
+     * Checks if the user with the given userId has the role of admin in the given channel.
+     *
+     * @param userId the userId of the user
+     * @param channel the channel object to check in
+     * @return true if admin/false otherwise
+     */
+    public boolean isUserAdminInChannel(String userId, Channel channel) {
+        if(channel == null) {
+            return false;
+        }
+
+        List<ChannelUserMapper> updatedChannelUserMapperList = ChannelService.getInstance(context).getListOfUsersFromChannelUserMapper(channel.getKey());
+
+        if(TextUtils.isEmpty(userId)) {
+            return false;
+        }
+
+        for (ChannelUserMapper channelUserMapper : updatedChannelUserMapperList) {
+            if(userId.equals(channelUserMapper.getUserKey())) {
+                return ChannelUserMapper.UserRole.ADMIN.getValue() == channelUserMapper.getRole().intValue();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the logged-in userId from {@link MobiComUserPreference#getUserId()}
+     * and checks if that user has role admin in channel.
+     *
+     * @param channel the channel to check in
+     * @return true if admin/false otherwise
+     */
+    public boolean isLoggedInUserAdminInChannel(Channel channel) {
+        return isUserAdminInChannel(loggedInUserId, channel);
+    }
 }

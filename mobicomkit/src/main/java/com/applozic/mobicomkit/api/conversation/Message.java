@@ -16,6 +16,8 @@ import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.channel.ChannelMetadata;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -705,6 +707,69 @@ public class Message extends JsonMarker {
             return (subGroupFlag || categoryFlag || ApplozicClient.getInstance(context).isSubGroupEnabled() || !TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getCategoryName()));
         }
         return ((ApplozicClient.getInstance(context).isActionMessagesHidden() && isActionMessage()) || hasHideKey());
+    }
+
+    public String getMessageType() {
+        String type = null;
+
+        if (getContentType() == ContentType.LOCATION.getValue()) {
+            type = "location";
+        } else if (getContentType() == ContentType.AUDIO_MSG.getValue()) {
+            type = "audio";
+        } else if (getContentType() == ContentType.VIDEO_MSG.getValue()) {
+            type = "video";
+        } else if (getContentType() == ContentType.ATTACHMENT.getValue()) {
+            if (getFilePaths() != null) {
+                String filePath = getFilePaths().get(getFilePaths().size() - 1);
+                String mimeType = FileUtils.getMimeType(filePath);
+
+                if (mimeType != null) {
+                    if (mimeType.startsWith("image")) {
+                        type = "image";
+                    } else if (mimeType.startsWith("audio")) {
+                        type = "audio";
+                    } else if (mimeType.startsWith("video")) {
+                        type = "video";
+                    }
+                }
+            } else if (getFileMetas() != null) {
+                if (getFileMetas().getContentType().contains("image")) {
+                    type = "image";
+                } else if (getFileMetas().getContentType().contains("audio")) {
+                    type = "audio";
+                } else if (getFileMetas().getContentType().contains("video")) {
+                    type = "video";
+                }
+            }
+        } else if (getContentType() == ContentType.CONTACT_MSG.getValue()) {
+            type = "contact";
+        } else {
+            type = "text";
+        }
+        return type;
+    }
+
+    public List<String> getSenderIdListFor() {
+        if (!TextUtils.isEmpty(getTo())) {
+            return Arrays.asList(getTo().split("\\s*,\\s*"));
+        } else if (!TextUtils.isEmpty(getContactIds())) {
+            return Arrays.asList(getContactIds().split("\\s*,\\s*"));
+        }
+
+        return new ArrayList<>();
+    }
+
+    public boolean isNormalAttachment() {
+        if (getFileMetas() != null) {
+            return !(getFileMetas().getContentType().contains("image") || getFileMetas().getContentType().contains("video") || isContactMessage());
+        } else if (getFilePaths() != null) {
+            String filePath = getFilePaths().get(0);
+            final String mimeType = FileUtils.getMimeType(filePath);
+            if (mimeType != null) {
+                return !(mimeType.contains("image") || mimeType.contains("video") || isContactMessage());
+            }
+        }
+        return false;
     }
 
     public enum Source {

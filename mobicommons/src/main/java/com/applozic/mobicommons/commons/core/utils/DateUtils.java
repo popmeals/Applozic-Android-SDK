@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.applozic.mobicommons.ApplozicService;
@@ -184,5 +185,7 @@ public class DateUtils {
         return simpleDateFormat.format(date);
     }
 
-
+    public static @NonNull String getDateStringForLocalFileName() {
+        return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+    }
 }

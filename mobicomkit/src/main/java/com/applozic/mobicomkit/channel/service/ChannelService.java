@@ -3,10 +3,12 @@ package com.applozic.mobicomkit.channel.service;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
+import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -486,6 +488,23 @@ public class ChannelService {
         return channelDatabaseService.getChannelUserByChannelKey(channelKey);
     }
 
+    public boolean updateRoleForUserInChannel(@NonNull Integer channelKey, @NonNull String userId, @NonNull Integer role) {
+        GroupInfoUpdate groupInfoUpdate = new GroupInfoUpdate(channelKey);
+        List<ChannelUsersFeed> channelUsersFeedList = new ArrayList<>();
+        ChannelUsersFeed channelUsersFeed = new ChannelUsersFeed();
+        channelUsersFeed.setUserId(userId);
+        channelUsersFeed.setRole(role);
+        channelUsersFeedList.add(channelUsersFeed);
+        groupInfoUpdate.setUsers(channelUsersFeedList);
+        if (groupInfoUpdate != null) {
+            String response = channelService.updateChannel(groupInfoUpdate);
+            if (!TextUtils.isEmpty(response) && MobiComKitConstants.SUCCESS.equals(response)) {
+                channelService.updateRoleInChannelUserMapper(channelKey, userId, role);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void updateRoleInChannelUserMapper(Integer channelKey, String userId, Integer role) {
         channelDatabaseService.updateRoleInChannelUserMapper(channelKey, userId, role);

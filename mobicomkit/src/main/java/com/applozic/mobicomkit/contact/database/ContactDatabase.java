@@ -11,6 +11,7 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
 import com.applozic.mobicommons.ApplozicService;
@@ -47,6 +48,7 @@ public class ContactDatabase {
         this.dbHelper = dbHelper;
     }
 
+    //ApplozicInternal: private
     public Contact getContact(Cursor cursor) {
         return getContact(cursor, null);
     }
@@ -57,6 +59,7 @@ public class ContactDatabase {
      * @param cursor
      * @return
      */
+    @ApplozicInternal
     public Contact getContact(Cursor cursor, String primaryKeyAliash) {
         Contact contact = new Contact();
 
@@ -100,6 +103,7 @@ public class ContactDatabase {
      * @param cursor
      * @return
      */
+    //ApplozicInternal: private
     public List<Contact> getContactList(Cursor cursor) {
 
         List<Contact> smsList = new ArrayList<Contact>();
@@ -144,6 +148,7 @@ public class ContactDatabase {
         }
     }
 
+    @ApplozicInternal
     public Cursor getContactCursorByIdForLoader(String id) {
         Cursor cursor = null;
         try {
@@ -202,12 +207,14 @@ public class ContactDatabase {
         dbHelper.close();
     }
 
+    //ApplozicInternal: default
     public void updateLocalImageUri(Contact contact) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.CONTACT_IMAGE_LOCAL_URI, contact.getLocalImageUrl());
         dbHelper.getWritableDatabase().update(CONTACT, contentValues, MobiComDatabaseHelper.USERID + "=?", new String[]{contact.getUserId()});
     }
 
+    //ApplozicInternal: default
     public void updateConnectedOrDisconnectedStatus(String userId, Date date, boolean connected) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.CONNECTED, connected ? 1 : 0);
@@ -234,7 +241,7 @@ public class ContactDatabase {
         }
     }
 
-
+    //ApplozicInternal: default
     public void updateUserBlockStatus(String userId, boolean userBlocked) {
         try {
             ContentValues contentValues = new ContentValues();
@@ -247,6 +254,7 @@ public class ContactDatabase {
         }
     }
 
+    //ApplozicInternal: default
     public void updateUserBlockByStatus(String userId, boolean userBlockedBy) {
         try {
             ContentValues contentValues = new ContentValues();
@@ -283,6 +291,7 @@ public class ContactDatabase {
         }
     }
 
+    //ApplozicInternal: private
     public ContentValues prepareContactValues(Contact contact, boolean isContactUpdated) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.FULL_NAME, getFullNameForUpdate(contact));
@@ -425,6 +434,7 @@ public class ContactDatabase {
         }
     }
 
+    //ApplozicInternal: default
     public void updateNotificationAfterTime(String userId, Long notificationAfterTime) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.NOTIFICATION_AFTER_TIME, notificationAfterTime);
@@ -475,14 +485,17 @@ public class ContactDatabase {
         return 0;
     }
 
+    @ApplozicInternal
     public Loader<Cursor> getSearchCursorLoader(final String searchString, final String[] userIdArray) {
         return getSearchCursorLoader(searchString, userIdArray, null, null);
     }
 
+    @ApplozicInternal
     public Loader<Cursor> getSearchCursorLoader(final String searchString, final String[] userIdArray, final Integer parentGroupKey) {
         return getSearchCursorLoader(searchString, userIdArray, parentGroupKey, null);
     }
 
+    @ApplozicInternal
     public Loader<Cursor> getSearchCursorLoader(final String searchString, final String[] userIdArray, final Integer parentGroupKey, final String pinnedContactUserId) {
 
         return new CursorLoader(context, null, null, null, null, MobiComDatabaseHelper.DISPLAY_NAME + " asc") {
@@ -593,6 +606,7 @@ public class ContactDatabase {
         }
     }
 
+    //ApplozicInternal: default
     public void updateMetadataKeyValueForUserId(String userId, String key, String value) {
         Contact contact = getContactById(userId);
         if (contact != null) {

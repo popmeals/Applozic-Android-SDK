@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
@@ -25,8 +26,9 @@ import java.net.URLEncoder;
 /**
  * Created by devashish on 28/11/14.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default (move to root)
 public class HttpRequestUtils {
-
+    //ApplozicInternal: private where applicable
     private static final String TAG = "HttpRequestUtils";
     public static String APP_MODULE_NAME_KEY_HEADER = "App-Module-Name";
     private static final String OF_USER_ID_HEADER = "Of-User-Id";
@@ -38,7 +40,7 @@ public class HttpRequestUtils {
     public static boolean isRefreshTokenInProgress = false;
     private Context context;
 
-
+    @ApplozicInternal
     public HttpRequestUtils(Context context) {
         this.context = ApplozicService.getContext(context);
     }
@@ -203,6 +205,7 @@ public class HttpRequestUtils {
         return postJsonToServer(stringUrl, data, null);
     }
 
+    //ApplozicInternal: private
     public String postJsonToServer(String stringUrl, String data, String userId) throws Exception {
         Utils.printLog(context, TAG, "Calling url (POST) with exception: " + stringUrl);
         Utils.printLog(context, TAG, "(POST) Json: " + data);
@@ -338,6 +341,7 @@ public class HttpRequestUtils {
         }
     }
 
+    //ApplozicInternal: private
     public String getResponse(String urlString, String contentType, String accept, boolean isFileUpload, String userId) {
         Utils.printLog(context, TAG, "Calling url (GET): " + urlString);
 
@@ -450,6 +454,7 @@ public class HttpRequestUtils {
         }
     }
 
+    //ApplozicInternal: private
     public void addHeadersForAuthToken(HttpURLConnection connection, String userId) {
         try {
             if (MobiComKitClientService.getAppModuleName(context) != null) {

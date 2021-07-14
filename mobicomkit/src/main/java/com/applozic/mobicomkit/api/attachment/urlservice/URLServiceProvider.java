@@ -1,9 +1,9 @@
 package com.applozic.mobicomkit.api.attachment.urlservice;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicommons.ApplozicService;
@@ -11,12 +11,14 @@ import com.applozic.mobicommons.ApplozicService;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+@ApplozicInternal
 public class URLServiceProvider {
 
     private Context context;
     private URLService urlService;
     private MobiComKitClientService mobiComKitClientService;
 
+    //ApplozicInternal: default
     public URLServiceProvider(Context context) {
         this.context = ApplozicService.getContext(context);
         mobiComKitClientService = new MobiComKitClientService(context);
@@ -43,7 +45,7 @@ public class URLServiceProvider {
         return urlService;
     }
 
-
+    @ApplozicInternal
     public HttpURLConnection getDownloadConnection(Message message) throws IOException {
         HttpURLConnection connection;
 
@@ -55,6 +57,7 @@ public class URLServiceProvider {
         return connection;
     }
 
+    @ApplozicInternal
     public String getThumbnailURL(Message message) throws IOException {
         try {
             return getUrlService(context).getThumbnailURL(message);
@@ -63,12 +66,13 @@ public class URLServiceProvider {
         }
     }
 
+    @ApplozicInternal
     public String getFileUploadUrl() {
         return getUrlService(context).getFileUploadUrl();
     }
 
+    @ApplozicInternal
     public String getImageURL(Message message) {
         return getUrlService(context).getImageUrl(message);
     }
-
 }

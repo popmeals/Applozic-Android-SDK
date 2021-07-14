@@ -3,12 +3,14 @@ package com.applozic.mobicomkit.api.conversation.selfdestruct;
 import android.content.Context;
 import android.util.Log;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
 
 import java.util.TimerTask;
 
+@ApplozicInternal
 public class DisappearingMessageTask extends TimerTask {
     private static final String TAG = "DisappearingMessageTask";
 

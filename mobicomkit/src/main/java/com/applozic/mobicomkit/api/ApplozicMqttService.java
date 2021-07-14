@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Process;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -38,6 +39,7 @@ import java.util.Date;
 /**
  * Created by sunil on 26/11/15.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ApplozicMqttService extends MobiComKitClientService implements MqttCallback {
 
     private static final String STATUS = "status-v2";
@@ -57,6 +59,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         memoryPersistence = new MemoryPersistence();
     }
 
+    @ApplozicInternal
     public static ApplozicMqttService getInstance(Context context) {
 
         if (applozicMqttService == null) {
@@ -172,10 +175,12 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void unSubscribe(boolean useEncrypted) {
         unSubscribeToConversation(useEncrypted);
     }
 
+    //ApplozicInternal: private
     public synchronized void subscribeToConversation(boolean useEncrypted) {
         try {
             String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
@@ -191,6 +196,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void unSubscribeToConversation(final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -211,6 +217,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         thread.start();
     }
 
+    //ApplozicInternal: private
     public synchronized void subscribeToCustomTopic(String customTopic, boolean useEncrypted) {
         try {
             String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
@@ -228,6 +235,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void unSubscribeToCustomTopic(final String customTopic, final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -248,6 +256,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         thread.start();
     }
 
+    //ApplozicInternal: private
     public synchronized void publishCustomData(final String customTopic, final String data, final boolean useEncrypted) {
         try {
             final AlMqttClient client = connect();
@@ -324,6 +333,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public void disconnect() {
         if (client != null && client.isConnected()) {
             try {
@@ -602,6 +612,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void publishTopic(final String applicationId, final String status, final String loggedInUserId, final String userId) {
         try {
             final MqttClient client = connect();
@@ -727,6 +738,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
     public static enum NOTIFICATION_TYPE {
         MESSAGE_RECEIVED("APPLOZIC_01"), MESSAGE_SENT("APPLOZIC_02"),
         MESSAGE_SENT_UPDATE("APPLOZIC_03"), MESSAGE_DELIVERED("APPLOZIC_04"),

@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+//ApplozicInternal: default
 public class MarkStream extends InputStream {
 
     private static final int DEFAULT_BUFFER_SIZE = 4096;

@@ -40,9 +40,9 @@ public class UserService {
 
     private static final String TAG = "UserService";
     private static UserService userService;
-    Context context;
-    UserClientService userClientService;
-    BaseContactService baseContactService;
+    Context context; //ApplozicInternal: private
+    UserClientService userClientService; //ApplozicInternal: private
+    BaseContactService baseContactService; //ApplozicInternal: private
     private MobiComUserPreference userPreference;
 
     private UserService(Context context) {
@@ -69,6 +69,7 @@ public class UserService {
         this.userClientService = userClientService;
     }
 
+    //ApplozicInternal: default or rename
     public synchronized void processSyncUserBlock() {
         try {
             SyncBlockUserApiResponse apiResponse = userClientService.getSyncUserBlockList(userPreference.getUserBlockSyncTime());
@@ -115,7 +116,7 @@ public class UserService {
         }
     }
 
-
+    //ApplozicInternal: default or rename
     public ApiResponse processUserBlock(String userId, boolean block) {
         ApiResponse apiResponse = userClientService.userBlock(userId, block);
         if (apiResponse != null && apiResponse.isSuccess()) {
@@ -125,6 +126,7 @@ public class UserService {
         return null;
     }
 
+    //ApplozicInternal: default or rename
     public synchronized void processUserDetail(Set<UserDetail> userDetails) {
         if (userDetails != null && userDetails.size() > 0) {
             for (UserDetail userDetail : userDetails) {
@@ -133,12 +135,14 @@ public class UserService {
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void processUserDetails(String userId) {
         Set<String> userIds = new HashSet<String>();
         userIds.add(userId);
         processUserDetails(userIds);
     }
 
+    //ApplozicInternal: default or rename
     public synchronized void processUserDetails(Set<String> userIds) {
         String response = userClientService.getUserDetails(userIds);
         if (!TextUtils.isEmpty(response)) {
@@ -149,14 +153,17 @@ public class UserService {
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void processUser(UserDetail userDetail) {
         processUser(userDetail, Contact.ContactType.APPLOZIC);
     }
 
+    //ApplozicInternal: private
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail) {
         return getContactFromUserDetail(userDetail, Contact.ContactType.APPLOZIC);
     }
 
+    //ApplozicInternal: private
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -182,6 +189,7 @@ public class UserService {
         return contact;
     }
 
+    //ApplozicInternal: private or rename
     public synchronized void processUser(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -206,6 +214,7 @@ public class UserService {
         baseContactService.upsert(contact);
     }
 
+    //ApplozicInternal: private or rename
     public synchronized void processMuteUserResponse(MuteUserResponse response) {
         Contact contact = new Contact();
         contact.setUserId(response.getUserId());
@@ -221,6 +230,7 @@ public class UserService {
         baseContactService.upsert(contact);
     }
 
+    //ApplozicInternal: default
     public synchronized String[] getOnlineUsers(int numberOfUser) {
         try {
             Map<String, String> userMapList = userClientService.getOnlineUserList(numberOfUser);
@@ -246,6 +256,7 @@ public class UserService {
         return null;
     }
 
+    //ApplozicInternal: default
     public synchronized RegisteredUsersApiResponse getRegisteredUsersList(Long startTime, int pageSize) {
         String response = userClientService.getRegisteredUsers(startTime, pageSize);
         RegisteredUsersApiResponse apiResponse = null;
@@ -260,6 +271,7 @@ public class UserService {
         return null;
     }
 
+    //ApplozicInternal: default
     public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
         ApiResponse response = userClientService.muteUserNotifications(userId, notificationAfterTime);
 
@@ -273,6 +285,7 @@ public class UserService {
         return response;
     }
 
+    //ApplozicInternal: default
     public List<MuteUserResponse> getMutedUserList() {
         MuteUserResponse[] mutedUserList = userClientService.getMutedUserList();
 
@@ -285,6 +298,7 @@ public class UserService {
         return Arrays.asList(mutedUserList);
     }
 
+    //ApplozicInternal: private
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status) {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
     }
@@ -293,6 +307,7 @@ public class UserService {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
     }
 
+    //ApplozicInternal: private
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -333,6 +348,7 @@ public class UserService {
         return response.getStatus();
     }
 
+    //ApplozicInternal: private
     public ApiResponse updateUserWithResponse(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -372,19 +388,22 @@ public class UserService {
         return response;
     }
 
+    //ApplozicInternal: default
     public ApiResponse updateUserWithResponse(User user) {
         return updateUserWithResponse(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
 
+    //ApplozicInternal: private
     public String updateLoggedInUser(User user) {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getMetadata());
     }
 
+    //ApplozicInternal: private
     public String updateUser(User user) {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
 
-
+    //ApplozicInternal: default
     public void processUserDetailsResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             List<UserDetail> userDetails = (List<UserDetail>) GsonUtils.getObjectFromJson(response, new TypeToken<List<UserDetail>>() {
@@ -395,14 +414,17 @@ public class UserService {
         }
     }
 
+    //ApplozicInternal: default
     public void processUserDetailsByUserIds(Set<String> userIds) {
         userClientService.postUserDetailsByUserIds(userIds);
     }
 
+    //ApplozicInternal: private
     public ApiResponse processUserReadConversation() {
         return userClientService.getUserReadServerCall();
     }
 
+    //ApplozicInternal: private
     public String processUpdateUserPassword(String oldPassword, String newPassword) {
         String response = userClientService.updateUserPassword(oldPassword, newPassword);
         if (!TextUtils.isEmpty(response) && MobiComKitConstants.SUCCESS.equals(response)) {
@@ -411,6 +433,7 @@ public class UserService {
         return response;
     }
 
+    //ApplozicInternal: default
     public List<Contact> getUserListBySearch(String searchString) throws ApplozicException {
         try {
             ApiResponse response = userClientService.getUsersBySearchString(searchString);
@@ -438,10 +461,12 @@ public class UserService {
         return null;
     }
 
+    //ApplozicInternal: default
     public void updateUser(User user, AlCallback callback) {
         AlTask.execute(new AlUserUpdateTask(context, user, callback));
     }
 
+    //ApplozicInternal: default
     public ApiResponse updateUserDisplayName(String userId, String userDisplayName) {
        ApiResponse response =  userClientService.updateUserDisplayName(userId,userDisplayName);
        if (response != null && response.isSuccess()) {

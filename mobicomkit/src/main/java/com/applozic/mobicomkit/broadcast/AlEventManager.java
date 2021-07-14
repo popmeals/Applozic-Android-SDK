@@ -17,7 +17,7 @@ import java.util.Map;
  * multiple listeners can be registered by unique id
  */
 public class AlEventManager {
-    public static final String AL_EVENT = "AL_EVENT";
+    public static final String AL_EVENT = "AL_EVENT"; //ApplozicInternal: protected
     private static AlEventManager eventManager;
     private Map<String, ApplozicUIListener> listenerMap;
     private Map<String, AlMqttListener> mqttListenerMap;
@@ -54,6 +54,7 @@ public class AlEventManager {
         }
     }
 
+    //ApplozicInternal: private
     public void registerMqttListener(String id, AlMqttListener mqttListener) {
         if (mqttListenerMap == null) {
             mqttListenerMap = new HashMap<>();
@@ -64,6 +65,7 @@ public class AlEventManager {
         }
     }
 
+    //ApplozicInternal: private
     public void unregisterMqttListener(String id) {
         if (mqttListenerMap != null) {
             mqttListenerMap.remove(id);
@@ -80,6 +82,7 @@ public class AlEventManager {
         }
     }
 
+    //ApplozicInternal: default
     public void postMqttEventData(MqttMessageResponse messageResponse) {
         if (mqttListenerMap != null && !mqttListenerMap.isEmpty()) {
             for (AlMqttListener alMqttListener : mqttListenerMap.values()) {

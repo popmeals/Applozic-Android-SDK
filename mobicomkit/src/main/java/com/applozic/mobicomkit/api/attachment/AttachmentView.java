@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider;
 import com.applozic.mobicomkit.api.conversation.Message;
 
@@ -34,6 +35,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
  * This class extends the standard Android ImageView View class with some features
  * that are useful for downloading, decoding, and displaying Picasa images.
  */
+@ApplozicInternal
 public class AttachmentView extends ImageView {
 
     // Indicates if caching should be used

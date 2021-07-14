@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -25,8 +26,9 @@ import java.util.UUID;
 /**
  * Created by devashish on 08/08/16.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class VideoCallNotificationHelper {
-
+    //ApplozicInternal: default and private where required
     public static final String CALL_STARTED = "CALL_STARTED";
     public static final String CALL_END = "CALL_END";
     public static final String MSG_TYPE = "MSG_TYPE";
@@ -48,12 +50,14 @@ public class VideoCallNotificationHelper {
     private MobiComConversationService conversationService;
     private AppContactService baseContactService;
 
+    @ApplozicInternal
     public VideoCallNotificationHelper(Context context) {
         this.context = context;
         this.isAudioOnly = false;
         init();
     }
 
+    @ApplozicInternal
     public VideoCallNotificationHelper(Context context, boolean isAudioOnly) {
         this.context = context;
         this.isAudioOnly = isAudioOnly;
@@ -103,6 +107,7 @@ public class VideoCallNotificationHelper {
         this.baseContactService = new AppContactService(context);
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getDialCallMetaData() {
 
         Map<String, String> metaData = new HashMap<>();
@@ -113,6 +118,7 @@ public class VideoCallNotificationHelper {
 
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getAnswerCallMetaData() {
 
         Map<String, String> metaData = new HashMap<>();
@@ -124,6 +130,7 @@ public class VideoCallNotificationHelper {
 
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getVideoCallStartedMap() {
 
         Map<String, String> metaData = new HashMap<>();
@@ -134,6 +141,7 @@ public class VideoCallNotificationHelper {
 
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getVideoCallEndMap(String callDuration) {
 
         Map<String, String> metaData = new HashMap<>();
@@ -145,6 +153,7 @@ public class VideoCallNotificationHelper {
 
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getVideoCanceledMap() {
 
         Map<String, String> metaData = new HashMap<>();
@@ -155,6 +164,7 @@ public class VideoCallNotificationHelper {
 
     }
 
+    //ApplozicInternal: private
     public Map<String, String> getRejectedCallMap() {
 
         Map<String, String> metaData = new HashMap<>();
@@ -172,6 +182,7 @@ public class VideoCallNotificationHelper {
         return metaData;
     }
 
+    //ApplozicInternal: private
     public String sendVideoCallRequest(Contact contact, boolean audioOnly) {
         Message notificationMessage = getNotificationMessage(contact);
         this.videoCallId = UUID.randomUUID().toString()
@@ -190,7 +201,7 @@ public class VideoCallNotificationHelper {
      * @param contact
      * @return
      */
-
+//ApplozicInternal: private
     public String sendVideoCallRequest(Contact contact) {
         return sendVideoCallRequest(contact, false);
     }
@@ -199,10 +210,12 @@ public class VideoCallNotificationHelper {
      * @param contact
      * @return
      */
+    //ApplozicInternal: private
     public String sendAudioCallRequest(Contact contact) {
         return sendVideoCallRequest(contact, true);
     }
 
+    //ApplozicInternal: private
     public void sendVideoCallAnswer(Contact contact, String videoCallId) {
 
         Log.i(TAG, "sendVideoCallAnswer()");
@@ -234,6 +247,7 @@ public class VideoCallNotificationHelper {
 //
 //    }
 
+    //ApplozicInternal: private
     public void sendVideoCallReject(Contact contact, String videoCallId) {
         this.videoCallId = videoCallId;
         Message notificationMessage = getNotificationMessage(contact);
@@ -242,6 +256,7 @@ public class VideoCallNotificationHelper {
         conversationService.sendMessage(notificationMessage);
     }
 
+    //ApplozicInternal: private
     public void sendCallMissed(Contact contact, String videoCallId) {
         this.videoCallId = videoCallId;
         Message notificationMessage = getNotificationMessage(contact);
@@ -254,7 +269,7 @@ public class VideoCallNotificationHelper {
 //    public void updateVideoMessageStatus(String callId,String type){
 //        messageDatabaseService.updateVideoCallMetaData(callId,type);
 //    }
-
+    //ApplozicInternal: private
     public void sendVideoCallStarted(Contact contact, String videoCallId) {
         Message statusMessage = getVideoCallStatusMessage(contact);
         statusMessage.setMetadata(getVideoCallStartedMap());
@@ -262,6 +277,7 @@ public class VideoCallNotificationHelper {
         conversationService.sendMessage(statusMessage);
     }
 
+    //ApplozicInternal: private
     public void sendVideoCallEnd(Contact contact, String videoCallId, String duration) {
 
         Message statusMessage = getVideoCallStatusMessage(contact);
@@ -271,6 +287,7 @@ public class VideoCallNotificationHelper {
 
     }
 
+    //ApplozicInternal: private
     @NonNull
     private Message getNotificationMessage(Contact contact) {
         Message notificationMessage = new Message();
@@ -288,6 +305,7 @@ public class VideoCallNotificationHelper {
         return notificationMessage;
     }
 
+    //ApplozicInternal: private
     @NonNull
     private Message getVideoCallStatusMessage(Contact contact) {
 
@@ -412,6 +430,7 @@ public class VideoCallNotificationHelper {
         return myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
     }
 
+    //ApplozicInternal: private
     void openCallActivity(Message msg, String isAudioCallOnly) {
         Class activityToOpen = null;
         try {

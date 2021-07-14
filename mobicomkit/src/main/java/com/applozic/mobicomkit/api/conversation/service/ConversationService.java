@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.conversation.service;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.database.ConversationDatabaseService;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicomkit.feed.ChannelFeed;
@@ -37,6 +38,7 @@ public class ConversationService {
         return conversationService;
     }
 
+    //ApplozicInternal: default or rename
     public synchronized void processConversationArray(Conversation[] conversations, Channel channel, Contact contact) {
 
         if (conversations != null && conversations.length > 0) {
@@ -93,6 +95,7 @@ public class ConversationService {
         return null;
     }
 
+    @ApplozicInternal
     public synchronized void getConversation(Integer conversationId) {
         if (!conversationDatabaseService.isConversationPresent(conversationId)) {
             Conversation conversation = conversationClientService.getConversation(conversationId);
@@ -107,6 +110,7 @@ public class ConversationService {
         conversationDatabaseService.deleteConversation(userId);
     }
 
+    @ApplozicInternal
     public synchronized Integer isConversationExist(String userId, String topicId) {
         if (TextUtils.isEmpty(userId) || TextUtils.isEmpty(topicId)) {
             return null;
@@ -114,6 +118,7 @@ public class ConversationService {
         return conversationDatabaseService.isConversationExit(userId, topicId);
     }
 
+    @ApplozicInternal
     public void updateTopicLocalImageUri(String imageUri, Integer conversationId) {
         conversationDatabaseService.updateTopicLocalImageUri(imageUri, conversationId);
     }

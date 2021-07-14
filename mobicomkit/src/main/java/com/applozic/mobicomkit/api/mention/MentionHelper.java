@@ -16,6 +16,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.MentionMetadataModel;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -41,6 +42,7 @@ import java.util.regex.Pattern;
  * Helper class for 'Mentions'.
  * Contains most of the mentions logic.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public final class MentionHelper {
     public static final Pattern MENTION_PATTERN = Pattern.compile("@(\\w+#\\d\\d\\d)");
     @ColorInt public static final int DETAILED_CONVERSATION_SPAN_COLOR = 0xFF5959FF;
@@ -258,6 +260,7 @@ public final class MentionHelper {
         return mentionMetadataModels;
     }
 
+    @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
     public static class MentionPair {
         private final String serverReadyMentionsString;
         private final ArrayList<MentionMetadataModel> serverReadyMentionsMetadataList;
@@ -298,12 +301,14 @@ public final class MentionHelper {
         return message.getGroupId() != null && message.getGroupId() != 0 && isLoggedInUserMentioned;
     }
 
+    @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
     public static class ReceivedQuickConversationMessageMentionDisplaySpan extends StyleSpan {
         public ReceivedQuickConversationMessageMentionDisplaySpan() {
             super(Typeface.BOLD_ITALIC);
         }
     }
 
+    @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
     public static class ReceivedDetailedConversationMessageMentionDisplaySpan extends BackgroundColorSpan {
         public ReceivedDetailedConversationMessageMentionDisplaySpan() {
             super(DETAILED_CONVERSATION_SPAN_COLOR);

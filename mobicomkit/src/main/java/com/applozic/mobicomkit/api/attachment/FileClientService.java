@@ -12,6 +12,9 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
@@ -21,6 +24,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
 import com.applozic.mobicomkit.api.conversation.service.ConversationService;
 import com.applozic.mobicomkit.feed.TopicDetail;
+import com.applozic.mobicommons.commons.core.utils.DateUtils;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.commons.image.ImageUtils;
 import com.applozic.mobicommons.file.FileUtils;
@@ -582,4 +586,37 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
+    public @Nullable String getFileFormatFromMimeType(@NonNull String mimeType) {
+        String[] array = mimeType.split("/");
+        String fileFormat = null;
+
+        if (array.length > 1) {
+            fileFormat = array[1];
+        }
+
+        if (TextUtils.isEmpty(fileFormat)) {
+            return null;
+        }
+
+        return fileFormat;
+    }
+
+    public @Nullable File saveFileToApplozicLocalStorage(@NonNull Uri fromUri, @Nullable String mimeType) {
+        if (context != null && !TextUtils.isEmpty(mimeType)) {
+            String fileFormat = getFileFormatFromMimeType(mimeType);
+
+            if (TextUtils.isEmpty(fileFormat)) {
+                return null;
+            }
+
+            String fileNameToWrite = DateUtils.getDateStringForLocalFileName() + "." + fileFormat;
+
+            File mediaFile = FileClientService.getFilePath(fileNameToWrite, context, mimeType);
+
+            writeFile(fromUri, mediaFile);
+
+            return mediaFile;
+        }
+        return null;
+    }
 }

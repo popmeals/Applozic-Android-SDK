@@ -484,6 +484,15 @@ public class ALRichMessageModel extends JsonMarker {
                     ", type='" + type + '\'' +
                     '}';
         }
+
+        public Map<String, Object> getReplyMetadata() {
+            if (this != null && getAction() != null) {
+                if (getAction().getPayload() != null) {
+                    return getAction().getPayload().getReplyMetadata();
+                }
+            }
+            return null;
+        }
     }
 
     public static class AlAction extends JsonMarker {

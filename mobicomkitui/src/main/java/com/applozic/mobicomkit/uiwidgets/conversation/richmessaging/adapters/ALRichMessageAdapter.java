@@ -740,21 +740,12 @@ public class ALRichMessageAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View v) {
                 if (context.getApplicationContext() instanceof ALRichMessageListener) {
-                    ((ALRichMessageListener) context.getApplicationContext()).onAction(context, getActionType(action), message, action, getReplyMetadata(action));
+                    ((ALRichMessageListener) context.getApplicationContext()).onAction(context, getActionType(action), message, action, action.getReplyMetadata());
                 } else if (listener != null) {
-                    listener.onAction(context, getActionType(action), message, action, getReplyMetadata(action));
+                    listener.onAction(context, getActionType(action), message, action, action.getReplyMetadata());
                 }
             }
         };
-    }
-
-    private Map<String, Object> getReplyMetadata(ALRichMessageModel.AlButtonModel alButtonModel) {
-        if (alButtonModel != null && alButtonModel.getAction() != null) {
-            if (alButtonModel.getAction().getPayload() != null) {
-                return alButtonModel.getAction().getPayload().getReplyMetadata();
-            }
-        }
-        return null;
     }
 
     private String getActionType(ALRichMessageModel.AlButtonModel alButtonModel) {

@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by sunil on 28/12/15.
+ * Model class for storing data for a channel from server responses.
  */
 public class ChannelFeed extends JsonMarker {
 

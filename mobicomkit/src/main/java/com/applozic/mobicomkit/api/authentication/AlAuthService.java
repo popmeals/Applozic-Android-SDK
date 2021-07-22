@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.listners.AlCallback;
 import com.applozic.mobicommons.task.AlTask;
 
+@ApplozicInternal
 public class AlAuthService {
     //ApplozicInternal: private
     public static boolean isTokenValid(long createdAtTime, int validUptoMins) {

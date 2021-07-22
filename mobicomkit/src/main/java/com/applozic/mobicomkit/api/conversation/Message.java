@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.notification.VideoCallNotificationHelper;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicommons.json.JsonMarker;
@@ -24,6 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+/**
+ * Model class for an Applozic Message.
+ *
+ * <p>A message is, as the name suggests, the data that is sent and received between two users.
+ * A message has a message string, a sender-id (to) or a group-id (groupId), a key-string to identify it
+ * as well has other data like attachment information, delivery information etc.
+ * The message metadata map field can be used to send custom key-value information with the message.</p>
+ */
 public class Message extends JsonMarker {
 
     private Long createdAtTime = new Date().getTime();
@@ -134,6 +143,13 @@ public class Message extends JsonMarker {
         this.attDownloadInProgress = attDownloadInProgress;
     }
 
+    /**
+     * Checks if the message is read or not.
+     *
+     * <p>Sent messages are also considered to be read.</p>
+     *
+     * @return true/false
+     */
     public Boolean isRead() {
         return read || isTypeOutbox() || getScheduledAt() != null;
     }
@@ -142,34 +158,77 @@ public class Message extends JsonMarker {
         this.read = read;
     }
 
+    @ApplozicInternal
     public boolean isSelfDestruct() {
         return getTimeToLive() != null;
     }
 
+    /**
+     * Checks if the file has a local filepath associated, that has not been uploaded yet (i.e fileMeta is null).
+     *
+     * @return true/false
+     */
     public boolean isUploadRequired() {
         return hasAttachment() && (fileMeta == null);
     }
 
+    /**
+     * Checks if the message object has any attachment.
+     *
+     * <p>A message with attachment has either fileMeta or filePaths.</p>
+     *
+     * @return true/false
+     */
     public boolean hasAttachment() {
         return ((filePaths != null && !filePaths.isEmpty()) || (fileMeta != null));
     }
 
+    /**
+     * Checks if the attachment is being uploaded or ready to be uploaded.
+     *
+     * <p>The attachment must be available locally and not already sent to the server.</p>
+     *
+     * @return true/false
+     */
     public boolean isAttachmentUploadInProgress() {
         return filePaths != null && !filePaths.isEmpty() && FileUtils.isFileExist(filePaths.get(0)) && !sentToServer;
     }
 
+    /**
+     * Checks if the attachment for the message object has been downloaded locally.
+     *
+     * <p>A downloaded attachment will have a valid filepath stored in the respective variable.</p>
+     *
+     * @return true/false
+     */
     public boolean isAttachmentDownloaded() {
         return filePaths != null && !filePaths.isEmpty() && FileUtils.isFileExist(filePaths.get(0));
     }
 
+    /**
+     * Checks if the message object is for a call notification message.
+     * Inferred from the MessageType.
+     *
+     * @return true/false
+     */
     public boolean isCall() {
         return MessageType.CALL_INCOMING.getValue().equals(type) || MessageType.CALL_OUTGOING.getValue().equals(type);
     }
 
+    /**
+     * Checks if the `type` is that of an outgoing call message.
+     *
+     * @return true/false
+     */
     public boolean isOutgoingCall() {
         return MessageType.CALL_OUTGOING.getValue().equals(type);
     }
 
+    /**
+     * Checks if the `type` is that of an incoming call message.
+     *
+     * @return true/false
+     */
     public boolean isIncomingCall() {
         return MessageType.CALL_INCOMING.getValue().equals(type);
     }
@@ -182,10 +241,12 @@ public class Message extends JsonMarker {
         this.messageId = messageId;
     }
 
+    @ApplozicInternal
     public boolean isDummyEmptyMessage() {
         return getCreatedAtTime() != null && getCreatedAtTime() == 0 && TextUtils.isEmpty(getMessage());
     }
 
+    @ApplozicInternal
     public boolean isLocalMessage() {
         return TextUtils.isEmpty(getKeyString()) && isSentToServer();
     }
@@ -270,6 +331,7 @@ public class Message extends JsonMarker {
         this.type = type;
     }
 
+    @ApplozicInternal
     public void processContactIds(Context context) {
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
         if (TextUtils.isEmpty(getContactIds())) {
@@ -302,6 +364,11 @@ public class Message extends JsonMarker {
         this.scheduledAt = scheduledAt;
     }
 
+    /**
+     * Checks if the message has multiple recipients.
+     *
+     * @return true/false
+     */
     public boolean isSentToMany() {
         return !TextUtils.isEmpty(getTo()) && getTo().split(",").length > 1;
     }
@@ -314,15 +381,22 @@ public class Message extends JsonMarker {
         this.sentToServer = sentToServer;
     }
 
+    /**
+     * Checks if the message is one that was sent or outgoing or outbox.
+     *
+     * @return true/false
+     */
     public boolean isTypeOutbox() {
         return MessageType.OUTBOX.getValue().equals(type) || MessageType.MT_OUTBOX.getValue().equals(type) ||
                 MessageType.OUTBOX_SENT_FROM_DEVICE.getValue().equals(type) || MessageType.CALL_OUTGOING.getValue().equals(type);
     }
 
+    @ApplozicInternal
     public boolean isSentViaApp() {
         return MessageType.MT_OUTBOX.getValue().equals(this.type);
     }
 
+    @ApplozicInternal
     public boolean isSentViaCarrier() {
         return MessageType.OUTBOX.getValue().equals(type);
     }
@@ -431,14 +505,25 @@ public class Message extends JsonMarker {
         this.topicId = topicId;
     }
 
+    @ApplozicInternal
     public String getCurrentId() {
         return getGroupId() != null ? String.valueOf(getGroupId()) : getContactIds();
     }
 
+    /**
+     * Checks if the message string has a URL in it.
+     *
+     * @return true/false
+     */
     public boolean isTypeUrl() {
         return !TextUtils.isEmpty(getFirstUrl());
     }
 
+    /**
+     * Matches for and returns the first web url in the message string.
+     *
+     * @return the web url in the message if present. else null
+     */
     public String getFirstUrl() {
         Matcher matcher = Patterns.WEB_URL.matcher(getMessage());
         if (matcher.find()) {
@@ -475,6 +560,13 @@ public class Message extends JsonMarker {
         return false;
     }
 
+    /**
+     * Gets the type of the file attached with the message object.
+     *
+     * <p>This is inferred either directly from the Message Content Type give to it
+     * or from the format/mime of the attached file.</p>
+     * @return the type (location, audio, video, contact, others, image)
+     */
     public String getAttachmentType() {
         String type = "no_attachment";
 
@@ -601,10 +693,17 @@ public class Message extends JsonMarker {
         this.clientGroupId = clientGroupId;
     }
 
+    /**
+     * Gets the message metadata value for the passed message metadata key.
+     *
+     * @param key the key
+     * @return the value. will return null if the key is not present or metadata is null
+     */
     public String getMetaDataValueForKey(String key) {
         return getMetadata() != null ? getMetadata().get(key) : null;
     }
 
+    @ApplozicInternal
     public String getAssigneId() {
         if (isActionMessage()) {
             return getMetadata().get(BOT_ASSIGN);
@@ -612,11 +711,13 @@ public class Message extends JsonMarker {
         return null;
     }
 
+    @ApplozicInternal
     public boolean isGroupDeleteAction() {
         return getMetadata() != null && getMetadata().containsKey(ChannelMetadata.AL_CHANNEL_ACTION)
                 && Integer.parseInt(getMetadata().get(ChannelMetadata.AL_CHANNEL_ACTION)) == GroupAction.DELETE_GROUP.getValue();
     }
 
+    @ApplozicInternal
     public boolean isUpdateMessage() {
         return !Message.ContentType.HIDDEN.getValue().equals(contentType)
                 && (!Message.MetaDataType.ARCHIVE.getValue().equals(getMetaDataValueForKey(Message.MetaDataType.KEY.getValue())) || !isHidden())
@@ -632,6 +733,13 @@ public class Message extends JsonMarker {
         return ContentType.VIDEO_CALL_STATUS_MSG.getValue().equals(getContentType());
     }
 
+    /**
+     * Check is the message is one for IP calls.
+     *
+     * <p>This includes call notification messages like call accepted, rejected, missed etc.</p>
+     *
+     * @return true/false
+     */
     public boolean isVideoOrAudioCallMessage() {
         String msgType = getMetaDataValueForKey(VideoCallNotificationHelper.MSG_TYPE);
         return (VideoCallNotificationHelper.CALL_STARTED.equals(msgType)
@@ -644,15 +752,18 @@ public class Message extends JsonMarker {
                 || VideoCallNotificationHelper.CALL_MISSED.equals(msgType));
     }
 
+    @ApplozicInternal
     public boolean isConsideredForCount() {
         return (!Message.ContentType.HIDDEN.getValue().equals(getContentType()) &&
                 !ContentType.VIDEO_CALL_NOTIFICATION_MSG.getValue().equals(getContentType()) && !isReadStatus() && !hasHideKey());
     }
 
+    @ApplozicInternal
     public boolean hasHideKey() {
         return GroupMessageMetaData.TRUE.getValue().equals(getMetaDataValueForKey(GroupMessageMetaData.HIDE_KEY.getValue())) || Message.ContentType.HIDDEN.getValue().equals(getContentType()) || hidden;
     }
 
+    @ApplozicInternal
     public boolean isGroupMetaDataUpdated() {
         return ContentType.CHANNEL_CUSTOM_MESSAGE.getValue().equals(this.getContentType()) && this.getMetadata() != null && this.getMetadata().containsKey("action") && GroupAction.GROUP_META_DATA_UPDATED.getValue().toString().equals(this.getMetadata().get("action"));
     }
@@ -673,24 +784,35 @@ public class Message extends JsonMarker {
         this.replyMessage = replyMessage;
     }
 
+    @ApplozicInternal
     public boolean isActionMessage() {
         return getMetadata() != null && (getMetadata().containsKey(BOT_ASSIGN) || getMetadata().containsKey(CONVERSATION_STATUS) || getMetadata().containsKey(FEEDBACK_METADATA_KEY));
     }
 
+    @ApplozicInternal
     public String getConversationStatus() {
         return (getMetadata() != null && getMetadata().containsKey(CONVERSATION_STATUS)) ? getMetadata().get(CONVERSATION_STATUS) : null;
     }
 
+    @ApplozicInternal
     public String getConversationAssignee() {
         return (getMetadata() != null && getMetadata().containsKey(BOT_ASSIGN)) ? getMetadata().get(BOT_ASSIGN) : null;
     }
 
+    /**
+     * Checks if the message has been deleted for all.
+     *
+     * @return true/false
+     */
     public boolean isDeletedForAll() {
         return getMetadata() != null
                 && getMetadata().containsKey(AL_DELETE_MESSAGE_FOR_ALL_KEY)
                 && GroupMessageMetaData.TRUE.getValue().equals(getMetadata().get(AL_DELETE_MESSAGE_FOR_ALL_KEY));
     }
 
+    /**
+     * Adds a deleted for all metadata key-value pair for the message.
+     */
     public void setAsDeletedForAll() {
         if (metadata == null) {
             metadata = new HashMap<>();
@@ -699,6 +821,7 @@ public class Message extends JsonMarker {
         metadata.put(AL_DELETE_MESSAGE_FOR_ALL_KEY, GroupMessageMetaData.TRUE.getValue());
     }
 
+    @ApplozicInternal
     public boolean isIgnoreMessageAdding(Context context) {
         if (ApplozicClient.getInstance(context).isSubGroupEnabled() && MobiComUserPreference.getInstance(context).getParentGroupKey() != null || !TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getCategoryName())) {
             Channel channel = ChannelService.getInstance(context).getChannelByChannelKey(getGroupId());
@@ -709,6 +832,13 @@ public class Message extends JsonMarker {
         return ((ApplozicClient.getInstance(context).isActionMessagesHidden() && isActionMessage()) || hasHideKey());
     }
 
+    /**
+     * Gets the type of the file attached with the message object.
+     *
+     * <p>This is inferred either directly from the Message Content Type give to it
+     * or from the format/mime of the attached file.</p>
+     * @return the type (location, audio, video, contact, others, image)
+     */
     public String getMessageType() {
         String type = null;
 
@@ -749,6 +879,11 @@ public class Message extends JsonMarker {
         return type;
     }
 
+    /**
+     * Get the user id of the sender/s of the message.
+     *
+     * @return A list of sender ids.
+     */
     public List<String> getSenderIdListFor() {
         if (!TextUtils.isEmpty(getTo())) {
             return Arrays.asList(getTo().split("\\s*,\\s*"));
@@ -759,6 +894,7 @@ public class Message extends JsonMarker {
         return new ArrayList<>();
     }
 
+    @ApplozicInternal
     public boolean isNormalAttachment() {
         if (getFileMetas() != null) {
             return !(getFileMetas().getContentType().contains("image") || getFileMetas().getContentType().contains("video") || isContactMessage());

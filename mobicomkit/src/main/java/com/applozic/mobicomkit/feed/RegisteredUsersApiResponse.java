@@ -3,11 +3,10 @@ package com.applozic.mobicomkit.feed;
 import com.applozic.mobicomkit.api.account.user.UserDetail;
 import com.applozic.mobicommons.json.JsonMarker;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
- * Created by sunil on 28/4/16.
+ * Model class for storing data retrieved from registered user api calls to the server.
  */
 public class RegisteredUsersApiResponse extends JsonMarker {
 

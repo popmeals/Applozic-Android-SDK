@@ -52,9 +52,8 @@ import java.util.UUID;
  * <p>This class handles most of the database and network management of messages.
  * It also includes some methods for user/contact handling.
  * It's a party here.</p>
- *
- * Created by devashish on 26/12/14.
  */
+//ApplozicInternal: This entire class can be given package visibility with a little work
 public class MessageClientService extends MobiComKitClientService {
     //ApplozicInternal: all to private unless specified
     public static final int SMS_SYNC_BATCH_SIZE = 5;
@@ -796,6 +795,7 @@ public class MessageClientService extends MobiComKitClientService {
         Utils.printLog(context, TAG, "Read status response is " + response);
     }
 
+    @ApplozicInternal
     public void updateReadStatusForSingleMessage(String pairedmessagekey) {
         String singleReadMessageParm = "";
         String response = "";
@@ -903,6 +903,7 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
+    @ApplozicInternal
     public String[] getConnectedUsers() {
         try {
             String response = getMessages(null, null, null, null, null);
@@ -1022,7 +1023,7 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    @ApplozicInternal
     public MessageInfoResponse getMessageInfoList(String messageKey) {
 
         String url = getMessageInfoUrl() + "?key=" + messageKey;

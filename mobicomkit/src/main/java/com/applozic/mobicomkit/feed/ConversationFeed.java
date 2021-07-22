@@ -1,14 +1,12 @@
 package com.applozic.mobicomkit.feed;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicommons.people.channel.Conversation;
 
 import java.util.List;
 
-/**
- * Created by ninu on 27/04/17.
- */
-
+@ApplozicInternal
 public class ConversationFeed extends JsonMarker {
 
     private static final String SUCCESS = "success";

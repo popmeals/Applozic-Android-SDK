@@ -22,10 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-
-/**
- * Created by devashish on 28/11/14.
- */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default (move to root)
 public class HttpRequestUtils {
     //ApplozicInternal: private where applicable

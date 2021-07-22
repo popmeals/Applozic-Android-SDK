@@ -1,10 +1,9 @@
 package com.applozic.mobicomkit.feed;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
-/**
- * Created by sunil on 22/10/15.
- */
+@ApplozicInternal
 public class MessageResponse extends JsonMarker {
     private String messageKey;
     private String createdAt;

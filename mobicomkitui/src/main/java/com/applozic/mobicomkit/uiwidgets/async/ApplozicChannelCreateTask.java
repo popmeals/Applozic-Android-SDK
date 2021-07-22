@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.uiwidgets.async;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.people.ChannelInfo;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicomkit.feed.AlResponse;
@@ -11,9 +12,8 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.util.List;
 
-/**
- * Created by sunil on 17/5/16.
- */
+@Deprecated
+@ApplozicInternal
 public class ApplozicChannelCreateTask extends AlAsyncTask<Void, Boolean> {
     Context context;
     String groupName;

@@ -7,10 +7,12 @@ import android.text.TextUtils;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserClientService;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
 import com.applozic.mobicomkit.api.authentication.AlAuthService;
@@ -36,7 +38,7 @@ import com.applozic.mobicommons.task.AlTask;
 import java.util.Map;
 
 /**
- * Created by sunil on 29/8/16.
+ * Class for all the major public methods for using the Applozic Chat SDK.
  */
 public class Applozic {
 
@@ -56,12 +58,28 @@ public class Applozic {
         this.sharedPreferences = this.context.getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
     }
 
+    /**
+     * Initializes the client SDK.
+     *
+     * <p>This method basically stores the application key and application context for further use.</p>
+     *
+     * @param context the context
+     * @param applicationKey the application id/application key
+     *
+     * @return the {@link Applozic} object
+     */
     public static Applozic init(Context context, String applicationKey) {
         applozic = getInstance(context);
         AlPrefSettings.getInstance(context).setApplicationKey(applicationKey);
         return applozic;
     }
 
+    /**
+     * Returns the {@link Applozic} object. Singleton.
+     *
+     * @param context the context
+     * @return the object
+     */
     public static Applozic getInstance(Context context) {
         if (applozic == null) {
             applozic = new Applozic(ApplozicService.getContext(context));
@@ -69,14 +87,29 @@ public class Applozic {
         return applozic;
     }
 
+    /**
+     * Will set a log callback, that will be able to "capture" Applozic logs.
+     *
+     * <p>Logs logged using {@link AlLog} will be sent in the callback.</p>
+     *
+     * @param alLoggerListener the listener
+     */
     public void setAlLoggerListener(AlLog.AlLoggerListener alLoggerListener) {
         this.alLoggerListener = alLoggerListener;
     }
 
+    /**
+     * Will set the API key from Google's Geolocation API
+     *
+     * <p>This will be used for the Applozic SDK's location services like sharing location etc.</p>
+     *
+     * @param geoApiKey the geolocation API key
+     */
     public void setGeoApiKey(String geoApiKey) {
         AlPrefSettings.getInstance(context).setGeoApiKey(geoApiKey);
     }
 
+    @ApplozicInternal
     public String getGeoApiKey() {
         String geoApiKey = AlPrefSettings.getInstance(context).getGeoApiKey();
         if (!TextUtils.isEmpty(geoApiKey)) {
@@ -85,6 +118,16 @@ public class Applozic {
         return Utils.getMetaDataValue(context, AlPrefSettings.GOOGLE_API_KEY_META_DATA);
     }
 
+    /**
+     * This method will give you the application key/id with which the given SDK has been initialized.
+     *
+     * <p>This application key/id is retrieved from one of three places:
+     * - From the server call (usually the registration server call)
+     * - From the AndroidManifest.xml metadata value
+     * - From the shared preferences (key is written here during SDK initialization)</p>
+     *
+     * @return the application key
+     */
     public String getApplicationKey() {
         String decryptedApplicationKey = AlPrefSettings.getInstance(context).getApplicationKey();
         if (!TextUtils.isEmpty(decryptedApplicationKey)) {
@@ -98,54 +141,97 @@ public class Applozic {
         return existingAppKey;
     }
 
+    /**
+     * Gets the device registration id, to be used for push notifications.
+     *
+     * <p>This device registration id is retrieved from shared preferences.</p>
+     *
+     * @return the device registration id
+     */
     public String getDeviceRegistrationId() {
         return sharedPreferences.getString(DEVICE_REGISTRATION_ID, null);
     }
 
     @SuppressLint("NewApi")
+    @ApplozicInternal
     public int getNotificationChannelVersion() {
         return sharedPreferences.getInt(NOTIFICATION_CHANNEL_VERSION_STATE, NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
     }
 
+    @ApplozicInternal
     public void setNotificationChannelVersion(int version) {
         sharedPreferences.edit().putInt(NOTIFICATION_CHANNEL_VERSION_STATE, version).commit();
     }
 
+    /**
+     * Store the device registration id in shared preferences.
+     *
+     * @param registrationId the device registration id from FCM
+     * @return the enclosing class object
+     */
     public Applozic setDeviceRegistrationId(String registrationId) {
         sharedPreferences.edit().putString(DEVICE_REGISTRATION_ID, registrationId).commit();
         return this;
     }
 
+    /**
+     * Sets the filepath for a custom Android notification sound.
+     *
+     * <p>This will be referred to by the SDK when required.</p>
+     *
+     * @param filePath the filepath to the notification sound
+     * @return the enclosing class object
+     */
     public Applozic setCustomNotificationSound(String filePath) {
         sharedPreferences.edit().putString(CUSTOM_NOTIFICATION_SOUND, filePath).commit();
         return this;
     }
 
+    @ApplozicInternal
     public String getCustomNotificationSound() {
         return sharedPreferences.getString(CUSTOM_NOTIFICATION_SOUND, null);
     }
 
+    //ApplozicInternal: private
     public static void disconnectPublish(Context context, String deviceKeyString, String userKeyString, boolean useEncrypted) {
         if (!TextUtils.isEmpty(userKeyString) && !TextUtils.isEmpty(deviceKeyString)) {
             ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
         }
     }
 
+    /**
+     * @deprecated User {@link Applozic#isConnected(Context)}.
+     */
     @Deprecated
     public static boolean isLoggedIn(Context context) {
         return MobiComUserPreference.getInstance(context).isLoggedIn();
     }
 
+    /**
+     * Disconnect from MQTT for publishing and receiving events.
+     *
+     * @param context the context
+     */
     public static void disconnectPublish(Context context) {
         disconnectPublish(context, true);
         disconnectPublish(context, false);
     }
 
+    /**
+     * Connect to MQTT for publishing and receiving events.
+     *
+     * @param context the context
+     */
     public static void connectPublish(Context context) {
         connectPublish(context, true);
         connectPublish(context, false);
     }
 
+    /**
+     * Connect to MQTT for publishing and receiving events after verifying and refreshing the JWT auth token.
+     *
+     * @param context the context
+     */
     public static void connectPublishWithVerifyToken(final Context context, String loadingMessage) {
         AlAuthService.verifyToken(context, loadingMessage, new AlCallback() {
             @Override
@@ -161,37 +247,70 @@ public class Applozic {
         });
     }
 
-
+    //ApplozicInternal: private
     public static void disconnectPublish(Context context, boolean useEncrypted) {
         final String deviceKeyString = MobiComUserPreference.getInstance(context).getDeviceKeyString();
         final String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
         disconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
     }
 
+    //ApplozicInternal: private
     public static void connectPublish(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublish(context, useEncrypted);
     }
 
+    //ApplozicInternal: private
     public static void subscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkSubscribeToSupportGroup(context, useEncrypted);
     }
 
+    //ApplozicInternal: private
     public static void unSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkUnSubscribeToSupportGroup(context, useEncrypted);
     }
 
+    /**
+     * Subscribe to the MQTT topic for typing for a particular conversation.
+     *
+     * <p>Either one of the channel or contact passed can be null.</p>
+     *
+     * @param context the context
+     * @param channel the channel you wish to subscribe to for typing
+     * @param contact the contact you wish to subscribe to for typing
+     */
     public static void subscribeToTyping(Context context, Channel channel, Contact contact) {
         ApplozicMqttWorker.enqueueWorkSubscribeToTyping(context, channel, contact);
     }
 
+    /**
+     * Unsubscribe to the MQTT topic for typing for a particular conversation.
+     *
+     * <p>Either one of the channel or contact passed can be null.</p>
+     *
+     * @param context the context
+     * @param channel the channel you wish to unsubscribe to for typing
+     * @param contact the contact you wish to unsubscribe to for typing
+     */
     public static void unSubscribeToTyping(Context context, Channel channel, Contact contact) {
         ApplozicMqttWorker.enqueueWorkUnSubscribeToTyping(context, channel, contact);
     }
 
+    /**
+     * Publish your typing status to MQTT for a particular conversation.
+     *
+     * <p>Either one of the channel or contact passed can be null.</p>
+     *
+     * @param context the context
+     * @param channel the channel you wish to publish typing status to
+     * @param contact the contact you wish to publish typing status to
+     */
     public static void publishTypingStatus(Context context, Channel channel, Contact contact, boolean typingStarted) {
         ApplozicMqttWorker.enqueueWorkPublishTypingStatus(context, channel, contact, typingStarted);
     }
 
+    /**
+     * @deprecated User {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
+     */
     @Deprecated
     public static void loginUser(Context context, User user, AlLoginHandler loginHandler) {
         if (MobiComUserPreference.getInstance(context).isLoggedIn()) {
@@ -203,6 +322,18 @@ public class Applozic {
         }
     }
 
+    /**
+     * Use this method for Applozic user login/registration. It connects and authenticates a user to the Applozic servers
+     * and initializes user data for the SDK.
+     *
+     * <p>This method checks if a user is already logged/connected and doesn't connect if it finds one.
+     * If the user with the given user id is not found in the servers, a new one will be registered.
+     * See {@link com.applozic.mobicomkit.api.account.register.RegisterUserClientService#createAccount(User)}.</p>
+     *
+     * @param context the context
+     * @param user the user object
+     * @param loginHandler the success/failure callbacks
+     */
     public static void connectUser(Context context, User user, AlLoginHandler loginHandler) {
         if (isConnected(context)) {
             RegistrationResponse registrationResponse = new RegistrationResponse();
@@ -222,18 +353,29 @@ public class Applozic {
         }
     }
 
+    //ApplozicInternal: private
     public static void connectUserWithoutCheck(Context context, User user, AlLoginHandler loginHandler) {
         AlTask.execute(new UserLoginTask(user, loginHandler, context));
     }
 
+    /**
+     * Checks if a user is connected and authenticated.
+     *
+     * <p>The SDK can be used only after a user has been logged in/connected.</p>
+     *
+     * @param context the context
+     * @return true/false
+     */
     public static boolean isConnected(Context context) {
         return MobiComUserPreference.getInstance(context).isLoggedIn();
     }
 
+    //ApplozicInternal: private
     public static boolean isRegistered(Context context) {
         return MobiComUserPreference.getInstance(context).isRegistered();
     }
 
+    @ApplozicInternal
     public static boolean isApplozicNotification(Context context, Map<String, String> data) {
         if (MobiComPushReceiver.isMobiComPushNotification(data)) {
             MobiComPushReceiver.processMessageAsync(context, data);
@@ -242,6 +384,9 @@ public class Applozic {
         return false;
     }
 
+    /**
+     * @deprecated Use {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
+     */
     @Deprecated
     public static void loginUser(Context context, User user, boolean withLoggedInCheck, AlLoginHandler loginHandler) {
         if (withLoggedInCheck && MobiComUserPreference.getInstance(context).isLoggedIn()) {
@@ -253,14 +398,24 @@ public class Applozic {
         }
     }
 
+    /**
+     * Logout the current user in an asynchronous thread.
+     *
+     * <p>See {@link UserClientService#logout(boolean)} for details.</p>
+     *
+     * @param context the context
+     * @param logoutHandler success/failure callbacks
+     */
     public static void logoutUser(final Context context, AlLogoutHandler logoutHandler) {
         AlTask.execute(new UserLogoutTask(logoutHandler, context));
     }
 
+    //ApplozicInternal: private
     public static void registerForPushNotification(Context context, String pushToken, AlPushNotificationHandler handler) {
         AlTask.execute(new PushNotificationTask(context, pushToken, handler));
     }
 
+    //ApplozicInternal: private
     public static void registerForPushNotification(Context context, AlPushNotificationHandler handler) {
         registerForPushNotification(context, Applozic.getInstance(context).getDeviceRegistrationId(), handler);
     }
@@ -301,12 +456,18 @@ public class Applozic {
         }
     }
 
+    /**
+     * @deprecated Use {@link com.applozic.mobicomkit.broadcast.AlEventManager#registerUIListener(String, ApplozicUIListener)}.
+     */
     @Deprecated
     public void registerUIListener(ApplozicUIListener applozicUIListener) {
         applozicBroadcastReceiver = new ApplozicBroadcastReceiver(applozicUIListener);
         LocalBroadcastManager.getInstance(context).registerReceiver(applozicBroadcastReceiver, BroadcastService.getIntentFilter());
     }
 
+    /**
+     * @deprecated Use {@link com.applozic.mobicomkit.broadcast.AlEventManager#unregisterMqttListener(String)}.
+     */
     @Deprecated
     public void unregisterUIListener() {
         if (applozicBroadcastReceiver != null) {

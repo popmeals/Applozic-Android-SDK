@@ -1,12 +1,11 @@
 package com.applozic.mobicomkit.sync;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.List;
 
-/**
- * Created by sunil on 17/3/16.
- */
+@ApplozicInternal
 public class SyncUserBlockListFeed extends JsonMarker {
 
     List<SyncUserBlockFeed> blockedByUserList;

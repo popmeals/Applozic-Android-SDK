@@ -14,9 +14,7 @@ import com.applozic.mobicommons.people.contact.Contact;
 
 import java.util.List;
 
-/**
- * Created by sunil on 18/2/16.
- */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ConversationService {
 
     private static ConversationService conversationService;
@@ -95,7 +93,6 @@ public class ConversationService {
         return null;
     }
 
-    @ApplozicInternal
     public synchronized void getConversation(Integer conversationId) {
         if (!conversationDatabaseService.isConversationPresent(conversationId)) {
             Conversation conversation = conversationClientService.getConversation(conversationId);
@@ -110,7 +107,6 @@ public class ConversationService {
         conversationDatabaseService.deleteConversation(userId);
     }
 
-    @ApplozicInternal
     public synchronized Integer isConversationExist(String userId, String topicId) {
         if (TextUtils.isEmpty(userId) || TextUtils.isEmpty(topicId)) {
             return null;
@@ -118,7 +114,6 @@ public class ConversationService {
         return conversationDatabaseService.isConversationExit(userId, topicId);
     }
 
-    @ApplozicInternal
     public void updateTopicLocalImageUri(String imageUri, Integer conversationId) {
         conversationDatabaseService.updateTopicLocalImageUri(imageUri, conversationId);
     }

@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.people;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicomkit.contact.AppContactService;
 import com.applozic.mobicomkit.listners.AlChannelListener;
@@ -11,6 +12,8 @@ import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
+//Cleanup: remove this class, not used
+@ApplozicInternal
 public class AlGetPeopleTask extends AlAsyncTask<Object, Object> {
     private String userId;
     private String clientChannelKey;

@@ -55,6 +55,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+//Cleanup: Why is this separate from MobiComMessageService, why does this have Message related code
+
+/**
+ * This class handles the server and local database related code for
+ * {@link Message} and Applozic "conversations".
+ */
 public class MobiComConversationService {
 
     private static final String TAG = "Conversation";
@@ -472,6 +478,7 @@ public class MobiComConversationService {
         }
     }
 
+    @ApplozicInternal
     public synchronized List<Message> getAlConversationList(int status, int pageSize, Long lastFetchTime, boolean makeServerCall) throws Exception {
         List<Message> conversationList = new ArrayList<>();
         List<Message> cachedConversationList = messageDatabaseService.getAlConversationList(status, lastFetchTime);
@@ -678,7 +685,19 @@ public class MobiComConversationService {
         }
     }
 
-    @ApplozicInternal
+    //Cleanup: remove 2nd parameter
+    /**
+     * Deletes a message from the device and server.
+     *
+     * <p>If the server delete was successful, only then is the message deleted from the
+     * local database.
+     * In cases when the server delete was unsuccessful, a message deleted flag is updated
+     * in the database for the message.</p>
+     *
+     * @param message the message object, only the key-string and the replyMessageType is used
+     * @param contact pass null
+     * @return true always
+     */
     public boolean deleteMessage(Message message, Contact contact) {
         if (!message.isSentToServer()) {
             deleteMessageFromDevice(message, contact != null ? contact.getContactIds() : null);
@@ -693,12 +712,18 @@ public class MobiComConversationService {
         return true;
     }
 
-    @ApplozicInternal
+    /**
+     * @see MobiComConversationService#deleteMessage(Message, Contact).
+     *
+     * @param message the message object to delete
+     * @return true always
+     */
     public boolean deleteMessage(Message message) {
         return deleteMessage(message, null);
     }
 
     //ApplozicInternal: private
+    //Cleanup: remove 2nd parameter
     public String deleteMessageFromDevice(Message message, String contactNumber) {
         if (message == null) {
             return null;
@@ -716,6 +741,7 @@ public class MobiComConversationService {
         messageDatabaseService.deleteChannelConversation(channelKey);
     }
 
+    @ApplozicInternal
     public void deleteAndBroadCast(final Contact contact, boolean deleteFromServer) {
         deleteConversationFromDevice(contact.getContactIds());
         if (deleteFromServer) {
@@ -796,6 +822,7 @@ public class MobiComConversationService {
         }
     }
 
+    @ApplozicInternal
     public String getConversationIdString(Integer conversationId) {
         return BroadcastService.isContextBasedChatEnabled() && conversationId != null && conversationId != 0 ? "_" + conversationId : "";
     }

@@ -1,8 +1,8 @@
 package com.applozic.mobicomkit.exception;
 
-/**
- * Created by user on 5/30/2015.
- */
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
+
+@ApplozicInternal //Cleanup: can be removed
 public class InvalidApplicationException extends Exception {
     private String message;
 

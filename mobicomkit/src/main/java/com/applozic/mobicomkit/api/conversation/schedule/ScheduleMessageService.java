@@ -11,7 +11,7 @@ import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
 import java.util.Calendar;
 import java.util.List;
 
-@ApplozicInternal
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ScheduleMessageService extends IntentService {
 
     public ScheduleMessageService() {

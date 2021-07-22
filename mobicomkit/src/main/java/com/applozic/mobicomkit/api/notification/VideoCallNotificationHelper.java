@@ -23,9 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by devashish on 08/08/16.
- */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class VideoCallNotificationHelper {
     //ApplozicInternal: default and private where required

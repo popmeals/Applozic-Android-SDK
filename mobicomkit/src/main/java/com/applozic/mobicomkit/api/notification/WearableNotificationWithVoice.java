@@ -17,9 +17,6 @@ import androidx.core.app.RemoteInput;
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
-/**
- * @author adarsh
- */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class WearableNotificationWithVoice {
 

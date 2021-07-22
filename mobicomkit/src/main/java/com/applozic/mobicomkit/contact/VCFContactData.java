@@ -4,10 +4,7 @@ import android.graphics.Bitmap;
 
 import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
-/**
- * Created by devashish on 09/03/16.
- */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class VCFContactData {
 
     private String name;

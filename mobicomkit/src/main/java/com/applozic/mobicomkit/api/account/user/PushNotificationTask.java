@@ -10,7 +10,12 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by devashish on 7/22/2015.
+ * Task that wraps around {@link RegisterUserClientService#updatePushNotificationId(String)}.
+ *
+ * <p>Updates the server with a "device id"/"registration id" that will be used
+ * to identify the device for push notifications.
+ * Created for async execution of the above mentioned method.
+ * Use either {@link TaskListener} or {@link AlPushNotificationHandler} to get the results.</p>
  */
 public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
 

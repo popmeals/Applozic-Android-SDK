@@ -18,8 +18,6 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
 /**
  * This worker handles syncing messages and last seen on network change (if available).
  * It also handle updating time zone change data.
- *
- * Created by sunil on 26/12/15.
  */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible
 public class ApplozicWorker extends Worker {

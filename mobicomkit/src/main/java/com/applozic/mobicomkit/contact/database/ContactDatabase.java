@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by adarsh on 9/7/15.
+ * Handles the database and other local data operations for {@link Contact}.
  */
 public class ContactDatabase {
 
@@ -53,12 +53,6 @@ public class ContactDatabase {
         return getContact(cursor, null);
     }
 
-    /**
-     * Form a single contact from cursor
-     *
-     * @param cursor
-     * @return
-     */
     @ApplozicInternal
     public Contact getContact(Cursor cursor, String primaryKeyAliash) {
         Contact contact = new Contact();
@@ -97,12 +91,6 @@ public class ContactDatabase {
         return contact;
     }
 
-    /**
-     * Form a single contact details from cursor
-     *
-     * @param cursor
-     * @return
-     */
     //ApplozicInternal: private
     public List<Contact> getContactList(Cursor cursor) {
 
@@ -116,6 +104,11 @@ public class ContactDatabase {
         return smsList;
     }
 
+    /**
+     * Gets the list of contacts save in the local database, excluding the current logged user.
+     *
+     * @return the list of {@link Contact} objects
+     */
     public List<Contact> getAllContactListExcludingLoggedInUser() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if (TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getUserId())) {
@@ -134,6 +127,11 @@ public class ContactDatabase {
         }
     }
 
+    /**
+     * Gets the list of all contacts save in the local database.
+     *
+     * @return the list of {@link Contact} objects
+     */
     public List<Contact> getAllContact() {
         Cursor cursor = null;
         try {
@@ -173,6 +171,12 @@ public class ContactDatabase {
         return null;
     }
 
+    /**
+     * Gets the contact from the db with the given user id.
+     *
+     * @param id the user id
+     * @return the {@link Contact} object
+     */
     public Contact getContactById(String id) {
         Cursor cursor = null;
         try {
@@ -201,6 +205,13 @@ public class ContactDatabase {
         return null;
     }
 
+    /**
+     * Updates the contact object in the local database.
+     *
+     * <p>Non-null/non-empty/non-zero data is taken from the passed contact object and updated.</p>
+     *
+     * @param contact the {@link Contact} object
+     */
     public void updateContact(Contact contact) {
         ContentValues contentValues = prepareContactValues(contact, true);
         dbHelper.getWritableDatabase().update(CONTACT, contentValues, MobiComDatabaseHelper.USERID + "=?", new String[]{contact.getUserId()});
@@ -229,6 +240,7 @@ public class ContactDatabase {
         }
     }
 
+    @ApplozicInternal
     public void updateLastSeenTimeAt(String userId, long lastSeenTime) {
         try {
             ContentValues contentValues = new ContentValues();
@@ -267,6 +279,11 @@ public class ContactDatabase {
         }
     }
 
+    /**
+     * Adds a new contact to the local database.
+     *
+     * @param contact the contact object
+     */
     public void addContact(Contact contact) {
         try {
             ContentValues contentValues = prepareContactValues(contact, false);
@@ -377,10 +394,10 @@ public class ContactDatabase {
 
     /**
      * This method will return full name of contact to be updated.
-     * This is require to avoid updating full name back to userId in case fullname is not set while updating contact.
+     * This is required to avoid updating full name back to userId in case full name is not set while updating contact.
      *
-     * @param contact
-     * @return
+     * @param contact the contact object
+     * @return the full name
      */
     @VisibleForTesting
     public String getFullNameForUpdate(Contact contact) {
@@ -395,6 +412,12 @@ public class ContactDatabase {
         return fullName;
     }
 
+    /**
+     * Checks if the contact with the given userId is present in the local database.
+     *
+     * @param userId the user id to check
+     * @return true/false
+     */
     public boolean isContactPresent(String userId) {
         Cursor cursor = null;
         try {
@@ -412,22 +435,38 @@ public class ContactDatabase {
         }
     }
 
+    /**
+     * Adds a bunch of contacts to the local database.
+     *
+     * @param contactList a list of contacts to add
+     */
     public void addAllContact(List<Contact> contactList) {
         for (Contact contact : contactList) {
             addContact(contact);
         }
     }
 
+    /**
+     * Deletes the contact entry with the given {@link Contact#getUserId()} in the local database.
+     *
+     * @param contact the contact object to delete. the contact will be identified by the user id
+     */
     public void deleteContact(Contact contact) {
         deleteContactById(contact.getUserId());
     }
 
+    //ApplozicInternal: private
     public void deleteContactById(String id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(CONTACT, "userId=?", new String[]{id});
         dbHelper.close();
     }
 
+    /**
+     * Will delete a bunch of contacts using {@link Contact#getUserId()}.
+     *
+     * @param contacts the list of contacts to delete
+     */
     public void deleteAllContact(List<Contact> contacts) {
         for (Contact contact : contacts) {
             deleteContact(contact);
@@ -441,6 +480,7 @@ public class ContactDatabase {
         dbHelper.getWritableDatabase().update(CONTACT, contentValues, MobiComDatabaseHelper.USERID + "=?", new String[]{userId});
     }
 
+    @ApplozicInternal
     public int getChatUnreadCount() {
         Cursor cursor = null;
         try {
@@ -463,6 +503,7 @@ public class ContactDatabase {
         return 0;
     }
 
+    @ApplozicInternal
     public int getGroupUnreadCount() {
         Cursor cursor = null;
         try {
@@ -564,6 +605,8 @@ public class ContactDatabase {
         };
     }
 
+    //ApplozicInternal: private, remove
+    @ApplozicInternal
     public boolean isContactPresent(String contactNumber, Contact.ContactType contactType) {
         Cursor cursor = null;
         try {
@@ -582,6 +625,8 @@ public class ContactDatabase {
         return false;
     }
 
+    //ApplozicInternal: private, remove
+    @ApplozicInternal
     public void saveOrUpdate(Contact contact) {
         Contact existingContact = getContactById(contact.getUserId());
         if (existingContact == null) {
@@ -591,6 +636,12 @@ public class ContactDatabase {
         }
     }
 
+    /**
+     * Get a list of contacts of the given {@link com.applozic.mobicommons.people.contact.Contact.ContactType}.
+     *
+     * @param contactType the {@link com.applozic.mobicommons.people.contact.Contact.ContactType}
+     * @return the list of contacts
+     */
     public List<Contact> getContacts(Contact.ContactType contactType) {
         Cursor cursor = null;
         try {

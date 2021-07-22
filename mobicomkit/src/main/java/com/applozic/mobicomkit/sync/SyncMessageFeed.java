@@ -1,17 +1,12 @@
 package com.applozic.mobicomkit.sync;
 
-/**
- * Created by devashish on 15/1/15.
- */
-
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicomkit.api.conversation.Message;
 
 import java.util.List;
 
-/**
- * @author devashish
- */
+@ApplozicInternal
 public class SyncMessageFeed extends JsonMarker {
 
     private Long lastSyncTime;

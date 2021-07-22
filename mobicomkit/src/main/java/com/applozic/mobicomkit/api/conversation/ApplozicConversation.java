@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.conversation;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.ApplozicMqttService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.attachment.AttachmentManager;
@@ -23,10 +24,7 @@ import com.applozic.mobicommons.task.AlTask;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by ashish on 05/01/18.
- */
-
+@ApplozicInternal
 public class ApplozicConversation {
 
     private static final String MESSAGE_STATUS_TOPIC = "message-status";

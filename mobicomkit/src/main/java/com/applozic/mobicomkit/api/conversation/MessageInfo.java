@@ -1,12 +1,14 @@
 package com.applozic.mobicomkit.api.conversation;
 
-/**
- * Created by devashish on 28/03/16.
- */
-
 import com.applozic.mobicommons.json.JsonMarker;
 
-
+/**
+ * Model class for storing message read/delivered information.
+ *
+ * <p>This includes:
+ * - The userId of concerned user.
+ * - The status of the message for that user. See {@link Message.Status}.</p>
+ */
 public class MessageInfo extends JsonMarker {
 
     String userId;

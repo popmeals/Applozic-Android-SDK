@@ -12,10 +12,7 @@ import com.applozic.mobicomkit.listners.ApplozicUIListener;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
 
-/**
- * Created by reytum on 5/12/17.
- */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class ApplozicBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "ApplozicUIReceiver";

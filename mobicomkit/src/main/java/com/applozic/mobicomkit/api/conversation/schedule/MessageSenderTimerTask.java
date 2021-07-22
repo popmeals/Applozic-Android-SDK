@@ -2,14 +2,13 @@ package com.applozic.mobicomkit.api.conversation.schedule;
 
 import android.util.Log;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComMessageService;
 
 import java.util.TimerTask;
 
-/**
- * Created by devashish on 24/1/15.
- */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class MessageSenderTimerTask extends TimerTask {
 
     private static final String TAG = "MessageSenderTimerTask";

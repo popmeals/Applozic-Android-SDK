@@ -38,7 +38,7 @@ import java.lang.ref.WeakReference;
  * this allows PhotoTask to start on a Thread, run a download in a delegate object, then
  * run a decode, and then start over again. This class can be pooled and reused as necessary.
  */
-@ApplozicInternal
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class AttachmentTask implements
         AttachmentDownloader.TaskRunnableDownloadMethods, TaskRunnableDecodeMethods {
 

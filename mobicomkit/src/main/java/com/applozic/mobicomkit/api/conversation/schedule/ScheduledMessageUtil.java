@@ -11,13 +11,7 @@ import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
 
-/**
- * Created with IntelliJ IDEA.
- * User: anshul
- * Date: 1/26/14
- * Time: 12:32 AM
- */
-@ApplozicInternal
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ScheduledMessageUtil {
     Context context = null;
     private Class intentClass;

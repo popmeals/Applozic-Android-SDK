@@ -5,7 +5,7 @@ import com.applozic.mobicommons.json.JsonMarker;
 import java.util.List;
 
 /**
- * Created by sunil on 12/1/16.
+ * Model class for storing data from server responses related to channels/groups.
  */
 public class ChannelFeedApiResponse extends JsonMarker {
 

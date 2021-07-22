@@ -27,7 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by sunil on 28/12/15.
+ * Manages database operations related to {@link Channel} and {@link ChannelUserMapper}.
+ *
+ * <p>This class is responsible for handling database queries for operations
+ * related to "groups".
+ * Care must be taken when working with all database service classes.
+ * Modifying the database might lead to unexpected changes in the working of the
+ * SDK.</p>
  */
 public class ChannelDatabaseService {
 
@@ -188,6 +194,12 @@ public class ChannelDatabaseService {
         return contentValues;
     }
 
+    /**
+     * Will get a channel object from the database, corresponding to the passed client group id.
+     *
+     * @param clientGroupId the client group id. used to identify a channel (similar to with group id/channel key)
+     * @return the channel object, null if no such channel exists in database
+     */
     public Channel getChannelByClientGroupId(String clientGroupId) {
         Channel channel = null;
         try {
@@ -214,6 +226,12 @@ public class ChannelDatabaseService {
         return channel;
     }
 
+    /**
+     * Will get a channel object from the database, corresponding to the passed channel key.
+     *
+     * @param channelKey the channel key/group id. used to identify a channel
+     * @return the channel object, null if no such channel exists in database
+     */
     public Channel getChannelByChannelKey(final Integer channelKey) {
         Channel channel = null;
         try {
@@ -240,6 +258,16 @@ public class ChannelDatabaseService {
         return channel;
     }
 
+    /**
+     * Will return a list of users/contacts that are part of the channel with the given channel key.
+     *
+     * <p>The users will be returned in the form of User-To-Channel Mappings ({@link ChannelUserMapper)}.
+     * Internally, this mapping for ever channel-user is stored in a separate table
+     * with the name "channel_User_X".</p>
+     *
+     * @param channelKey {@link Channel#getKey()}
+     * @return a list of {@link ChannelUserMapper} objects, or a empty list, or null in case of any exception
+     */
     public List<ChannelUserMapper> getChannelUserList(Integer channelKey) {
         Cursor cursor = null;
         try {
@@ -285,6 +313,15 @@ public class ChannelDatabaseService {
         return channel;
     }
 
+    /**
+     * Get a list of all the channels in the local database.
+     *
+     * <p>This will include channels the current logged in user is part of
+     * or was a part of.
+     * Note: This will not return all the channels, but simply the ones synced locally.</p>
+     *
+     * @return a list of channels, empty if none present, null in case of an exception
+     */
     public List<Channel> getAllChannels() {
         List<Channel> contactList = null;
         Cursor cursor = null;
@@ -329,6 +366,12 @@ public class ChannelDatabaseService {
     }
 
     //ApplozicInternal: default
+    /**
+     * Updates the time after which notifications should be received for a muted channel in the local database.
+     *
+     * @param id the group id
+     * @param notificationAfterTime the time in milliseconds
+     */
     public void updateNotificationAfterTime(Integer id, Long notificationAfterTime) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.NOTIFICATION_AFTER_TIME, notificationAfterTime);
@@ -342,6 +385,12 @@ public class ChannelDatabaseService {
         dbHelper.close();
     }
 
+    /**
+     * Checks if the given channel is present in the local database.
+     *
+     * @param channelKey the channel key
+     * @return true/false
+     */
     public boolean isChannelPresent(Integer channelKey) {
         Cursor cursor = null;
         try {
@@ -365,6 +414,14 @@ public class ChannelDatabaseService {
         dbHelper.getWritableDatabase().update(CHANNEL, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=?", new String[]{String.valueOf(channelKey)});
     }
 
+    /**
+     * Checks if there is a {@link ChannelUserMapper} entry in the local database for the
+     * given channelKey and userId.
+     *
+     * @param channelKey the channel key for which we want to check
+     * @param userId the user we wish to check
+     * @return true if user is present in channel, false otherwise
+     */
     public boolean isChannelUserPresent(Integer channelKey, String userId) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = null;
@@ -539,7 +596,7 @@ public class ChannelDatabaseService {
         };
     }
 
-
+    @ApplozicInternal
     public String getGroupOfTwoReceiverId(Integer channelKey) {
         Cursor cursor = null;
         try {
@@ -567,7 +624,7 @@ public class ChannelDatabaseService {
         return null;
     }
 
-
+    @ApplozicInternal
     public String[] getChannelMemberByName(String name, String type) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         List<String> userIds = new ArrayList<String>();
@@ -628,6 +685,14 @@ public class ChannelDatabaseService {
         return channelUserMapper;
     }
 
+    /**
+     * Get the User-To-Channel mapping object ({@link ChannelUserMapper} for the given channel
+     * and user.
+     *
+     * @param channelKey the channel key
+     * @param userId the user id
+     * @return the ChannelUserMapper object, null if not found
+     */
     public ChannelUserMapper getChannelUserByChannelKeyAndUserId(final Integer channelKey, final String userId) {
         ChannelUserMapper channelUserMapper = null;
         Cursor cursor = null;
@@ -692,7 +757,7 @@ public class ChannelDatabaseService {
         dbHelper.getWritableDatabase().update(CHANNEL_USER_X, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=?", new String[]{String.valueOf(channelKey)});
     }
 
-
+    @ApplozicInternal
     public Integer getParentGroupKey(String parentClientGroupId) {
         if (TextUtils.isEmpty(parentClientGroupId)) {
             return null;

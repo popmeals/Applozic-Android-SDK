@@ -15,10 +15,7 @@ import com.applozic.mobicommons.people.contact.Contact;
 
 import java.util.List;
 
-/**
- * Created by ashish on 27/03/18.
- */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class ConversationRunnables {
 
     Context context;

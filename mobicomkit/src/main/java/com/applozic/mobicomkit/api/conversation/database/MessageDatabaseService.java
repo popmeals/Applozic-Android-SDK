@@ -29,10 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Manish
- * Date: 6/9/12
- * Time: 8:40 PM
+ * This class contains methods for {@link Message} related database operations.
  */
 public class MessageDatabaseService {
     private static final String TAG = "MessageDatabaseService";
@@ -216,6 +213,18 @@ public class MessageDatabaseService {
         return messageList;
     }
 
+    /**
+     * Get message from the database based on the given parameters.
+     *
+     * <p>This method will not return deleted and hidden messages as well as notification messages for calls.</p>
+     *
+     * @param startTime a non-null startTime will return messages created after the given value in milliseconds
+     * @param endTime a non-null endTime will return messages created before the given value in milliseconds
+     * @param contact use this to filter the messages for a particular {@link Contact}/user
+     * @param channel use this to filter the messages for a particular {@link Channel}
+     * @param conversationId use this to filter the messages for a particular conversationId
+     * @return the message list
+     */
     public List<Message> getMessages(Long startTime, Long endTime, Contact contact, Channel channel, Integer conversationId) {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -273,6 +282,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public List<Message> getUnreadMessages() {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -374,6 +384,12 @@ public class MessageDatabaseService {
         }
     }
 
+    /**
+     * Returns the message with the given key-string(id).
+     *
+     * @param keyString the message key-string(id)
+     * @return the message object
+     */
     public Message getMessage(String keyString) {
         if (TextUtils.isEmpty(keyString)) {
             return null;
@@ -402,6 +418,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public List<Message> getScheduledMessages(Long time) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if (!DBUtils.isTableExists(db, MobiComDatabaseHelper.SCHEDULE_SMS_TABLE_NAME)) {
@@ -459,12 +476,14 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public void deleteScheduledMessages(long time) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(MobiComDatabaseHelper.SCHEDULE_SMS_TABLE_NAME, MobiComDatabaseHelper.TIMESTAMP + " <= ? ", new String[]{time + ""});
         dbHelper.close();
     }
 
+    @ApplozicInternal
     public boolean deleteScheduledMessage(String messageKeyString) {
         SQLiteDatabase db = dbHelper.getInstance(context).getWritableDatabase();
         boolean deleted = db.delete(MobiComDatabaseHelper.SCHEDULE_SMS_TABLE_NAME, MobiComDatabaseHelper.SMS_KEY_STRING + "='" + messageKeyString + "'", null) > 0;
@@ -472,6 +491,11 @@ public class MessageDatabaseService {
         return deleted;
     }
 
+    /**
+     * Check if the message table is empty.
+     *
+     * @return true if empty
+     */
     public boolean isMessageTableEmpty() {
         dbHelper = MobiComDatabaseHelper.getInstance(context);
         boolean empty = DBUtils.isTableEmpty(dbHelper.getReadableDatabase(), "sms");
@@ -479,6 +503,13 @@ public class MessageDatabaseService {
         return empty;
     }
 
+    /**
+     * Updates the message file-metas ({@link FileMeta}) for the message.
+     *
+     * @param messageId the message id ({@link Message#getMessageId()})
+     * @param message the message object with the new file-metas, key-string must not be null
+     */
+    @ApplozicInternal
     public synchronized void updateMessageFileMetas(long messageId, final Message message) {
         ContentValues values = new ContentValues();
         values.put("keyString", message.getKeyString());
@@ -502,6 +533,7 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
+    @ApplozicInternal
     public synchronized long createMessage(final Message message) {
         long id = -1;
         if (message.getMessageId() != null) {
@@ -523,6 +555,7 @@ public class MessageDatabaseService {
         return id;
     }
 
+    @ApplozicInternal
     public synchronized long createSingleMessage(final Message message) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ApplozicClient applozicClient = ApplozicClient.getInstance(context);
@@ -645,6 +678,7 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
+    @ApplozicInternal
     public int updateMessageDeliveryReportForContact(String contactId, boolean markRead) {
         try {
             SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -668,6 +702,7 @@ public class MessageDatabaseService {
         return 0;
     }
 
+    @ApplozicInternal
     public void updateMessageDeliveryReportForContact(String messageKeyString, String contactNumber, boolean markRead) {
         try {
             SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -689,6 +724,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public void updateMessageSyncStatus(Message message, String keyString) {
         try {
             ContentValues values = new ContentValues();
@@ -703,6 +739,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public void updateDeleteSyncStatus(Message message, String deleteStatus) {
         try {
             ContentValues values = new ContentValues();
@@ -715,6 +752,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public void updateInternalFilePath(String keyString, String filePath) {
         ContentValues values = new ContentValues();
         values.put("filePaths", filePath);
@@ -723,6 +761,7 @@ public class MessageDatabaseService {
 
     }
 
+    @ApplozicInternal
     public void updateMessage(Long id, Long createdAt, String KeyString, boolean isSentToServer) {
         ContentValues values = new ContentValues();
         values.put("createdAt", createdAt);
@@ -732,6 +771,7 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
+    @ApplozicInternal
     public void updateCanceledFlag(long smsId, int value) {
         ContentValues values = new ContentValues();
         values.put("canceled", value);
@@ -739,6 +779,7 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
+    @ApplozicInternal
     public void updateMessageReadFlag(long smsId, boolean read) {
         ContentValues values = new ContentValues();
         values.put("read", read ? 1 : 0);
@@ -747,6 +788,15 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
+    /**
+     * Get the unread count for the messages with the given contact (user id).
+     *
+     * <p>Note: This count is purely local and might no always be accurate.
+     * Sync with server for accurate value.</p>
+     *
+     * @param userId the user id of the contact to get the unread count with
+     * @return the unread count
+     */
     public int getUnreadMessageCountForContact(String userId) {
         Cursor cursor = null;
         try {
@@ -769,6 +819,15 @@ public class MessageDatabaseService {
         return 0;
     }
 
+    /**
+     * Get the unread count for the messages with the given channel.
+     *
+     * <p>Note: This count is purely local and might no always be accurate.
+     * Sync with server for accurate value.</p>
+     *
+     * @param channelKey the channel to get the unread count of
+     * @return the unread count
+     */
     public int getUnreadMessageCountForChannel(Integer channelKey) {
         Cursor cursor = null;
         try {
@@ -791,6 +850,7 @@ public class MessageDatabaseService {
         return 0;
     }
 
+    @ApplozicInternal
     public int getUnreadConversationCount() {
         Cursor cursor = null;
         try {
@@ -813,6 +873,7 @@ public class MessageDatabaseService {
         return 0;
     }
 
+    @ApplozicInternal
     public int getUnreadMessageCount() {
         Cursor cursor = null;
         try {
@@ -835,6 +896,12 @@ public class MessageDatabaseService {
         return 0;
     }
 
+    /**
+     * Returns the latest message saved locally of the given contact.
+     *
+     * @param contactNumbers the userId of the contact
+     * @return a single item list with the latest message
+     */
     public List<Message> getLatestMessage(String contactNumbers) {
         List<Message> messages = new ArrayList<Message>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -846,15 +913,31 @@ public class MessageDatabaseService {
         return messages;
     }
 
-
+    @ApplozicInternal
     public List<Message> getLatestMessageByClientGroupId(String clientGroupId) {
         return getLatestMessageForChannel(null, clientGroupId);
     }
 
+    /**
+     * Returns the latest message saved locally from the given channel.
+     * See {@link MessageDatabaseService#getLatestMessageForChannel(Integer, String)}.
+     *
+     * @param channelKey the channel key
+     * @return a single item list with the latest message
+     */
     public List<Message> getLatestMessageByChannelKey(Integer channelKey) {
         return getLatestMessageForChannel(channelKey, null);
     }
 
+    /**
+     * Returns the latest message saved locally from the given channel.
+     *
+     * <p>Pass either the channelKey or the clientGroupId.</p>
+     *
+     * @param channelKey the channel key
+     * @param clientGroupId the client group id
+     * @return a single item list with the latest message
+     */
     private List<Message> getLatestMessageForChannel(Integer channelKey, String clientGroupId) {
         String clauseString = null;
 
@@ -879,7 +962,14 @@ public class MessageDatabaseService {
         }
     }
 
-
+    /**
+     * Checks if the message is present in the local database and is of the passed replyMessageType.
+     *
+     * @param key the message key-string
+     * @param replyMessageType the reply message type {@link Message.ReplyMessage}
+     * @return true if present
+     */
+    @ApplozicInternal
     public boolean isMessagePresent(String key, Integer replyMessageType) {
         Cursor cursor = null;
         boolean present = false;
@@ -901,11 +991,12 @@ public class MessageDatabaseService {
         return present;
     }
 
-
+    @ApplozicInternal
     public List<Message> getChannelCustomMessagesByClientGroupId(String clientGroupId) {
         return getChannelCustomMessageList(null, clientGroupId);
     }
 
+    @ApplozicInternal
     public List<Message> getChannelCustomMessagesByChannelKey(Integer channelKey) {
         return getChannelCustomMessageList(channelKey, null);
     }
@@ -927,6 +1018,7 @@ public class MessageDatabaseService {
         return getMessageList(cursor);
     }
 
+    @ApplozicInternal
     public int updateReadStatus(String contactNumbers) {
         ContentValues values = new ContentValues();
         values.put("read", 1);
@@ -935,6 +1027,7 @@ public class MessageDatabaseService {
         return read;
     }
 
+    @ApplozicInternal
     public int updateReadStatusForKeyString(String keyString) {
         ContentValues values = new ContentValues();
         values.put("read", 1);
@@ -944,6 +1037,7 @@ public class MessageDatabaseService {
         return read;
     }
 
+    @ApplozicInternal
     public int updateReadStatusForContact(String userId) {
         ContentValues values = new ContentValues();
         values.put(MobiComDatabaseHelper.UNREAD_COUNT, 0);
@@ -952,6 +1046,7 @@ public class MessageDatabaseService {
         return read;
     }
 
+    @ApplozicInternal
     public int updateReadStatusForChannel(String channelKey) {
         ContentValues values = new ContentValues();
         values.put(MobiComDatabaseHelper.UNREAD_COUNT, 0);
@@ -1023,7 +1118,7 @@ public class MessageDatabaseService {
         return new ArrayList<>();
     }
 
-
+    @ApplozicInternal
     public List<Message> getMessages(Long createdAt) {
         return getMessages(createdAt, null, null);
     }
@@ -1032,7 +1127,7 @@ public class MessageDatabaseService {
         return getMessages(createdAt, searchText, null);
     }
 
-
+    @ApplozicInternal
     public List<Message> getMessages(Long createdAt, String searchText, Integer parentGroupKey) {
 
         if (parentGroupKey != null && parentGroupKey != 0) {
@@ -1098,6 +1193,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public List<Message> getAlConversationList(int status, Long lastFetchTime) {
         Cursor cursor = null;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -1144,7 +1240,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-
+    @ApplozicInternal
     public int getTotalUnreadCountForSupportGroup(int status) {
         Cursor cursor = null;
         int count = 0;
@@ -1171,6 +1267,8 @@ public class MessageDatabaseService {
         return count;
     }
 
+    //Cleanup: remove 2nd parameter
+    @ApplozicInternal
     public String deleteMessage(Message message, String contactNumber) {
         if (!message.isSentToServer()) {
             deleteMessageFromDb(message);
@@ -1182,6 +1280,7 @@ public class MessageDatabaseService {
         return null;
     }
 
+    @ApplozicInternal
     public void deleteMessageFromDb(Message message) {
         try {
             SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -1192,6 +1291,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public void deleteConversation(String contactNumber) {
         Utils.printLog(context, TAG, "Deleting conversation for contactNumber: " + contactNumber);
         int deletedRows = dbHelper.getWritableDatabase().delete("sms", "contactNumbers=? AND channelKey = 0", new String[]{contactNumber});
@@ -1200,6 +1300,7 @@ public class MessageDatabaseService {
         Utils.printLog(context, TAG, "Delete " + deletedRows + " messages.");
     }
 
+    @ApplozicInternal
     public void deleteChannelConversation(Integer channelKey) {
         Utils.printLog(context, TAG, "Deleting  Conversation for channel: " + channelKey);
         int deletedRows = dbHelper.getWritableDatabase().delete("sms", "channelKey=?", new String[]{String.valueOf(channelKey)});
@@ -1208,6 +1309,7 @@ public class MessageDatabaseService {
         Utils.printLog(context, TAG, "Delete " + deletedRows + " messages.");
     }
 
+    @ApplozicInternal
     public synchronized void updateContactUnreadCount(String userId) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1217,6 +1319,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public synchronized void updateChannelUnreadCount(Integer channelKey) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1226,6 +1329,7 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public synchronized void updateChannelUnreadCountToZero(Integer channelKey) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1235,11 +1339,13 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public synchronized void replaceExistingMessage(Message message) {
         deleteMessageFromDb(message);
         createMessage(message);
     }
 
+    @ApplozicInternal
     public synchronized void updateContactUnreadCountToZero(String userId) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1249,12 +1355,14 @@ public class MessageDatabaseService {
         }
     }
 
+    @ApplozicInternal
     public void updateReplyFlag(String messageKey, int isReplyMessage) {
         ContentValues values = new ContentValues();
         values.put("replyMessage", isReplyMessage);
         int updatedMessage = dbHelper.getWritableDatabase().update("sms", values, " keyString = '" + messageKey + "'", null);
     }
 
+    @ApplozicInternal
     public void updateMessageReplyType(String messageKey, Integer replyMessage) {
         try {
             ContentValues values = new ContentValues();
@@ -1267,6 +1375,13 @@ public class MessageDatabaseService {
         }
     }
 
+    /**
+     * Get the total unread count for the current user.
+     *
+     * <p>Note: This unread count is local and might not be accurate.</p>
+     *
+     * @return the total unread count.
+     */
     public int getTotalUnreadCount() {
         Cursor channelCursor = null;
         Cursor contactCursor = null;
@@ -1301,6 +1416,7 @@ public class MessageDatabaseService {
         return totalCount;
     }
 
+    @ApplozicInternal
     public List<Message> getAttachmentMessages(String contactId, Integer groupId, boolean downloadedOnly) {
 
         if (contactId == null && (groupId == null || groupId == 0)) {
@@ -1325,6 +1441,7 @@ public class MessageDatabaseService {
 
     }
 
+    @ApplozicInternal
     public void updateMessageMetadata(String keyString, Map<String, String> metadata) {
         ContentValues values = new ContentValues();
 

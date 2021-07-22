@@ -3,9 +3,8 @@ package com.applozic.mobicomkit.api.notification;
 import java.util.Map;
 
 /**
- * Created by reytum on 20/11/17.
+ * Response for requests that ask for details of users muted by a particular user.
  */
-
 public class MuteUserResponse {
     private String userId;
     private boolean connected;

@@ -10,6 +10,10 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * This task can be used to refresh the jwt auth token for a user once the original one has expired.
+ * Simply call this task and the token will be refreshed asynchronously.
+ */
 public class RefreshAuthTokenTask extends AlAsyncTask<Void, Boolean> {
 
     private final String applicationId;

@@ -1,12 +1,9 @@
 package com.applozic.mobicomkit.feed;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
-import java.io.Serializable;
-
-/**
- * Created by sunil on 11/3/16.
- */
+@ApplozicInternal //Cleanup: can be removed
 public class ChannelName extends JsonMarker {
 
     private Integer groupId;

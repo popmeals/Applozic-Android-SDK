@@ -22,8 +22,6 @@ import com.applozic.mobicommons.people.contact.Contact;
 
 /**
  * Handles all the real-time MQTT related code. Example: typing, subscribing etc.
- *
- * Created by sunil on 30/12/15.
  */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible (maybe keep it at the root)
 public class ApplozicMqttWorker extends Worker {

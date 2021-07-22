@@ -14,7 +14,7 @@ import com.applozic.mobicommons.ApplozicService;
 import com.applozic.mobicommons.commons.core.utils.DBUtils;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default (move to root)
+@ApplozicInternal //ApplozicInternal: default (move to root)
 public class MobiComDatabaseHelper extends SQLiteOpenHelper {
     //ApplozicInternal: all the public constants can be move to a diff class
     public static final int DB_VERSION = 35;

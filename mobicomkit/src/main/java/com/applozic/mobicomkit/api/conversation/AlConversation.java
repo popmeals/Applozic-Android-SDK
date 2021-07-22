@@ -1,8 +1,10 @@
 package com.applozic.mobicomkit.api.conversation;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 
+@ApplozicInternal
 public class AlConversation {
     private Channel channel;
     private Contact contact;

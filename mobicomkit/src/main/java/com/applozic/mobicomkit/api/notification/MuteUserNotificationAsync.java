@@ -10,11 +10,10 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.lang.ref.WeakReference;
 
-
 /**
- * Created by reytum on 20/11/17.
+ * Asynchronous task that can be used to mute a user for a given amount of time.
+ * See {@link UserService#muteUserNotifications(String, Long)}.
  */
-
 public class MuteUserNotificationAsync extends AlAsyncTask<Void, ApiResponse> {
 
     TaskListener listener;

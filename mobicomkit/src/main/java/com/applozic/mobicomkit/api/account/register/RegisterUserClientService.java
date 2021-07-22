@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 /**
- * Created by devashish on 2/2/15.
+ * This class has the methods required for user authentication and registration.
  */
 public class RegisterUserClientService extends MobiComKitClientService {
     private static final String CREATE_ACCOUNT_URL = "/rest/ws/register/client?";
@@ -69,7 +69,19 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return getBaseUrl() + REFRESH_TOKEN_URL;
     }
 
-    //Cleanup: can be removed
+    /**
+     * This method connects/authenticates the passed user(userId and other details) to
+     * the Applozic servers. It also initializes the SDK for that user.
+     *
+     * <p>If the user with the given userId is not present in the servers, a new
+     * one will be created.
+     * After successful authentication, this method stored some user level data in shared
+     * preferences for future SDK use.</p>
+     *
+     * @param user the user object to authenticate
+     * @return the {@link RegistrationResponse}
+     * @throws Exception in case of empty or invalid user id, and connection errors
+     */
     @ApplozicInternal
     public RegistrationResponse createAccount(User user) throws Exception {
         if (user.getDeviceType() == null) {
@@ -194,6 +206,18 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return registrationResponse;
     }
 
+    /**
+     * Gets the new auth token from the Applozic servers and saves it locally for application use.
+     *
+     * <p>A JWT auth token is retrieved from the backend and saved in the
+     * user specific shared preference file {@link MobiComUserPreference}.
+     * Note: This auth token is user specific and can be used as authentication
+     * for user level server calls.</p>
+     *
+     * @param applicationId the Applozic application id
+     * @param userId the user id of the user to get the auth token for
+     * @return true if the auth token was successfully retrieved/false otherwise
+     */
     public boolean refreshAuthToken(String applicationId, String userId) {
         try {
             HttpRequestUtils.isRefreshTokenInProgress = true;
@@ -243,7 +267,18 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     //Cleanup: can be removed, is used in just the PushNotificationTask
-    //ApplozicInternal: default
+    /**
+     * Updates the user's account with the new push notification id from FCM/GCM.
+     *
+     * <p>This is required for setting up push notifications.
+     * You can get the push notification id from Firebase. Override FirebaseMessageService#onNewToken
+     * to get a registrationId. Pass that id to this method.
+     * This id will then be used to deliver push notifications to the user's device.
+     * This method will also save the id locally in a shared preference {@link MobiComUserPreference}.</p>
+     *
+     * @param pushNotificationId the push notification id received from FCM
+     * @return the user account update response from the server
+     */
     public RegistrationResponse updatePushNotificationId(final String pushNotificationId) throws Exception {
         MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
         //Note: In case if gcm registration is done before login then only updating in pref
@@ -261,7 +296,18 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return registrationResponse;
     }
 
-
+    /**
+     * Updates the user details in the backend.
+     *
+     * <p>The user object will be used to update the user's account in the server.
+     * Note: Not all data is taken from the user object.
+     * The applicationId, encryption enable/disable, time zone, contact api, app version code,
+     * authentication type, app module name and device registration id will be take from
+     * the local sources if present.</p>
+     *
+     * @param user the user data
+     * @return registration response obtained from server
+     */
     public RegistrationResponse updateRegisteredAccount(User user) throws Exception {
         RegistrationResponse registrationResponse = null;
 
@@ -327,7 +373,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return user;
     }
 
-    //ApplozicInternal: default
+    @ApplozicInternal
     public void syncAccountStatus() {
         try {
             String response = httpRequestUtils.getResponse(getPricingPackageUrl(), "application/json", "application/json");

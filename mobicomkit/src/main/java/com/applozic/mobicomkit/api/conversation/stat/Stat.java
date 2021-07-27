@@ -5,9 +5,6 @@ import com.applozic.mobicomkit.api.conversation.Message;
 
 import java.io.Serializable;
 
-/**
- * Created by devashish on 26/8/14.
- */
 @ApplozicInternal
 public class Stat implements Serializable {
     private Short sourceId = Message.Source.DEVICE_NATIVE_APP.getValue();

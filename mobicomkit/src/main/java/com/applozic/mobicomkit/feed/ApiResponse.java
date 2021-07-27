@@ -5,7 +5,11 @@ import com.applozic.mobicommons.json.JsonMarker;
 import java.util.List;
 
 /**
- * Created by sunil on 23/12/15.
+ * Generic model class for all applozic server responses.
+ *
+ * <p>{@link ApiResponse#getStatus()} should equal (ignore case) {@link ApiResponse#SUCCESS}.</p>
+ *
+ * @param <T> the response type
  */
 public class ApiResponse<T> extends JsonMarker {
 
@@ -40,6 +44,11 @@ public class ApiResponse<T> extends JsonMarker {
         this.response = response;
     }
 
+    /**
+     * Checks if the response a "success".
+     *
+     * @return true/false accordingly
+     */
     public boolean isSuccess() {
         return SUCCESS.equals(status);
     }

@@ -3,9 +3,8 @@ package com.applozic.mobicomkit.api.conversation;
 import java.util.Map;
 
 /**
- * Created by reytum on 17/11/17.
+ * Model class used to store data required when updating a message's metadata.
  */
-
 public class MessageMetadataUpdate {
     String key;
     Map<String, String> metadata;

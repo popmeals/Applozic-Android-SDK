@@ -258,7 +258,7 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: default
+    @ApplozicInternal
     public String downloadGif(String url) {
         InputStream input = null;
         OutputStream output = null;
@@ -586,6 +586,12 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
+    /**
+     * Infers the file format from the mime type, if possible.
+     *
+     * @param mimeType the mime type
+     * @return the file extension
+     */
     public @Nullable String getFileFormatFromMimeType(@NonNull String mimeType) {
         String[] array = mimeType.split("/");
         String fileFormat = null;
@@ -601,6 +607,16 @@ public class FileClientService extends MobiComKitClientService {
         return fileFormat;
     }
 
+    /**
+     * Saves the file to the Applozic apps media/file folder.
+     *
+     * <p>Name of the file will be set using {@link DateUtils#getDateStringForLocalFileName()}.
+     * and the path from {@link FileClientService#getFilePath(String, Context, String)}.<p/>
+     *
+     * @param fromUri the uri of the file to save
+     * @param mimeType mime type of the file to save
+     * @return the saved file object
+     */
     public @Nullable File saveFileToApplozicLocalStorage(@NonNull Uri fromUri, @Nullable String mimeType) {
         if (context != null && !TextUtils.isEmpty(mimeType)) {
             String fileFormat = getFileFormatFromMimeType(mimeType);

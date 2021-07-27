@@ -3,10 +3,7 @@ package com.applozic.mobicomkit.channel.service;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Rahul-PC on 28-06-2017.
- */
-
+//ApplozicInternal: default
 public class ApplozicAddMemberOfGroupType {
     List<String> groupMemberList = new ArrayList<>();
     String type;

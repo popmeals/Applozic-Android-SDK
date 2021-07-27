@@ -10,7 +10,7 @@ import com.applozic.mobicomkit.broadcast.BroadcastService;
 
 import java.util.TimerTask;
 
-@ApplozicInternal
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class DisappearingMessageTask extends TimerTask {
     private static final String TAG = "DisappearingMessageTask";
 

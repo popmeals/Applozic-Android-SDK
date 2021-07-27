@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,9 +39,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by devashish on 24/12/14.
+ * Wraps around all the user related server calls.
+ *
+ * <p>Methods of this class do not affect persisted/local/database data.</p>
  */
-@ApplozicInternal //ApplozicInternal: default
 public class UserClientService extends MobiComKitClientService {
     //ApplozicInternal: all need to be private
     public static final String APP_VERSION_UPDATE_URL = "/rest/ws/register/version/update";
@@ -101,6 +103,7 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: private
+    //Cleanup: the name says sync but the url isn't for sync
     public String getUnBlockUserSyncUrl() {
         return getBaseUrl() + UNBLOCK_USER_SYNC_URL;
     }
@@ -152,12 +155,18 @@ public class UserClientService extends MobiComKitClientService {
         return getBaseUrl() + USER_SEARCH_URL;
     }
 
-    @ApplozicInternal //ApplozicInternal: default
+    /**
+     * Performs logout.
+     *
+     * @see UserClientService#logout(boolean)
+     *
+     * @return logout backend api response
+     */
     public ApiResponse logout() {
         return logout(false);
     }
 
-    @ApplozicInternal //ApplozicInternal: default
+    //ApplozicInternal: default
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
         final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
@@ -174,7 +183,23 @@ public class UserClientService extends MobiComKitClientService {
         ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
     }
 
-    @ApplozicInternal //ApplozicInternal: default
+    //ApplozicInternal: private
+    //Cleanup: fromLogin is always false
+    /**
+     * Performs logout for the current user.
+     *
+     * <p>A logout server call will be sent. Along with that:
+     * - {@link MobiComUserPreference} shared preference will be cleared.
+     * Everything except {@link MobiComUserPreference#getUrl()}.
+     * - {@link ALSpecificSettings} shared preference will be cleared.
+     * - All notification channel will be deleted.
+     * - The local database will be deleted.
+     * - All unsent messages will be removed.
+     * - All notifications will be cancelled.</p>
+     *
+     * @param fromLogin pass false
+     * @return logout backend api response
+     */
     public ApiResponse logout(boolean fromLogin) {
         Utils.printLog(context, TAG, "Al Logout call !!");
         ApiResponse apiResponse = userLogoutResponse();
@@ -199,7 +224,12 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: rename to something more suitable for a public api
+    /**
+     * Sends a logout server call for the logged user.
+     *
+     * @return logout backend api response
+     */
     public ApiResponse userLogoutResponse() {
         String response = "";
         ApiResponse apiResponse = null;
@@ -250,7 +280,13 @@ public class UserClientService extends MobiComKitClientService {
         return info;
     }
 
-    //ApplozicInternal: default
+    /**
+     * Sends a server request to update the display name for the given userId.
+     *
+     * @param userId the user id of the user
+     * @param displayName the new display name
+     * @return api response from the server
+     */
     public ApiResponse updateUserDisplayName(final String userId, final String displayName) {
         String parameters = "";
         try {
@@ -268,7 +304,13 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    /**
+     * Sends a server request to block/unblock the passed userId for the current(logged) user.
+     *
+     * @param userId the userId of the user to block/unblock
+     * @param block true for block/false for unblock
+     * @return api response from the server
+     */
     public ApiResponse userBlock(String userId, boolean block) {
         String response = "";
         ApiResponse apiResponse = null;
@@ -314,7 +356,12 @@ public class UserClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: default
+    /**
+     * Retrieves the user data from the server for the given set of userIds.
+     *
+     * @param userIds the set of userIds to get details for
+     * @return the json api response. convert to {@link UserDetail} using {@link GsonUtils#getObjectFromJson(String, Type)}
+     */
     public String getUserDetails(Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
@@ -338,6 +385,14 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: default
+    /**
+     * Syncs user data for the given users from the server.
+     *
+     * <p>Updated user data is retrieved from the server and local database is updated.</p>
+     *
+     * @param userIds set of user ids to sync
+     * @return api response from the server
+     */
     public String postUserDetailsByUserIds(Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
@@ -386,6 +441,13 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: default
+
+    /**
+     * Gets list of online users from the server.
+     *
+     * @param numberOfUser the number of users to get
+     * @return a map with key = userId, value = connectedStatus of the online users
+     */
     public Map<String, String> getOnlineUserList(int numberOfUser) {
         Map<String, String> info = new HashMap<String, String>();
         try {
@@ -407,7 +469,14 @@ public class UserClientService extends MobiComKitClientService {
         return info;
     }
 
-    //ApplozicInternal: default
+    /**
+     * Gets list of registered users from the server.
+     *
+     * @param startTime the time in milliseconds to get the registered users from. eg: a start
+     *                  time of X will get all the registered users that were registered after time X
+     * @param pageSize the number of users to get
+     * @return the json api response. convert to {@link com.applozic.mobicomkit.feed.RegisteredUsersApiResponse}
+     */
     public String getRegisteredUsers(Long startTime, int pageSize) {
         String response = null;
         try {
@@ -423,6 +492,9 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: default
+    /**
+     * This method updates more than just the display name or image link. See the parameters.
+     */
     public ApiResponse updateDisplayNameORImageLink(String displayName, String profileImageLink, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
         AlUserUpdate userUpdate = new AlUserUpdate();
         try {
@@ -456,7 +528,15 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    /**
+     * Sends a mute notification request for the given userId.
+     *
+     * <p>The current user will be taken from the user shared preferences.</p>
+     *
+     * @param userId the user id of the user to mute
+     * @param notificationAfterTime the time (in milliseconds) to mute the user for
+     * @return the api response
+     */
     public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
         if (userId == null || notificationAfterTime == null) {
             return null;
@@ -479,7 +559,14 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    /**
+     * Gets the list of users muted by the current user.
+     *
+     * <p>The muted user ids can be accessed from the array items
+     * by using {@link MuteUserResponse#getUserId()}.</p>
+     *
+     * @return an array of {@link MuteUserResponse}
+     */
     public MuteUserResponse[] getMutedUserList() {
         try {
             String response = httpRequestUtils.getResponse(getMutedUserListUrl(), "application/json", "application/json");
@@ -533,7 +620,14 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    /**
+     * Will return a list of contacts matching the search term, from the server.
+     *
+     * @param searchString the search term
+     * @return the api response. cast the result from {@link ApiResponse#getResponse()}
+     * to a {@link UserDetail} array to get the list in usable form
+     * @throws ApplozicException when the backend returns an error response
+     */
     public ApiResponse getUsersBySearchString(String searchString) throws ApplozicException {
         if (TextUtils.isEmpty(searchString)) {
             return null;

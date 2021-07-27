@@ -1,9 +1,5 @@
 package com.applozic.mobicomkit.contact;
 
-/**
- * Created by devashish on 08/03/16.
- */
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -15,11 +11,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-
 /**
  * Parser code for parsing the vCard file and creating a CSV file.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class MobiComVCFParser {
 
     public static final String BEGIN_VCARD = "BEGIN:VCARD";

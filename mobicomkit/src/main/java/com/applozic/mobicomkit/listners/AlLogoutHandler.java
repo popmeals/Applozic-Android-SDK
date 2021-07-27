@@ -3,9 +3,8 @@ package com.applozic.mobicomkit.listners;
 import android.content.Context;
 
 /**
- * Created by reytum on 30/11/17.
+ * Callbacks for an Applozic logout.
  */
-
 public interface AlLogoutHandler {
     void onSuccess(Context context);
 

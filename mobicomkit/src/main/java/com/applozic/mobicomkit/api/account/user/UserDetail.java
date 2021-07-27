@@ -5,7 +5,13 @@ import com.applozic.mobicommons.json.JsonMarker;
 import java.util.Map;
 
 /**
- * Created by sunil on 24/11/15.
+ * Model class for storing user details.
+ *
+ * <p>User details/data for this class is usually retrieved from the server
+ * or needs to be sent to the server.
+ * This object can be converted to a {@link com.applozic.mobicommons.people.contact.Contact} object
+ * using {@link UserService#getContactFromUserDetail(UserDetail)}. However keep in mind that this
+ * conversion will also add/update the user/contact/user detail in the local database.</p>
  */
 public class UserDetail extends JsonMarker {
 

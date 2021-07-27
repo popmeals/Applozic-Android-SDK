@@ -1,10 +1,10 @@
 package com.applozic.mobicomkit.api.notification;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
+
 import java.util.List;
 
-/**
- * Created by devashish on 12/11/14.
- */
+@ApplozicInternal
 public class MessageDeleteContent {
 
     private List<String> deleteKeyStrings;

@@ -4,9 +4,8 @@ import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.exception.ApplozicException;
 
 /**
- * Created by reytum on 27/11/17.
+ * Callbacks for message attachment media download.
  */
-
 public interface MediaDownloadProgressHandler {
     void onDownloadStarted();
 

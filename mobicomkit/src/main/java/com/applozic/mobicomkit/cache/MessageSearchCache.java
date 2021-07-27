@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//This is a temporary static data storage class.
 //Replace this with LRU cache implementation in future
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+/**
+ * This is a temporary static data storage class.
+ */
+@ApplozicInternal
 public class MessageSearchCache {
 
     private static SparseArray<Channel> channelSparseArray;

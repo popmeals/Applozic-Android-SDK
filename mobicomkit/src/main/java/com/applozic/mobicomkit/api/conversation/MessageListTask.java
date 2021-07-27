@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by reytum on 27/11/17.
- */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class MessageListTask extends AlAsyncTask<Void, List<Message>> {
 

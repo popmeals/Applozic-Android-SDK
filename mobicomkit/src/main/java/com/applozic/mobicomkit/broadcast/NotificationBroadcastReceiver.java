@@ -18,11 +18,10 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
 
 /**
- * Created by adarsh on 4/12/14.
  * This class should handle all notification types coming from server or some other client.
  * Depending upon actionType it should either do some bg service,task or open some view like activity.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
     public static String LAUNCH_APP = "applozic.LAUNCH_APP";

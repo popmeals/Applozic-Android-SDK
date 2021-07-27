@@ -1,12 +1,9 @@
 package com.applozic.mobicomkit;
 
-/**
- * Created by ashish on 24/04/18.
- */
-
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.channel.database.ChannelDatabaseService;
@@ -25,9 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by reytum on 20/10/17.
+ * Asynchronous task to get group/channel details for a particular id.
  */
-
 public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelModel> {
 
     private Context context;
@@ -44,6 +40,13 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
     private static final String CLIENT_GROUPID = "clientGroupId";
 
 
+    /**
+     * @param context the context
+     * @param groupId channel key/group id
+     * @param clientGroupId the client group id. pass this or the group id
+     * @param isUserListRequest true if you also want the list of user/members for the channel
+     * @param listener the callback
+     */
     public ALGroupInfoTask(Context context, Integer groupId, String clientGroupId, boolean isUserListRequest, ChannelInfoListener listener) {
         this.context = new WeakReference<Context>(context).get();
         this.groupId = groupId;
@@ -146,6 +149,9 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
         }
     }
 
+    /**
+     * Listener for callbacks for retrieving channel details.
+     */
     public interface ChannelInfoListener {
         void onSuccess(ChannelInfoModel channelInfoModel, String response, Context context);
 
@@ -188,6 +194,9 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
         return getBaseUrl() + CHANNEL_INFO_URL;
     }
 
+    /**
+     * Model class for providing channel details.
+     */
     public class ChannelInfoModel {
         Channel channel;
         ArrayList<String> groupMemberList;
@@ -217,6 +226,7 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
         }
     }
 
+    @ApplozicInternal
     class ChannelModel {
         private ChannelFeedApiResponse channelFeedApiResponse;
         private Exception exception;

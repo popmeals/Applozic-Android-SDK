@@ -3,9 +3,8 @@ package com.applozic.mobicomkit.listners;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 
 /**
- * Created by reytum on 30/11/17.
+ * Callback for the response for registering device id for push notifications.
  */
-
 public interface AlPushNotificationHandler {
     void onSuccess(RegistrationResponse registrationResponse);
 

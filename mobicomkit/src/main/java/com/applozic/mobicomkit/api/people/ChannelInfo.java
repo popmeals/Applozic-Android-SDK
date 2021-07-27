@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by sunil on 29/1/16.
+ * This class is used to store information about a channel.
+ *
+ * <p>Objects of this class are passed to API requests where channel data is sent
+ * or retrieved.</p>
  */
 public class ChannelInfo extends JsonMarker {
 

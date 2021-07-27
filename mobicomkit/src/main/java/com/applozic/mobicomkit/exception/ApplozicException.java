@@ -1,9 +1,9 @@
 package com.applozic.mobicomkit.exception;
 
 /**
- * Created by reytum on 27/11/17.
+ * Default base Applozic exception.
  */
-
+//Cleanup: can be improved or removed
 public class ApplozicException extends Exception {
     private String message;
 

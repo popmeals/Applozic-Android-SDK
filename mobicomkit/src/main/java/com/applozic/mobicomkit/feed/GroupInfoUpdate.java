@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by sunil on 11/3/16.
+ * This class can be used to store data for sending channel details update requests to the server.
  */
 public class GroupInfoUpdate extends JsonMarker {
 
@@ -41,6 +41,17 @@ public class GroupInfoUpdate extends JsonMarker {
         this.clientGroupId = clientGroupId;
     }
 
+    /**
+     * Will initialize using:
+     * - {@link Channel#getName()}              The channel name.
+     * - {@link Channel#getKey()}               The channel key.
+     * - {@link Channel#getClientGroupId()}     The client group id for channel.
+     * - {@link Channel#getImageUrl()}          The channel image url.
+     * - {@link Channel#getLocalImageUri()}     The local uri for the channel image.
+     * - {@link Channel#getKmStatus()}          Not Used. Ignore.
+     *
+     * @param channel {@link ChannelInfo}
+     */
     public GroupInfoUpdate(Channel channel) {
         this.newName = channel.getName();
         this.groupId = channel.getKey();
@@ -50,6 +61,12 @@ public class GroupInfoUpdate extends JsonMarker {
         this.kmStatus = channel.getKmStatus();
     }
 
+    /**
+     * Will take {@link ChannelInfo#getMetadata()} and initialize the metadata variable
+     * for this object.
+     *
+     * @param channel {@link ChannelInfo}
+     */
     public GroupInfoUpdate(ChannelInfo channel) {
         this.metadata = channel.getMetadata();
     }

@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.conversation.service;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.conversation.database.ConversationDatabaseService;
@@ -18,9 +19,7 @@ import com.applozic.mobicommons.people.channel.Conversation;
 import java.net.URLEncoder;
 import java.util.Set;
 
-/**
- * Created by sunil on 18/2/16.
- */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ConversationClientService extends MobiComKitClientService {
 
     private static final String CREATE_CONVERSATION_URL = "/rest/ws/conversation/id";

@@ -19,7 +19,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by devashish on 27/12/14.
+ * Base client (or server communication) class.
+ *
+ * <p>All other client classes for messages, users etc based on this.</p>
  */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default if possible (add to root maybe)
 public class MobiComKitClientService {

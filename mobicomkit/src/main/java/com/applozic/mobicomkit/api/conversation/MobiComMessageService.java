@@ -60,6 +60,7 @@ public class MobiComMessageService {
     private Short loggedInUserRole;
     private String loggedInUserId;
 
+    //Cleanup: remove 2nd parameter
     public MobiComMessageService(Context context, Class messageIntentServiceClass) {
         this.context = ApplozicService.getContext(context);
         this.messageDatabaseService = new MessageDatabaseService(context);
@@ -316,7 +317,7 @@ public class MobiComMessageService {
         }
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: default
     public synchronized void syncMessageForMetadataUpdate() {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         SyncMessageFeed syncMessageFeed = messageClientService.getMessageFeed(userpref.getLastSyncTimeForMetadataUpdate(), true);
@@ -334,6 +335,7 @@ public class MobiComMessageService {
         }
     }
 
+    //ApplozicInternal: remove this method, unnecessary
     @ApplozicInternal
     public MessageInfoResponse getMessageInfoResponse(String messageKey) {
         MessageInfoResponse messageInfoResponse = messageClientService.getMessageInfoList(messageKey);
@@ -354,7 +356,7 @@ public class MobiComMessageService {
         }
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: default
     public boolean isMessagePresent(String key) {
         return messageDatabaseService.isMessagePresent(key);
     }
@@ -381,7 +383,7 @@ public class MobiComMessageService {
         }
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: default
     public synchronized void updateDeliveryStatusForContact(String contactId, boolean markRead) {
         int rows = messageDatabaseService.updateMessageDeliveryReportForContact(contactId, markRead);
         Utils.printLog(context, TAG, "Updated delivery report of " + rows + " messages for contactId: " + contactId);
@@ -393,7 +395,7 @@ public class MobiComMessageService {
         }
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: default
     public synchronized void updateDeliveryStatus(String key, boolean markRead) {
         //Todo: Check if this is possible? In case the delivery report reaches before the sms is reached, then wait for the sms.
         Utils.printLog(context, TAG, "Got the delivery report for key: " + key);
@@ -424,11 +426,13 @@ public class MobiComMessageService {
         mtMessages.remove(key);
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: remove, unnecessary
     public ApiResponse getUpdateMessageMetadata(String key, Map<String, String> metadata) {
         return messageClientService.updateMessageMetadata(key, metadata);
     }
 
+    //Cleanup: remove
+    @ApplozicInternal
     public void createEmptyMessage(Contact contact) {
         Message sms = new Message();
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
@@ -442,12 +446,13 @@ public class MobiComMessageService {
         messageDatabaseService.createMessage(sms);
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: can be removed (is public)
+    //Cleanup: remove
     public String getMessageDeleteForAllResponse(String messageKey, boolean deleteForAll) throws Exception {
         return messageClientService.getMessageDeleteForAllResponse(messageKey, deleteForAll);
     }
 
-    @ApplozicInternal
+    //ApplozicInternal: try to make default
     public synchronized void syncMessageDataAndSendBroadcastFor(Message message) {
 
         if (!baseContactService.isContactPresent(message.getContactIds())) {

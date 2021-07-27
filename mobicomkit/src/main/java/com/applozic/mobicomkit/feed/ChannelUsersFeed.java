@@ -3,9 +3,8 @@ package com.applozic.mobicomkit.feed;
 import com.applozic.mobicommons.json.JsonMarker;
 
 /**
- * Created by sunil on 1/12/16.
+ * Model class for storing data for a channel user/member from server responses.
  */
-
 public class ChannelUsersFeed extends JsonMarker {
     private String userId;
     private Integer parentGroupKey;

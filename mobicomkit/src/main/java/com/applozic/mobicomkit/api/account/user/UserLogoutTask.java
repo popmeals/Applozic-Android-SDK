@@ -7,6 +7,10 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * An asynchronous logout task for the current user.
+ * <p>It simply provides an async wrapper for {@link UserClientService#logout()}.</p>
+ */
 public class UserLogoutTask extends AlAsyncTask<Void, Boolean> {
 
     private TaskListener taskListener;

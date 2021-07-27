@@ -11,10 +11,7 @@ import com.applozic.mobicomkit.api.conversation.ApplozicWorker;
 import com.applozic.mobicommons.commons.core.utils.DateUtils;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 
-/**
- * Created by adarsh on 28/7/15.
- */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class TimeChangeBroadcastReceiver extends BroadcastReceiver {
 
     @Override

@@ -12,7 +12,16 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Created by devashish on 22/12/14.
+ * Model class for a Applozic user.
+ *
+ * <p>A User is the entity using Applozic as the "sender". The User will be the one who is authenticated
+ * and usually the one logged in. The entity on the receiving end is a Contact.
+ *
+ * However, for non-client jargon, a "user" can be ANY entity using Applozic.
+ * Contacts exist mainly for the client SDKs.
+ *
+ * This class will be used to store data for the current user or the user using the application.
+ * For other users see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
  */
 public class User extends JsonMarker {
 

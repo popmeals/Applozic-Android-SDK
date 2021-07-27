@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * Created by devashish on 28/03/16.
+ * Response for message read/delivered information requests to the server.
  */
 public class MessageInfoResponse extends JsonMarker {
 
@@ -23,6 +23,13 @@ public class MessageInfoResponse extends JsonMarker {
         this.messageInfoList = messageInfoList;
     }
 
+    /**
+     * Returns the list of people that have the message delivered.
+     *
+     * <p>This information is in context of the API call which must have been for a particular message.</p>
+     *
+     * @return the required list
+     */
     public List<MessageInfo> getDeliverdToUserList() {
 
         if (this.messageInfoList == null) {
@@ -38,6 +45,13 @@ public class MessageInfoResponse extends JsonMarker {
         return deliverdToUserList;
     }
 
+    /**
+     * Returns the list of people that have read the message.
+     *
+     * <p>This information is in context of the API call which must have been for a particular message.</p>
+     *
+     * @return the required list
+     */
     public List<MessageInfo> getReadByUserList() {
 
         if (this.messageInfoList == null) {

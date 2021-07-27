@@ -5,6 +5,9 @@ import com.applozic.mobicomkit.listners.AlCallback;
 import com.applozic.mobicommons.json.GsonUtils;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
+/**
+ * Asynchronous wrapper around {@link MobiComConversationService#reportMessage(String)}.
+ */
 public class AlMessageReportTask extends AlAsyncTask<Void, String> {
 
     private String messageKey;

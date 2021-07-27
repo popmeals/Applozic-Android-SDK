@@ -27,12 +27,10 @@ import java.util.Map;
 /**
  * For sending various android Broadcasts different parts of the app.
  *
- * <p>NOTE: If we want to send the broadcast to app make sure to not to add the Category intent.addCategory(Intent.CATEGORY_DEFAULT);
+ * <p>NOTE: If we want to send the broadcast to app, don't forget to add the Category intent.addCategory(Intent.CATEGORY_DEFAULT);
  * P.S: When creating a new broadcast do not forget to add it's INTENT_ACTIONS to {@link BroadcastService#getIntentFilter()}.</p>
- *
- * Created by devashish on 24/1/15.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
 public class BroadcastService {
 
     private static final String TAG = "BroadcastService";

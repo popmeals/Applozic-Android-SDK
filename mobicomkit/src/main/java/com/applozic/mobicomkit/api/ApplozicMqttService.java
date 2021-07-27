@@ -37,7 +37,9 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.Date;
 
 /**
- * Created by sunil on 26/11/15.
+ * Class that manages MQTT/web-hook APIs for applozic.
+ *
+ * <p>Methods of this class are mainly concerned with real-time events from the server.</p>
  */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ApplozicMqttService extends MobiComKitClientService implements MqttCallback {

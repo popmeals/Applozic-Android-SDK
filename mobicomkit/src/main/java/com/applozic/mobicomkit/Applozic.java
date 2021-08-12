@@ -228,6 +228,16 @@ public class Applozic {
     }
 
     /**
+     * Connect to MQTT after for publishing and receiving events after verifying and refreshing the JWT auth token.
+     *
+     * @param context the context
+     * @param loadingMessage the message to display in the progress dialog while loading
+     */
+    public static void connectPublishWithVerifyToken(final Context context, String loadingMessage) {
+        connectPublishWithVerifyTokenAfter(context, loadingMessage, 0);
+    }
+
+    /**
      * Connect to MQTT after the given interval in minutes for publishing and receiving events
      * after verifying and refreshing the JWT auth token.
      *

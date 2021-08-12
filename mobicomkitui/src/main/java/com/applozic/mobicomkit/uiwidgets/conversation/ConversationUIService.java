@@ -52,6 +52,7 @@ import com.applozic.mobicomkit.uiwidgets.conversation.fragment.MobiComQuickConve
 import com.applozic.mobicomkit.uiwidgets.conversation.fragment.MultimediaOptionFragment;
 import com.applozic.mobicomkit.uiwidgets.people.activity.MobiComKitPeopleActivity;
 import com.applozic.mobicomkit.uiwidgets.people.fragment.UserProfileFragment;
+import com.applozic.mobicommons.AlLog;
 import com.applozic.mobicommons.commons.core.utils.LocationInfo;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.file.FileUtils;
@@ -69,6 +70,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class ConversationUIService {
@@ -1023,12 +1025,34 @@ public class ConversationUIService {
         toast.show();
     }
 
+    /**
+     * Connects to MQTT after a certain random interval.
+     * <p>The retry policy: There will be a max of 3 retries for each lifecycle of the
+     * activity ({@link ConversationActivity} in this case).
+     * 1: The 1st retry will happen immediately.
+     * 2: The second retry will happen after a random interval between 0 to 10 minutes.
+     * 3: The third retry will happen after a random interval between 10 to 20 minutes.</p>
+     *
+     * @param retryIndex 1st retry (index 0), 2nd retry (index 1) or 3rd retry (index 2)
+     */
+    private void connectMQTTWithRetryPolicy(int retryIndex) {
+        if (fragmentActivity == null) {
+            AlLog.e(TAG, "MQTTRetry", "Fragment activity object is null. Can't retry...");
+            return;
+        }
+        int boundRandom = new Random().nextInt(10); //a random integer between 0 - 10 minutes
+        int minutes = retryIndex == 1 ? boundRandom : (retryIndex == 2 ? (boundRandom + 10) : 0);
+        AlLog.i(TAG, "MQTTRetry", "MQTT connection retry (Index: " + retryIndex + ") for activity: "+ fragmentActivity.toString() +". Will retry after " + minutes + "minutes...");
+        Applozic.connectPublishWithVerifyTokenAfter(fragmentActivity, Utils.getString(fragmentActivity, R.string.auth_token_loading_message), minutes);
+    }
+
     public void reconnectMQTT() {
         try {
-            if (((MobiComKitActivityInterface) fragmentActivity).getRetryCount() <= 3 && Utils.isInternetAvailable(fragmentActivity)) {
-                Utils.printLog(fragmentActivity, TAG, "Reconnecting to mqtt.");
-                ((MobiComKitActivityInterface) fragmentActivity).retry();
-                Applozic.connectPublishWithVerifyToken(fragmentActivity, Utils.getString(fragmentActivity, R.string.auth_token_loading_message));
+            int retryIndex = ((MobiComKitActivityInterface) fragmentActivity).getRetryCount();
+            if (retryIndex < 3 && Utils.isInternetAvailable(fragmentActivity)) {
+                Utils.printLog(fragmentActivity, TAG, "Reconnecting to MQTT...");
+                ((MobiComKitActivityInterface) fragmentActivity).retry(); //will increment retry index by 1
+                connectMQTTWithRetryPolicy(retryIndex);
             }
         } catch (Exception e) {
             e.printStackTrace();

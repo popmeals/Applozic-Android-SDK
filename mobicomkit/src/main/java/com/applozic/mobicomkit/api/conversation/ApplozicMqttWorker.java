@@ -20,6 +20,8 @@ import com.applozic.mobicommons.json.GsonUtils;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Handles all the real-time MQTT related code. Example: typing, subscribing etc.
  */
@@ -45,11 +47,15 @@ public class ApplozicMqttWorker extends Worker {
         super(context, workerParams);
     }
 
-    private static void enqueueWork(Context context, Data data) {
+    private static void enqueueWork(Context context, Data data, int minutes) {
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
-        OneTimeWorkRequest mqttWorkerRequest = new OneTimeWorkRequest.Builder(ApplozicMqttWorker.class)
-                .setInputData(data).setConstraints(constraints)
-                .build();
+        OneTimeWorkRequest.Builder builder = new OneTimeWorkRequest.Builder(ApplozicMqttWorker.class)
+                .setInputData(data)
+                .setConstraints(constraints);
+        if (minutes > 0 && minutes < 60) {
+            builder.setInitialDelay(minutes, TimeUnit.MINUTES);
+        }
+        OneTimeWorkRequest mqttWorkerRequest = builder.build();
         WorkManager.getInstance(context).enqueue(mqttWorkerRequest);
     }
 
@@ -64,16 +70,15 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
 
         Utils.printLog(context, TAG, "Enqueue work disconnect publish...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
-    public static void enqueueWorkSubscribeAndConnectPublish(Context context, boolean useEncrypted) {
+    public static void enqueueWorkSubscribeAndConnectPublishAfter(Context context, boolean useEncrypted, int minutes) {
+        Utils.printLog(context, TAG, "Enqueue work subscribe and connect publish after " + minutes + " minutes...");
         Data.Builder dataBuilder = new Data.Builder();
         dataBuilder.putBoolean(ApplozicMqttWorker.SUBSCRIBE, true);
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
-
-        Utils.printLog(context, TAG, "Enqueue work subscribe and connect publish...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), minutes);
     }
 
     public static void enqueueWorkSubscribeToSupportGroup(Context context, boolean useEncrypted) {
@@ -82,7 +87,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
 
         Utils.printLog(context, TAG, "Enqueue work subscribe to support group...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkUnSubscribeToSupportGroup(Context context, boolean useEncrypted) {
@@ -91,7 +96,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
 
         Utils.printLog(context, TAG, "Enqueue work unsubscribe to support group...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkSubscribeToTyping(Context context, Channel channel, Contact contact) {
@@ -108,7 +113,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.SUBSCRIBE_TO_TYPING, true);
 
         Utils.printLog(context, TAG, "Enqueue work subscribe to typing...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkUnSubscribeToTyping(Context context, Channel channel, Contact contact) {
@@ -125,7 +130,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.UN_SUBSCRIBE_TO_TYPING, true);
 
         Utils.printLog(context, TAG, "Enqueue work unsubscribe to support group...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkPublishTypingStatus(Context context, Channel channel, Contact contact, boolean typingStarted) {
@@ -142,7 +147,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.TYPING, typingStarted);
 
         Utils.printLog(context, TAG, "Enqueue work publish typing status...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkConnectPublish(Context context) {
@@ -150,7 +155,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.CONNECTED_PUBLISH, true);
 
         Utils.printLog(context, TAG, "Enqueue work connect publish...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     @NonNull

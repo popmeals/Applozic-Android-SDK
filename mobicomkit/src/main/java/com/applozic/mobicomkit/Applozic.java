@@ -193,6 +193,14 @@ public class Applozic {
     }
 
     //ApplozicInternal: private
+    /**
+     * Publish offline status, unsubscribe from conversation topic (for real time updates) and disconnect MQTT.
+     *
+     * @param context the context
+     * @param deviceKeyString the device key string (id)
+     * @param userKeyString the user key string (id)
+     * @param useEncrypted true will send a encrypted topic filter along with a non-encrypted while un-subscribing, false will send only non-encrypted
+     */
     public static void disconnectPublish(Context context, String deviceKeyString, String userKeyString, boolean useEncrypted) {
         if (!TextUtils.isEmpty(userKeyString) && !TextUtils.isEmpty(deviceKeyString)) {
             ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
@@ -214,7 +222,6 @@ public class Applozic {
      */
     public static void disconnectPublish(Context context) {
         disconnectPublish(context, true);
-        disconnectPublish(context, false);
     }
 
     /**
@@ -222,9 +229,9 @@ public class Applozic {
      *
      * @param context the context
      */
+    //Cleanup: can be removed, not used in SDK
     public static void connectPublish(Context context) {
         ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, 0);
-        ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, false, 0);
     }
 
     /**
@@ -246,12 +253,11 @@ public class Applozic {
      * @param minutes the minutes after which to schedule the MQTT connection request, pass 0 for immediate
      */
     public static void connectPublishWithVerifyTokenAfter(final Context context, String loadingMessage, int minutes) {
-        AlLog.i("Applozic", "MQTTRetry", "Refreshing JWT Token if required...");
+        AlLog.d("Applozic", "MQTTRetry", "Refreshing JWT Token if required...");
         AlAuthService.verifyToken(context, loadingMessage, new AlCallback() {
             @Override
             public void onSuccess(Object response) {
                 ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, minutes);
-                ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, false, minutes);
             }
 
             @Override

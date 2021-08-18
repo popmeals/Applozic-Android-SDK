@@ -219,7 +219,7 @@ public class ApplozicConversation {
         ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(context);
 
         if (!TextUtils.isEmpty(pairedMessageKey) && applozicMqttService.isConnected()) {
-            applozicMqttService.publishMessageStatus(MESSAGE_STATUS_TOPIC, MobiComUserPreference.getInstance(context).getUserId() + "," + pairedMessageKey + "," + status);
+            applozicMqttService.connectAndPublishMessageStatus(MESSAGE_STATUS_TOPIC, MobiComUserPreference.getInstance(context).getUserId() + "," + pairedMessageKey + "," + status);
             return true;
         }
         return false;

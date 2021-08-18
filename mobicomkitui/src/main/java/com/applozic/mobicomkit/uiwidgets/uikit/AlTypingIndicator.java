@@ -4,12 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
@@ -18,10 +18,7 @@ import com.applozic.mobicomkit.uiwidgets.R;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 
-/**
- * Created by ashish on 14/05/18.
- */
-
+//Cleanup: can be removed
 public class AlTypingIndicator extends LinearLayout {
 
     private ALTypingReceiver mReceiver;

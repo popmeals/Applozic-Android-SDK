@@ -25,9 +25,9 @@ import com.applozic.mobicommons.people.contact.Contact;
 import java.util.Map;
 
 /**
- * For sending various android Broadcasts different parts of the app.
+ * For sending various android broadcasts and events to different parts of the app.
  *
- * <p>NOTE: If we want to send the broadcast to app, don't forget to add the Category intent.addCategory(Intent.CATEGORY_DEFAULT);
+ * <p>NOTE: If we want to send the broadcast to apps, don't forget to add the Category intent.addCategory(Intent.CATEGORY_DEFAULT);
  * P.S: When creating a new broadcast do not forget to add it's INTENT_ACTIONS to {@link BroadcastService#getIntentFilter()}.</p>
  */
 @ApplozicInternal
@@ -201,8 +201,8 @@ public class BroadcastService {
         sendBroadcast(context, intentTyping);
     }
 
-
-    public static void sendUpdate(Context context, boolean isMetadataUpdate, final String action) {
+    //ApplozicInternal: private
+    public static void sendUpdate(Context context, boolean isMetadataUpdate, boolean isMQTTReconnectionBroadcast, final String action) {
         if (INTENT_ACTIONS.MQTT_CONNECTED.toString().equals(action)) {
             postEventData(context, new AlMessageEvent().setAction(AlMessageEvent.ActionType.MQTT_CONNECTED));
         } else if (INTENT_ACTIONS.MQTT_DISCONNECTED.toString().equals(action)) {
@@ -219,12 +219,21 @@ public class BroadcastService {
         Intent intent = new Intent();
         intent.setAction(action);
         intent.putExtra("isMetadataUpdate", isMetadataUpdate);
+        intent.putExtra("isMQTTReconnectionBroadcast", isMQTTReconnectionBroadcast);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         sendBroadcast(context, intent);
     }
 
     public static void sendUpdate(Context context, String action) {
-        sendUpdate(context, false, action);
+        sendUpdate(context, false, false, action);
+    }
+
+    public static void sendMQTTDisconnectBroadcastUpdate(Context context, boolean isMQTTReconnectionBroadcast) {
+        sendUpdate(context, false, isMQTTReconnectionBroadcast, BroadcastService.INTENT_ACTIONS.MQTT_DISCONNECTED.toString());
+    }
+
+    public static void sendChannelSyncBroadcastUpdate(Context context, boolean isMetadataUpdate) {
+        sendUpdate(context, isMetadataUpdate, false, BroadcastService.INTENT_ACTIONS.CHANNEL_SYNC.toString());
     }
 
     public static void updateMessageMetadata(Context context, String messageKey, String action, String userId, Integer groupId, Boolean isOpenGroup, Map<String, String> metadata) {

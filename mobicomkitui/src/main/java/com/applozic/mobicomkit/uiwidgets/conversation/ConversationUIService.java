@@ -1030,18 +1030,18 @@ public class ConversationUIService {
      * <p>The retry policy: There will be a max of 3 retries for each lifecycle of the
      * activity ({@link ConversationActivity} in this case).
      * 1: The 1st retry will happen immediately.
-     * 2: The second retry will happen after a random interval between 0 to 10 minutes.
+     * 2: The second retry will happen after a random interval between 1 to 11 minutes.
      * 3: The third retry will happen after a random interval between 10 to 20 minutes.</p>
      *
      * @param retryIndex 1st retry (index 0), 2nd retry (index 1) or 3rd retry (index 2)
      */
     private void connectMQTTWithRetryPolicy(int retryIndex) {
         if (fragmentActivity == null) {
-            AlLog.e(TAG, "MQTTRetry", "Fragment activity object is null. Can't retry...");
+            AlLog.d(TAG, "MQTTRetry", "Fragment activity object is null. Can't retry...");
             return;
         }
         int boundRandom = new Random().nextInt(10); //a random integer between 0 - 10 minutes
-        int minutes = retryIndex == 1 ? boundRandom : (retryIndex == 2 ? (boundRandom + 10) : 0);
+        int minutes = retryIndex == 1 ? (boundRandom + 1) : (retryIndex == 2 ? (boundRandom + 10) : 0);
         AlLog.i(TAG, "MQTTRetry", "MQTT connection retry (Index: " + retryIndex + ") for activity: "+ fragmentActivity.toString() +". Will retry after " + minutes + "minutes...");
         Applozic.connectPublishWithVerifyTokenAfter(fragmentActivity, Utils.getString(fragmentActivity, R.string.auth_token_loading_message), minutes);
     }

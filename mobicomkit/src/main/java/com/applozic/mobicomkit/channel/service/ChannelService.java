@@ -290,8 +290,7 @@ public class ChannelService {
         if (syncChannelFeed.isSuccess()) {
             processChannelList(syncChannelFeed.getResponse());
 
-            BroadcastService.sendUpdate(context, isMetadataUpdate, BroadcastService
-                    .INTENT_ACTIONS.CHANNEL_SYNC.toString());
+            BroadcastService.sendChannelSyncBroadcastUpdate(context, isMetadataUpdate);
         }
         userpref.setChannelSyncTime(syncChannelFeed.getGeneratedAt());
 

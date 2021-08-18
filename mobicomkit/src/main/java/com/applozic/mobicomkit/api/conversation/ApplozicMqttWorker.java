@@ -81,6 +81,7 @@ public class ApplozicMqttWorker extends Worker {
         enqueueWork(context, dataBuilder.build(), minutes);
     }
 
+    //Cleanup: can be removed
     public static void enqueueWorkSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         Data.Builder dataBuilder = new Data.Builder();
         dataBuilder.putBoolean(ApplozicMqttWorker.CONNECT_TO_SUPPORT_GROUP_TOPIC, true);
@@ -90,6 +91,7 @@ public class ApplozicMqttWorker extends Worker {
         enqueueWork(context, dataBuilder.build(), 0);
     }
 
+    //Cleanup: can be removed
     public static void enqueueWorkUnSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         Data.Builder dataBuilder = new Data.Builder();
         dataBuilder.putBoolean(ApplozicMqttWorker.DISCONNECT_FROM_SUPPORT_GROUP_TOPIC, true);
@@ -183,7 +185,10 @@ public class ApplozicMqttWorker extends Worker {
         boolean typing = data.getBoolean(TYPING, false);
 
         if (subscribe) {
-            ApplozicMqttService.getInstance(getApplicationContext()).subscribe(useEncryptedTopic);
+            ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(getApplicationContext());
+            applozicMqttService.connectClient(true);
+            applozicMqttService.subscribe(useEncryptedTopic);
+            applozicMqttService.publishClientStatus(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
         }
 
         if (subscribeToTyping) {
@@ -213,11 +218,13 @@ public class ApplozicMqttWorker extends Worker {
         }
 
         if (!TextUtils.isEmpty(userKeyString) && !TextUtils.isEmpty(deviceKeyString)) {
-            ApplozicMqttService.getInstance(getApplicationContext()).disconnectPublish(userKeyString, deviceKeyString, "0", useEncryptedTopic);
+            ApplozicMqttService.getInstance(getApplicationContext()).publishOfflineStatusUnsubscribeAndDisconnect(userKeyString, deviceKeyString, useEncryptedTopic);
         }
 
         if (connectedStatus) {
-            ApplozicMqttService.getInstance(getApplicationContext()).connectPublish(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
+            ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(getApplicationContext());
+            applozicMqttService.connectClient(false);
+            applozicMqttService.publishClientStatus(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
         }
 
         if (contact != null && stop) {

@@ -1,13 +1,11 @@
 package com.applozic.mobicomkit.feed;
 
-
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.List;
 
-/**
- * Created by sunil on 13/6/16.
- */
+@ApplozicInternal
 public class UserDetailListFeed extends JsonMarker {
 
     private List<String> userIdList;

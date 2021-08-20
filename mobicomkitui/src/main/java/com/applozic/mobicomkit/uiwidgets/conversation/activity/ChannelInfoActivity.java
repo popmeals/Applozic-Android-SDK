@@ -54,7 +54,6 @@ import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicomkit.contact.AppContactService;
 import com.applozic.mobicomkit.contact.BaseContactService;
 import com.applozic.mobicomkit.feed.ApiResponse;
-import com.applozic.mobicomkit.feed.ChannelUsersFeed;
 import com.applozic.mobicomkit.feed.ErrorResponseFeed;
 import com.applozic.mobicomkit.feed.GroupInfoUpdate;
 import com.applozic.mobicomkit.feed.RegisteredUsersApiResponse;
@@ -80,7 +79,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -386,14 +384,7 @@ public class ChannelInfoActivity extends AppCompatActivity {
                 break;
             case 2:
                 if (Utils.isInternetAvailable(getApplicationContext())) {
-                    GroupInfoUpdate groupInfoUpdate = new GroupInfoUpdate(channelUserMapper.getKey());
-                    List<ChannelUsersFeed> channelUsersFeedList = new ArrayList<>();
-                    ChannelUsersFeed channelUsersFeed = new ChannelUsersFeed();
-                    channelUsersFeed.setUserId(channelUserMapper.getUserKey());
-                    channelUsersFeed.setRole(1);
-                    channelUsersFeedList.add(channelUsersFeed);
-                    groupInfoUpdate.setUsers(channelUsersFeedList);
-                    AlTask.execute(new ChannelUserRoleAsyncTask(channelUserMapper, groupInfoUpdate, this));
+                    AlTask.execute(new ChannelUserRoleAsyncTask(this, channelUserMapper, 1));
                 } else {
                     Toast toast = Toast.makeText(this, getString(R.string.you_dont_have_any_network_access_info), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
@@ -1094,7 +1085,6 @@ public class ChannelInfoActivity extends AppCompatActivity {
 
 
     public class RefreshBroadcast extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             updateChannelList();
@@ -1108,21 +1098,19 @@ public class ChannelInfoActivity extends AppCompatActivity {
         return intentFilter;
     }
 
-
     public class ChannelUserRoleAsyncTask extends AlAsyncTask<Integer, Long> {
-        private ChannelService channelService;
+        private final ChannelService channelService;
         private ProgressDialog progressDialog;
-        private Context context;
-        ChannelUserMapper channelUserMapper;
-        String response;
-        GroupInfoUpdate groupInfoUpdate;
+        private final Context context;
+        private final ChannelUserMapper channelUserMapper;
+        private final int newRole;
+        private String response;
 
-        public ChannelUserRoleAsyncTask(ChannelUserMapper channelUserMapper, GroupInfoUpdate groupInfoUpdate, Context context) {
+        public ChannelUserRoleAsyncTask(Context context, ChannelUserMapper channelUserMapper, int newRole) {
             this.channelUserMapper = channelUserMapper;
             this.context = context;
-            this.groupInfoUpdate = groupInfoUpdate;
             this.channelService = ChannelService.getInstance(context);
-
+            this.newRole = newRole;
         }
 
         @Override
@@ -1134,14 +1122,9 @@ public class ChannelInfoActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground() {
-            if (groupInfoUpdate != null) {
-                response = channelService.updateChannel(groupInfoUpdate);
-                if (!TextUtils.isEmpty(response) && MobiComKitConstants.SUCCESS.equals(response)) {
-                    for (ChannelUsersFeed channelUsersFeed : groupInfoUpdate.getUsers()) {
-                        channelUserMapper.setRole(channelUsersFeed.getRole());
-                        channelService.updateRoleInChannelUserMapper(groupInfoUpdate.getGroupId(), channelUserMapper.getUserKey(), channelUsersFeed.getRole());
-                    }
-                }
+            boolean updated = channelService.updateRoleForUserInChannel(channelUserMapper.getKey(), channelUserMapper.getUserKey(), newRole);
+            if (updated) {
+                channelUserMapper.setRole(newRole);
             }
             return null;
         }
@@ -1160,15 +1143,9 @@ public class ChannelInfoActivity extends AppCompatActivity {
                         channelUserMapperList.add(index, channelUserMapper);
                         contactsAdapter.notifyDataSetChanged();
                         Helper.getListViewSize(mainListView);
-                    } catch (Exception e) {
-
-                    }
-
+                    } catch (Exception e) { }
                 }
             }
-
         }
-
     }
-
 }

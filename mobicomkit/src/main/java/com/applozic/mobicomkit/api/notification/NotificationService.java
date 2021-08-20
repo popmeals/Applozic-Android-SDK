@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.attachment.FileClientService;
@@ -42,13 +43,13 @@ import static com.applozic.mobicomkit.api.notification.VideoCallNotificationHelp
 import static com.applozic.mobicomkit.api.notification.VideoCallNotificationHelper.CALL_ID;
 
 /**
- * Created with IntelliJ IDEA.
- * User: devashish
- * Date: 17/3/13
- * Time: 7:36 PM
+ * This class manages Android Notifications for Applozic.
+ * Methods of this class are used to notify when messages arrive etc.
  */
+@ApplozicInternal
 public class NotificationService {
-    public static final int NOTIFICATION_ID = 1000;
+    //ApplozicInternal: private all
+    public @ApplozicInternal static final int NOTIFICATION_ID = 1000;
     private static final String TAG = "NotificationService";
     private static final String NOTIFICATION_SMALL_ICON_METADATA = "com.applozic.mobicomkit.notification.smallIcon";
     private static final String NOTIFICATION_COLOR_METADATA = "com.applozic.mobicomkit.notification.color";
@@ -91,6 +92,8 @@ public class NotificationService {
         }
     }
 
+    //ApplozicInternal: rename to a public api name eg: createApplozicNotification()
+    @ApplozicInternal
     public void notifyUser(Contact contact, Channel channel, Message message, int index) {
         if (ApplozicClient.getInstance(context).isNotificationDisabled()) {
             Utils.printLog(context, TAG, "Notification is disabled !!");
@@ -254,6 +257,7 @@ public class NotificationService {
         }
     }
 
+    //ApplozicInternal: private
     public CharSequence getNotificationTitle(int conversationCount, Contact contact, Channel channel, Message message) {
         if (conversationCount < 2) {
             String notificationTitle = null;
@@ -286,7 +290,7 @@ public class NotificationService {
         }
     }
 
-
+    //ApplozicInternal: private
     public CharSequence getMessageBody(Message message, int count, Channel channel, Contact contact) {
         String notificationText;
         if (message.getContentType() == Message.ContentType.LOCATION.getValue()) {
@@ -318,6 +322,7 @@ public class NotificationService {
         return messageBody;
     }
 
+    //ApplozicInternal: private
     private NotificationInfo getNotificationInfo(Contact contact, Channel channel, Message message) {
         if (ApplozicClient.getInstance(context).isNotificationDisabled()) {
             Utils.printLog(context, TAG, "Notification is disabled");
@@ -364,6 +369,8 @@ public class NotificationService {
         return notificationInfo;
     }
 
+    //ApplozicInternal: rename to a public api method eg: createApplozicMessageNotification()
+    @ApplozicInternal
     public void notifyUserForNormalMessage(Contact contact, Channel channel, Message message, int index) {
         String notificationText;
         NotificationInfo notificationInfo = getNotificationInfo(contact, channel, message);
@@ -454,6 +461,8 @@ public class NotificationService {
         }
     }
 
+    //ApplozicInternal: rename to a public api name eg: createApplozicCallNotification()
+    @ApplozicInternal
     public void startCallNotification(Contact contact, Message message, String isAudioCallOnly, String callId) {
         NotificationInfo notificationInfo = getNotificationInfo(contact, null, message);
         if (notificationInfo == null) {
@@ -495,6 +504,7 @@ public class NotificationService {
         notificationManager.notify(message.getGroupId() != null ? String.valueOf(message.getGroupId()).hashCode() : message.getContactIds().hashCode(), incomingCallNotification);
     }
 
+    //ApplozicInternal: private
     public String getSpannedText(CharSequence message) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(message.toString(), Html.FROM_HTML_MODE_COMPACT).toString();
@@ -503,6 +513,7 @@ public class NotificationService {
         }
     }
 
+    //ApplozicInternal: private
     public String getText(int index) {
         if (context.getApplicationContext() instanceof AlConstantsHandler) {
             return getTextFromIndex(((AlConstantsHandler) context.getApplicationContext()).getNotificationTexts(), index);
@@ -511,6 +522,7 @@ public class NotificationService {
         return constArray[index];
     }
 
+    //ApplozicInternal: private
     public String getTextFromIndex(String[] texts, int index) {
         if (texts != null && texts.length == 4) {
             return texts[index];
@@ -518,6 +530,8 @@ public class NotificationService {
         return null;
     }
 
+    //ApplozicInternal: rename to public api method eg: isNotificationMuted()
+    @ApplozicInternal
     public boolean muteNotifications(int index) {
         return !(notificationDisableThreshold == 0 || (notificationDisableThreshold > 0 && index < notificationDisableThreshold));
     }

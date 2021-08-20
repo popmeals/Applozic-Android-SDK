@@ -8,6 +8,9 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * Asynchronous wrapper around {@link MobiComMessageService#getMessageDeleteForAllResponse(String, boolean)}.
+ */
 public class MessageDeleteTask extends AlAsyncTask<Void, String> {
 
     private WeakReference<Context> context;

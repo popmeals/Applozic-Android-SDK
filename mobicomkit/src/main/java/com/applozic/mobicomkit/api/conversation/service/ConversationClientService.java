@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.conversation.service;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.conversation.database.ConversationDatabaseService;
@@ -18,9 +19,7 @@ import com.applozic.mobicommons.people.channel.Conversation;
 import java.net.URLEncoder;
 import java.util.Set;
 
-/**
- * Created by sunil on 18/2/16.
- */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ConversationClientService extends MobiComKitClientService {
 
     private static final String CREATE_CONVERSATION_URL = "/rest/ws/conversation/id";
@@ -49,22 +48,27 @@ public class ConversationClientService extends MobiComKitClientService {
         return conversationClientService;
     }
 
+    //ApplozicInternal: private
     public String getCreateConversationUrl() {
         return getBaseUrl() + CREATE_CONVERSATION_URL;
     }
 
+    //ApplozicInternal: private
     public String getConversationUrl() {
         return getBaseUrl() + CONVERSATION_URL;
     }
 
+    //ApplozicInternal: private
     public String getConversationCloseUrl() {
         return getBaseUrl() + CONVERSATION_CLOSE_URL;
     }
 
+    //ApplozicInternal: private
     public String getConversationCloseByTopicIdUrl() {
         return getBaseUrl() + CONVERSATION_CLOSE_TOPIC_ID_URL;
     }
 
+    //ApplozicInternal: default
     public ChannelFeed createConversation(Conversation conversation) {
         ChannelFeed channelFeed = null;
         try {
@@ -83,6 +87,7 @@ public class ConversationClientService extends MobiComKitClientService {
         return channelFeed;
     }
 
+    //ApplozicInternal: default
     public Conversation getConversation(Integer conversationId) {
         String response = "";
         try {

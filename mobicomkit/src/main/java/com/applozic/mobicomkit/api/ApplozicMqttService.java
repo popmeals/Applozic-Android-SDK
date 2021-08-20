@@ -3,7 +3,9 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.os.Process;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -36,10 +38,17 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.Date;
 
 /**
- * Created by sunil on 26/11/15.
+ * Class that manages MQTT/web-hook APIs for applozic.
+ *
+ * <p>Methods of this class are mainly concerned with real-time events from the server.
+ * MQTT Connection and Retry policy:
+ * - Whenever the *UI with conversations* is opened, a MQTT client.connect() call is done. On failure *from the call*
+ * 3 retries will happen after a random interval of 1 - 41 minutes. The retry index scope is tied with the conversation UI lifecycle.
+ * - Whenever MQTT connection is lost, retries happen as per the same policy as in the previous point, and
+ * the same retry index is used.</p>
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ApplozicMqttService extends MobiComKitClientService implements MqttCallback {
-
     private static final String STATUS = "status-v2";
     private static final String TAG = "ApplozicMqttService";
     private static final String TYPINGTOPIC = "typing-";
@@ -57,6 +66,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         memoryPersistence = new MemoryPersistence();
     }
 
+    @ApplozicInternal
     public static ApplozicMqttService getInstance(Context context) {
 
         if (applozicMqttService == null) {
@@ -76,6 +86,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
             connOpts.setPassword(authToken.toCharArray());
         }
         connOpts.setConnectionTimeout(60);
+        connOpts.setAutomaticReconnect(false);
         connOpts.setWill(STATUS, (userPreference.getSuUserKeyString() + "," + userPreference.getDeviceKeyString() + "," + "0").getBytes(), 0, true);
         return connOpts;
     }
@@ -84,15 +95,34 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         return client != null && client.isConnected();
     }
 
-    private AlMqttClient connect() {
+    private AlMqttClient getClientInstance() throws MqttException {
+        String userId = MobiComUserPreference.getInstance(context).getUserId();
+        if (client == null) {
+            client = new AlMqttClient(getMqttBaseUrl(), userId + "-" + new Date().getTime(), memoryPersistence);
+        }
+        return client;
+    }
+
+    /**
+     * Connects client to the web socket.
+     *
+     * <p>This methods also sends "success" and "failure" broadcasts.
+     * NOTE: In case of client already connected or client connecting, a MQTTException will be thrown and caught. In this case
+     * the "failure" callback might not be called. And the broadcasts (MQTT_CONNECTED, MQTT_DISCONNECTED) might not be sent. So do not rely on them too much.
+     * Another important point: The client.connectWithResult() method is blocking (see implementation). So try to use the `client` object methods,
+     * namely client.isConnected() for success/failure.</p>
+     *
+     * @param requestReconnect setting to true will send the "failure" broadcast with data requesting for reconnection
+     * @return the client
+     */
+    public AlMqttClient connectClient(boolean requestReconnect) {
         String userId = MobiComUserPreference.getInstance(context).getUserId();
         try {
             if (TextUtils.isEmpty(userId)) {
-                return client;
+                throw new Exception("Logged in user's id empty.");
             }
-            if (client == null) {
-                client = new AlMqttClient(getMqttBaseUrl(), userId + "-" + new Date().getTime(), memoryPersistence);
-            }
+
+            client = getClientInstance();
 
             if (!client.isConnected()) {
                 Utils.printLog(context, TAG, "Connecting to mqtt...");
@@ -100,19 +130,21 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
                 client.connectWithResult(getConnectionOptions(), new IMqttActionListener() {
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
-                        Utils.printLog(context, TAG, "Mqtt Connection successfull to : " + client.getServerURI());
+                        Utils.printLog(context, TAG, "MQTT Connection successful to : " + client.getServerURI());
                         BroadcastService.sendUpdate(context, BroadcastService.INTENT_ACTIONS.MQTT_CONNECTED.toString());
                     }
 
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        Utils.printLog(context, TAG, "Mqtt Connection failed");
-                        BroadcastService.sendUpdate(context, BroadcastService.INTENT_ACTIONS.MQTT_DISCONNECTED.toString());
+                        Utils.printLog(context, TAG, "MQTT connection failed...sending disconnect broadcast...");
+                        BroadcastService.sendMQTTDisconnectBroadcastUpdate(context, requestReconnect);
                     }
                 });
+            } else {
+                Utils.printLog(context, TAG, "MQTT already connected...");
             }
         } catch (MqttException e) {
-            Utils.printLog(context, TAG, "Connecting already in progress.");
+            Utils.printLog(context, TAG, "MQTT exception: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,10 +152,17 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         return client;
     }
 
-    public synchronized void connectPublish(final String userKeyString, final String deviceKeyString, final String status) {
-
+    /**
+     * Publishes the presence/status of the user for others.
+     *
+     * <p>Status of "1" means the current user has come online. Status of "2" is for offline.</p>
+     * @param userKeyString the user key string (id)
+     * @param deviceKeyString the device key string (id)
+     * @param status "1" for online, "0" for offline
+     */
+    public synchronized void publishClientStatus(final String userKeyString, final String deviceKeyString, final String status) {
         try {
-            final AlMqttClient client = connect();
+            final AlMqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }
@@ -140,9 +179,30 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    BroadcastService.sendUpdate(context, BroadcastService.INTENT_ACTIONS.MQTT_DISCONNECTED.toString());
+                    BroadcastService.sendMQTTDisconnectBroadcastUpdate(context, false);
                 }
             });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //ApplozicInternal: private
+    public synchronized void subscribeToConversation(boolean useEncryptedTopic) {
+        try {
+            String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
+            if (TextUtils.isEmpty(userKeyString)) {
+                return;
+            }
+            if (client != null && client.isConnected()) {
+                Utils.printLog(context, TAG, "Subscribing to conversation topic (encrypted and non-encrypted): " + userKeyString);
+                String[] topicFilters = new String[] {userKeyString, MQTT_ENCRYPTION_TOPIC + userKeyString};
+                if (useEncryptedTopic) {
+                    client.subscribe(topicFilters, new int[]{0, 0});
+                } else {
+                    client.subscribe(userKeyString, 0);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -158,11 +218,11 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
             return;
         }
         try {
-            final MqttClient client = connect();
+            final MqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
+                Log.d(TAG, "Can't subscribe, client not connected....");
                 return;
             }
-            connectPublish(userKeyString, deviceKeyString, "1");
             subscribeToConversation(useEncrypted);
             if (client != null) {
                 client.setCallback(ApplozicMqttService.this);
@@ -172,25 +232,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
-    public synchronized void unSubscribe(boolean useEncrypted) {
-        unSubscribeToConversation(useEncrypted);
-    }
-
-    public synchronized void subscribeToConversation(boolean useEncrypted) {
-        try {
-            String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
-            if (TextUtils.isEmpty(userKeyString)) {
-                return;
-            }
-            if (client != null && client.isConnected()) {
-                Utils.printLog(context, TAG, "Subscribing to conversation topic : " + (useEncrypted ? MQTT_ENCRYPTION_TOPIC : "") + userKeyString);
-                client.subscribe((useEncrypted ? MQTT_ENCRYPTION_TOPIC : "") + userKeyString, 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    //ApplozicInternal: private
     public synchronized void unSubscribeToConversation(final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -201,7 +243,12 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
                     }
                     String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
                     Utils.printLog(context, TAG, "UnSubscribing to conversation topic : " + (useEncrypted ? MQTT_ENCRYPTION_TOPIC : "") + userKeyString);
-                    client.unsubscribe((useEncrypted ? MQTT_ENCRYPTION_TOPIC : "") + userKeyString);
+                    String[] topicFilters = new String[] {userKeyString, MQTT_ENCRYPTION_TOPIC + userKeyString};
+                    if (useEncrypted) {
+                        client.unsubscribe(topicFilters);
+                    } else {
+                        client.unsubscribe(userKeyString);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -211,13 +258,15 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         thread.start();
     }
 
+    //Cleanup: can be removed
+    //ApplozicInternal: private
     public synchronized void subscribeToCustomTopic(String customTopic, boolean useEncrypted) {
         try {
             String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
             if (TextUtils.isEmpty(userKeyString)) {
                 return;
             }
-            final MqttClient client = connect();
+            final MqttClient client = getClientInstance();
             if (client != null && client.isConnected()) {
                 String topic = (useEncrypted ? MQTT_ENCRYPTION_TOPIC : "") + customTopic + "-" + getApplicationKey(context);
                 Utils.printLog(context, TAG, "Subscribing to support group topic : " + topic);
@@ -228,6 +277,8 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //Cleanup: can be removed
+    //ApplozicInternal: private
     public synchronized void unSubscribeToCustomTopic(final String customTopic, final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -248,9 +299,11 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         thread.start();
     }
 
+    //Cleanup: can be removed
+    //ApplozicInternal: private
     public synchronized void publishCustomData(final String customTopic, final String data, final boolean useEncrypted) {
         try {
-            final AlMqttClient client = connect();
+            final AlMqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }
@@ -275,13 +328,14 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //Cleanup: can be removed
     public synchronized void subscribeToSupportGroup(boolean useEncrypted) {
         try {
             String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
             if (TextUtils.isEmpty(userKeyString)) {
                 return;
             }
-            final MqttClient client = connect();
+            final MqttClient client = getClientInstance();
             if (client != null && client.isConnected()) {
                 String topic = (useEncrypted ? MQTT_ENCRYPTION_TOPIC : "") + SUPPORT_GROUP_TOPIC + "-" + getApplicationKey(context);
                 Utils.printLog(context, TAG, "Subscribing to support group topic : " + topic);
@@ -292,6 +346,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //Cleanup: can be removed
     public synchronized void unSubscribeToSupportGroup(final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -312,10 +367,10 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         thread.start();
     }
 
-    public void disconnectPublish(String userKeyString, String deviceKeyString, String status, boolean useEncrypted) {
+    public void publishOfflineStatusUnsubscribeAndDisconnect(String userKeyString, String deviceKeyString, boolean useEncrypted) {
         try {
-            connectPublish(userKeyString, deviceKeyString, status);
-            unSubscribe(useEncrypted);
+            publishClientStatus(userKeyString, deviceKeyString, "0");
+            unSubscribeToConversation(useEncrypted);
             if (!MobiComUserPreference.getInstance(context).isLoggedIn()) {
                 disconnect();
             }
@@ -324,6 +379,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public void disconnect() {
         if (client != null && client.isConnected()) {
             try {
@@ -341,7 +397,8 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
 
     @Override
     public void connectionLost(Throwable throwable) {
-        BroadcastService.sendUpdate(context, BroadcastService.INTENT_ACTIONS.MQTT_DISCONNECTED.toString());
+        Log.d(TAG, "MQTT connection lost...");
+        BroadcastService.sendMQTTDisconnectBroadcastUpdate(context, true);
     }
 
     @Override
@@ -576,9 +633,10 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
-    public synchronized void publishMessageStatus(final String messageStatusTopic, final String data) {
+    public synchronized void connectAndPublishMessageStatus(final String messageStatusTopic, final String data) {
         try {
-            final AlMqttClient client = connect();
+            Log.d(TAG, "Connect and publish message status...");
+            final AlMqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }
@@ -602,9 +660,10 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void publishTopic(final String applicationId, final String status, final String loggedInUserId, final String userId) {
         try {
-            final MqttClient client = connect();
+            final MqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }
@@ -617,55 +676,6 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public synchronized void subscribeToTypingTopic(Channel channel) {
-        try {
-            String currentId = null;
-            if (channel != null) {
-                currentId = String.valueOf(channel.getKey());
-            } else {
-                MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-                currentId = mobiComUserPreference.getUserId();
-            }
-
-            final MqttClient client = connect();
-            if (client == null || !client.isConnected()) {
-                return;
-            }
-
-            client.subscribe("typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId), 0);
-            Utils.printLog(context, TAG, "Subscribed to topic: " + "typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public synchronized void unSubscribeToTypingTopic(Channel channel) {
-        try {
-            String currentId = null;
-            if (channel != null) {
-                currentId = String.valueOf(channel.getKey());
-            } else {
-                MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-                currentId = mobiComUserPreference.getUserId();
-            }
-
-            final MqttClient client = connect();
-            if (client == null || !client.isConnected()) {
-                return;
-            }
-
-            client.unsubscribe("typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId));
-            Utils.printLog(context, TAG, "UnSubscribed to topic: " + "typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
     }
 
     public void typingStarted(Contact contact, Channel channel) {
@@ -690,13 +700,57 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         publishTopic(getApplicationKey(context), "0", User.getEncodedUserId(mobiComUserPreference.getUserId()), User.getEncodedUserId(currentId));
     }
 
+    public synchronized void subscribeToTypingTopic(Channel channel) {
+        try {
+            String currentId = null;
+            if (channel != null) {
+                currentId = String.valueOf(channel.getKey());
+            } else {
+                MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+                currentId = mobiComUserPreference.getUserId();
+            }
+
+            final MqttClient client = getClientInstance();
+            if (client == null || !client.isConnected()) {
+                return;
+            }
+
+            client.subscribe("typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId), 0);
+            Utils.printLog(context, TAG, "Subscribed to topic: " + "typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void unSubscribeToTypingTopic(Channel channel) {
+        try {
+            String currentId = null;
+            if (channel != null) {
+                currentId = String.valueOf(channel.getKey());
+            } else {
+                MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+                currentId = mobiComUserPreference.getUserId();
+            }
+
+            final MqttClient client = getClientInstance();
+            if (client == null || !client.isConnected()) {
+                return;
+            }
+
+            client.unsubscribe("typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId));
+            Utils.printLog(context, TAG, "UnSubscribed to topic: " + "typing-" + getApplicationKey(context) + "-" + User.getEncodedUserId(currentId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public synchronized void subscribeToOpenGroupTopic(Channel channel) {
         try {
             String currentId = null;
             if (channel != null) {
                 currentId = String.valueOf(channel.getKey());
             }
-            final MqttClient client = connect();
+            final MqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }
@@ -715,7 +769,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
                 currentId = String.valueOf(channel.getKey());
             }
 
-            final MqttClient client = connect();
+            final MqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }
@@ -727,6 +781,10 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) { }
+
+    @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
     public static enum NOTIFICATION_TYPE {
         MESSAGE_RECEIVED("APPLOZIC_01"), MESSAGE_SENT("APPLOZIC_02"),
         MESSAGE_SENT_UPDATE("APPLOZIC_03"), MESSAGE_DELIVERED("APPLOZIC_04"),
@@ -764,5 +822,4 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
             return String.valueOf(value);
         }
     }
-
 }

@@ -3,9 +3,12 @@ package com.applozic.mobicomkit.channel.service;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
 import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -38,13 +41,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by sunil on 1/1/16.
+ * This handles all things {@link Channel}.
+ *
+ * <p>Methods of this class use the respective local database and client classes to
+ * perform operations for Applozic Channels/Groups.
+ * Consider this class your go-to for working with channels.</p>
  */
 public class ChannelService {
 
     public static boolean isUpdateTitle = false;
     private static ChannelService channelService;
-    public Context context;
+    public Context context; //ApplozicInternal: private
     private ChannelDatabaseService channelDatabaseService;
     private ChannelClientService channelClientService;
     private BaseContactService baseContactService;
@@ -87,10 +94,20 @@ public class ChannelService {
         this.baseContactService = appContactService;
     }
 
+    @ApplozicInternal
     public Channel getChannelInfoFromLocalDb(Integer key) {
         return channelDatabaseService.getChannelByChannelKey(key);
     }
 
+    /**
+     * Gets a channel object for the given channel key.
+     *
+     * <p>Channel is initially retrieved locally. If it's not found
+     * then a server call is done and the channel is synced locally and returned.</p>
+     *
+     * @param key the channel key
+     * @return the channel object
+     */
     public Channel getChannelInfo(Integer key) {
         if (key == null) {
             return null;
@@ -114,10 +131,20 @@ public class ChannelService {
         channelService = null;
     }
 
+    @ApplozicInternal //Cleanup: can be removed
     public String getLoggedInUserId() {
         return loggedInUserId;
     }
 
+    /**
+     * Gets a channel object for the given client group id.
+     *
+     * <p>Channel is initially retrieved locally. If it's not found
+     * then a server call is done and the channel is synced locally and returned.</p>
+     *
+     * @param clientGroupId the client group id
+     * @return the channel object
+     */
     public Channel getChannelInfo(String clientGroupId) {
         if (TextUtils.isEmpty(clientGroupId)) {
             return null;
@@ -137,6 +164,7 @@ public class ChannelService {
         return channel;
     }
 
+    @ApplozicInternal
     public void createMultipleChannels(List<ChannelInfo> channelInfo) {
         List<ChannelFeed> channelFeeds = channelClientService.createMultipleChannels(channelInfo);
         if (channelFeeds != null) {
@@ -144,6 +172,7 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal //ApplozicInternal: or rename
     public void processChannelFeedList(ChannelFeed[] channelFeeds, boolean isUserDetails) {
         if (channelFeeds != null && channelFeeds.length > 0) {
             for (ChannelFeed channelFeed : channelFeeds) {
@@ -152,7 +181,7 @@ public class ChannelService {
         }
     }
 
-
+    //ApplozicInternal: private
     public void processChannelFeed(ChannelFeed channelFeed, boolean isUserDetails) {
         if (channelFeed != null) {
             Set<String> memberUserIds = null;
@@ -205,6 +234,7 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal //Cleanup: can be removed
     public synchronized Channel getChannelByChannelKey(Integer channelKey) {
         if (channelKey == null) {
             return null;
@@ -212,11 +242,17 @@ public class ChannelService {
         return channelDatabaseService.getChannelByChannelKey(channelKey);
     }
 
-
+    @ApplozicInternal //Cleanup: can be removed
     public List<ChannelUserMapper> getListOfUsersFromChannelUserMapper(Integer channelKey) {
         return channelDatabaseService.getChannelUserList(channelKey);
     }
 
+    /**
+     * Gets the Channel object for the given channel key.
+     *
+     * @param channelKey the channel key
+     * @return the channel object (one with just the channel key if no channel is found)
+     */
     public Channel getChannel(Integer channelKey) {
         Channel channel;
         channel = MessageSearchCache.getChannelByKey(channelKey);
@@ -229,6 +265,7 @@ public class ChannelService {
         return channel;
     }
 
+    @ApplozicInternal
     public void updateChannel(Channel channel) {
         if (channelDatabaseService.getChannelByChannelKey(channel.getKey()) == null) {
             channelDatabaseService.addChannel(channel);
@@ -237,10 +274,12 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal //Cleanup: can be removed, code duplication for public api
     public List<Channel> getChannelList() {
         return channelDatabaseService.getAllChannels();
     }
 
+    @ApplozicInternal
     public synchronized void syncChannels(boolean isMetadataUpdate) {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         SyncChannelFeed syncChannelFeed = channelClientService.getChannelFeed(userpref
@@ -251,17 +290,24 @@ public class ChannelService {
         if (syncChannelFeed.isSuccess()) {
             processChannelList(syncChannelFeed.getResponse());
 
-            BroadcastService.sendUpdate(context, isMetadataUpdate, BroadcastService
-                    .INTENT_ACTIONS.CHANNEL_SYNC.toString());
+            BroadcastService.sendChannelSyncBroadcastUpdate(context, isMetadataUpdate);
         }
         userpref.setChannelSyncTime(syncChannelFeed.getGeneratedAt());
 
     }
 
+    @ApplozicInternal
     public synchronized void syncChannels() {
         syncChannels(false);
     }
 
+    /**
+     * @deprecated {@link AlResponse} is not longer used. It will be replaced by
+     * {@link ApiResponse}.
+     * Use {@link ChannelService#createChannelWithResponse(ChannelInfo)} instead.
+     */
+    @Deprecated
+    @ApplozicInternal
     public synchronized AlResponse createChannel(final ChannelInfo channelInfo) {
 
         if (channelInfo == null) {
@@ -300,6 +346,7 @@ public class ChannelService {
         return alResponse;
     }
 
+    @ApplozicInternal
     public Channel getChannel(ChannelFeed channelFeed) {
         Channel channel = new Channel(channelFeed.getId(), channelFeed.getName(), channelFeed
                 .getAdminName(), channelFeed.getType(), channelFeed.getUnreadCount(), channelFeed
@@ -314,6 +361,15 @@ public class ChannelService {
         return channel;
     }
 
+    /**
+     * Removes a given user from a channel.
+     *
+     * <p>The local database is also updated.</p>
+     *
+     * @param channelKey the channel key (to identify the channel)
+     * @param userId the id of the user to add to the channels
+     * @return the {@link ApiResponse} for the request
+     */
     public String removeMemberFromChannelProcess(Integer channelKey, String userId) {
         if (channelKey == null && TextUtils.isEmpty(userId)) {
             return "";
@@ -328,7 +384,15 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
-
+    /**
+     * Sends a server request to remove a given user from a channel.
+     *
+     * <p>The local database is also updated.</p>
+     *
+     * @param clientGroupId the client group id (to identify the channel)
+     * @param userId the id of the user to remove from the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public String removeMemberFromChannelProcess(String clientGroupId, String userId) {
         if (clientGroupId == null && TextUtils.isEmpty(userId)) {
             return "";
@@ -346,6 +410,7 @@ public class ChannelService {
     }
 
     @Deprecated
+    @ApplozicInternal
     public String addMemberToChannelProcess(Integer channelKey, String userId) {
         if (channelKey == null && TextUtils.isEmpty(userId)) {
             return "";
@@ -362,6 +427,7 @@ public class ChannelService {
     }
 
     @Deprecated
+    @ApplozicInternal
     public String addMemberToChannelProcess(String clientGroupId, String userId) {
         if (TextUtils.isEmpty(clientGroupId) && TextUtils.isEmpty(userId)) {
             return "";
@@ -373,6 +439,15 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
+    /**
+     * Adds a given user to a channel.
+     *
+     * <p>The local database is also updated.</p>
+     *
+     * @param clientGroupId the client group id (to identify the channel)
+     * @param userId the id of the user to add to the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToChannelProcessWithResponse(String clientGroupId, String userId) {
         if (TextUtils.isEmpty(clientGroupId) && TextUtils.isEmpty(userId)) {
             return null;
@@ -384,6 +459,15 @@ public class ChannelService {
         return apiResponse;
     }
 
+    /**
+     * Adds a given user to a channel.
+     *
+     * <p>The local database is also updated.</p>
+     *
+     * @param channelKey the channel key (to identify the channel)
+     * @param userId the id of the user to add to the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToChannelProcessWithResponse(Integer channelKey, String userId) {
         if (channelKey == null && TextUtils.isEmpty(userId)) {
             return null;
@@ -399,6 +483,15 @@ public class ChannelService {
         return apiResponse;
     }
 
+    /**
+     * Adds a given user to multiple channels.
+     *
+     * <p>The local database is NOT updated.</p>
+     *
+     * @param clientGroupIds the list of client group ids (to identify the channels)
+     * @param userId the id of the user to add to the channels
+     * @return the {@link ApiResponse} for the request
+     */
     public String addMemberToMultipleChannelsProcess(Set<String> clientGroupIds, String userId) {
         if (clientGroupIds == null && TextUtils.isEmpty(userId)) {
             return "";
@@ -411,6 +504,15 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
+    /**
+     * Adds a given user to one or more channels.
+     *
+     * <p>The local database is NOT updated.</p>
+     *
+     * @param channelKeys the list of channel keys (to identify the channels)
+     * @param userId the id of the user to add to the channels
+     * @return the {@link ApiResponse} for the request
+     */
     public String addMemberToMultipleChannelsProcessByChannelKeys(Set<Integer> channelKeys,
                                                                   String userId) {
         if (channelKeys == null && TextUtils.isEmpty(userId)) {
@@ -424,6 +526,7 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
+    @ApplozicInternal
     public String leaveMemberFromChannelProcess(String clientGroupId, String userId) {
         if (TextUtils.isEmpty(clientGroupId)) {
             return "";
@@ -438,6 +541,7 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
+    @ApplozicInternal
     public String leaveMemberFromChannelProcess(Integer channelKey, String userId) {
         if (channelKey == null) {
             return "";
@@ -452,6 +556,14 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
+    /**
+     * Updates the channel details, remotely and locally.
+     *
+     * <p>See {@link GroupInfoUpdate} for details on parameters.</p>
+     *
+     * @param groupInfoUpdate the object used to store data to update
+     * @return the {@link ApiResponse} for the request
+     */
     public String updateChannel(GroupInfoUpdate groupInfoUpdate) {
         if (groupInfoUpdate == null) {
             return null;
@@ -466,11 +578,13 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
+    @ApplozicInternal
     public synchronized String createConversation(Integer groupId, String userId, String agentId,
                                                   String applicationId) {
         return channelClientService.createConversation(groupId, userId, agentId, applicationId);
     }
 
+    @ApplozicInternal
     public synchronized void processChannelList(List<ChannelFeed> channelFeedList) {
         if (channelFeedList != null && channelFeedList.size() > 0) {
             for (ChannelFeed channelFeed : channelFeedList) {
@@ -479,39 +593,74 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal
     public ChannelUserMapper getChannelUserMapper(Integer channelKey) {
         return channelDatabaseService.getChannelUserByChannelKey(channelKey);
     }
 
+    /**
+     * Updates the role for a user in a channel.
+     *
+     * <p>A role type of `1` is for an admin. A role type of `0` is for a non-admin.</p>
+     *
+     * @param channelKey the channel key
+     * @param userId the user id whose role needs to be changed
+     * @param role the role type integer
+     * @return
+     */
+    public boolean updateRoleForUserInChannel(@NonNull Integer channelKey, @NonNull String userId, @NonNull Integer role) {
+        GroupInfoUpdate groupInfoUpdate = new GroupInfoUpdate(channelKey);
+        List<ChannelUsersFeed> channelUsersFeedList = new ArrayList<>();
+        ChannelUsersFeed channelUsersFeed = new ChannelUsersFeed();
+        channelUsersFeed.setUserId(userId);
+        channelUsersFeed.setRole(role);
+        channelUsersFeedList.add(channelUsersFeed);
+        groupInfoUpdate.setUsers(channelUsersFeedList);
+        if (groupInfoUpdate != null) {
+            String response = channelService.updateChannel(groupInfoUpdate);
+            if (!TextUtils.isEmpty(response) && MobiComKitConstants.SUCCESS.equals(response)) {
+                channelService.updateRoleInChannelUserMapper(channelKey, userId, role);
+                return true;
+            }
+        }
+        return false;
+    }
 
+    @ApplozicInternal //Cleanup: remove, code duplication
     public void updateRoleInChannelUserMapper(Integer channelKey, String userId, Integer role) {
         channelDatabaseService.updateRoleInChannelUserMapper(channelKey, userId, role);
     }
 
+    @ApplozicInternal //Cleanup: remove, code duplication
     public ChannelUserMapper getChannelUserMapperByUserId(Integer channelKey, String userId) {
         return channelDatabaseService.getChannelUserByChannelKeyAndUserId(channelKey, userId);
     }
 
+    @ApplozicInternal //Cleanup: remove, code duplication
     public synchronized boolean processIsUserPresentInChannel(Integer channelKey) {
         return channelDatabaseService.isChannelUserPresent(channelKey, MobiComUserPreference
                 .getInstance(context).getUserId());
     }
 
+    @ApplozicInternal //Cleanup: remove, code duplication
     public synchronized boolean isUserAlreadyPresentInChannel(Integer channelKey, String userId) {
         return channelDatabaseService.isChannelUserPresent(channelKey, userId);
     }
 
+    @ApplozicInternal
     public synchronized boolean processIsUserPresentInChannel(String clientGroupId) {
         Channel channel = channelDatabaseService.getChannelByClientGroupId(clientGroupId);
         return channelDatabaseService.isChannelUserPresent(channel.getKey(),
                 MobiComUserPreference.getInstance(context).getUserId());
     }
 
+    @ApplozicInternal
     public synchronized boolean isUserAlreadyPresentInChannel(String clientGroupId, String userId) {
         Channel channel = channelDatabaseService.getChannelByClientGroupId(clientGroupId);
         return channelDatabaseService.isChannelUserPresent(channel.getKey(), userId);
     }
 
+    @ApplozicInternal
     public synchronized String processChannelDeleteConversation(Channel channel, Context context) {
         String response = new MobiComConversationService(context).deleteSync(null, channel, null);
         if (!TextUtils.isEmpty(response) && "success".equals(response)) {
@@ -522,10 +671,24 @@ public class ChannelService {
 
     }
 
+    @ApplozicInternal
     public void updateChannelLocalImageURI(Integer channelKey, String localImageURI) {
         channelDatabaseService.updateChannelLocalImageURI(channelKey, localImageURI);
     }
 
+    /**
+     * Mutes notifications for a channel.
+     *
+     * <p>A muted channel will not receive push-notifications from the server.</p>
+     *
+     * <p>Request parameters can be passed inside the {@link MuteNotificationRequest} object.
+     * Pass non-null/non-zero values for either {@link MuteNotificationRequest#setClientGroupId(String)}
+     * or {@link MuteNotificationRequest#setId(Integer)}.
+     * See {@link MuteNotificationRequest} for more details.</p>
+     *
+     * @param muteNotificationRequest the mute notification parameter object
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse muteNotifications(MuteNotificationRequest muteNotificationRequest) {
 
         ApiResponse apiResponse = channelClientService.muteNotification(muteNotificationRequest);
@@ -540,6 +703,13 @@ public class ChannelService {
         return apiResponse;
     }
 
+    /**
+     * Updates the time after which notifications should be received for a muted channel.
+     *
+     * @param groupId the group id
+     * @param notificationAfterTime the time in milliseconds
+     */
+    @ApplozicInternal //Cleanup: this is not required. directly use channel database method
     public void updateNotificationAfterTime(Integer groupId, Long notificationAfterTime) {
         if (notificationAfterTime != null && groupId != null) {
             channelDatabaseService.updateNotificationAfterTime(groupId,
@@ -547,6 +717,12 @@ public class ChannelService {
         }
     }
 
+    /**
+     * Will get a channel object from the database, corresponding to the passed client group id.
+     *
+     * @param clientGroupId the client group id. used to identify a channel (similar to with group id/channel key)
+     * @return the channel object, null if no such channel exists in database
+     */
     public Channel getChannelByClientGroupId(String clientGroupId) {
         if (TextUtils.isEmpty(clientGroupId)) {
             return null;
@@ -554,6 +730,15 @@ public class ChannelService {
         return channelDatabaseService.getChannelByClientGroupId(clientGroupId);
     }
 
+    /**
+     * Creates a new Applozic {@link Channel}.
+     *
+     * <p>Details on the creation are passed with the help of the {@link ChannelInfo} object.
+     * Information about the newly created channel can be retrieved from {@link ChannelFeedApiResponse#getResponse()}.</p>
+     *
+     * @param channelInfo the channel info object
+     * @return the {@link ChannelFeedApiResponse} for the request.
+     */
     public ChannelFeedApiResponse createChannelWithResponse(ChannelInfo channelInfo) {
         ChannelFeedApiResponse channelFeedApiResponse = channelClientService
                 .createChannelWithResponse(channelInfo);
@@ -571,6 +756,15 @@ public class ChannelService {
         return channelFeedApiResponse;
     }
 
+    /**
+     * Adds a given user to a channel.
+     *
+     * <p>Data for this addition is updated both remotely and locally.</p>
+     *
+     * @param channelKey the channel key (to identify the channel)
+     * @param userId the id of the user to add to the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToChannelWithResponseProcess(Integer channelKey, String userId) {
         if (channelKey == null && TextUtils.isEmpty(userId)) {
             return null;
@@ -586,11 +780,13 @@ public class ChannelService {
         return apiResponse;
     }
 
+    @ApplozicInternal
     public String getGroupOfTwoReceiverUserId(Integer channelKey) {
         return channelDatabaseService.getGroupOfTwoReceiverId(channelKey);
     }
 
     @Deprecated
+    @ApplozicInternal
     public Channel createGroupOfTwo(ChannelInfo channelInfo) {
         if (channelInfo == null) {
             return null;
@@ -629,6 +825,15 @@ public class ChannelService {
         return null;
     }
 
+    /**
+     * Create a {@link Channel.GroupType#GROUPOFTWO} channel.
+     *
+     * <p>A group-of-two type channel is implemented in the UI to look like a 1-to-1 chat.
+     * It is meant to have two members only.</p>
+     *
+     * @param channelInfo the channel info that will be used to create the channel
+     * @return the {@link AlResponse} from the server
+     */
     public AlResponse createGroupOfTwoWithResponse(ChannelInfo channelInfo) {
         if (channelInfo == null) {
             return null;
@@ -674,18 +879,22 @@ public class ChannelService {
         return alResponse;
     }
 
+    @ApplozicInternal //Cleanup: remove
     public List<ChannelFeed> getGroupInfoFromGroupIds(List<String> groupIds) {
         return getGroupInfoFromGroupIds(groupIds, null);
     }
 
+    @ApplozicInternal //Cleanup: remove
     public List<ChannelFeed> getGroupInfoFromClientGroupIds(List<String> clientGroupIds) {
         return getGroupInfoFromGroupIds(null, clientGroupIds);
     }
 
+    @ApplozicInternal
     public List<String> getChildGroupKeys(Integer parentGroupKey) {
         return channelDatabaseService.getChildGroupIds(parentGroupKey);
     }
 
+    //ApplozicInternal: private
     public List<ChannelFeed> getGroupInfoFromGroupIds(List<String> groupIds, List<String>
             clientGroupIds) {
 
@@ -705,6 +914,16 @@ public class ChannelService {
         return channelFeedList.getResponse();
     }
 
+    /**
+     * Adds the list of users to a contact group with given id.
+     *
+     * <p>If group is not present, it will be created.</p>
+     *
+     * @param contactGroupId the id of the contact
+     * @param groupType the group type
+     * @param contactGroupMemberList list of userIds of contacts to add in group
+     * @return true if successfully added
+     */
     public boolean addMemberToContactGroup(String contactGroupId, String groupType, List<String>
             contactGroupMemberList) {
 
@@ -726,6 +945,16 @@ public class ChannelService {
         return apiResponse.isSuccess();
     }
 
+    /**
+     * Gets the users/contacts in the contact group for the passed id and group type.
+     *
+     * <p>Sends a request to get the contacts for a group, identified by it's contactGroupId and groupType.
+     * The new contacts retrieved are also added/updated in the local database.</p>
+     *
+     * @param contactGroupId the contact group id
+     * @param groupType the group type
+     * @return {@link ChannelFeed}. User {@link ChannelFeed#getGroupUsers()} to get the contacts.
+     */
     public ChannelFeed getMembersFromContactGroup(String contactGroupId, String groupType) {
         ChannelFeed channelFeed = null;
         if (!TextUtils.isEmpty(contactGroupId)) {
@@ -747,6 +976,8 @@ public class ChannelService {
         return null;
     }
 
+    //ApplozicInternal: private
+    //Cleanup: remove
     public ChannelFeed[] getMembersFromContactGroupList(List<String> groupIdList, List<String>
             groupNames, String groupType) {
         List<ChannelFeed> channelFeedList;
@@ -764,6 +995,17 @@ public class ChannelService {
         return null;
     }
 
+    /**
+     * Sends a request to remove a user from a contact group with the given group type and group id.
+     *
+     * <p>Contacts for a user can be grouped together. Such a group is called a contact group.
+     * Groups can have group types.</p>
+     *
+     * @param contactGroupId the id of the contact group
+     * @param groupType the group type
+     * @param userId id of contact to remove
+     * @return the {@link ApiResponse} for the request, null in-case of exception
+     */
     public ApiResponse removeMemberFromContactGroup(String contactGroupId, String groupType,
                                                     String userId) {
         ApiResponse apiResponse;
@@ -775,7 +1017,7 @@ public class ChannelService {
         return null;
     }
 
-
+    @ApplozicInternal
     public void processChannelFeedForSync(ChannelFeed channelFeed) {
         if (channelFeed != null) {
             Set<String> memberUserIds = channelFeed.getMembersName();
@@ -820,10 +1062,23 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal
     public String deleteChannel(Integer channelKey) {
         return deleteChannel(channelKey, false, false);
     }
 
+    /**
+     * Deletes the channel with the given channel key.
+     *
+     * <p>The channel is first deleted from the server and then locally along with it's
+     * member mappings.
+     * A broadcast is also sent with intent action {@link BroadcastService.INTENT_ACTIONS#DELETE_CONVERSATION}.</p>
+     *
+     * @param channelKey the channel key
+     * @param updateClientGroupId pass true if you want the client group id to be updated
+     * @param resetCount pass true if you want to reset the unread count for the channel
+     * @return success (ignore case) or failure (ignore case)
+     */
     public String deleteChannel(Integer channelKey, boolean updateClientGroupId, boolean resetCount) {
         ApiResponse apiResponse = channelClientService.deleteChannel(channelKey, updateClientGroupId, resetCount);
         if (apiResponse != null && apiResponse.isSuccess()) {
@@ -860,14 +1115,19 @@ public class ChannelService {
         }
     }
 
+    @ApplozicInternal
     public Integer getParentGroupKeyByClientGroupKey(String parentClientGroupKey) {
         return channelDatabaseService.getParentGroupKey(parentClientGroupKey);
     }
 
+    //ApplozicInternal: private
+    //Cleanup: remove
     public void getChannelByChannelKeyAsync(Integer groupId, AlChannelListener channelListener) {
         AlTask.execute(new AlGetPeopleTask(context, null, null, groupId, channelListener, null, null, this));
     }
 
+    //ApplozicInternal: private
+    //Cleanup: remove
     public void getChannelByClientKeyAsync(String clientChannelKey, AlChannelListener channelListener) {
         AlTask.execute(new AlGetPeopleTask(context, null, clientChannelKey, null, channelListener, null, null, this));
     }
@@ -895,5 +1155,43 @@ public class ChannelService {
             return new ArrayList<>();
         }
         return channelList;
+    }
+
+    /**
+     * Checks if the user with the given userId has the role of admin in the given channel.
+     *
+     * @param userId the userId of the user
+     * @param channel the channel object to check in
+     * @return true if admin/false otherwise
+     */
+    public boolean isUserAdminInChannel(String userId, Channel channel) {
+        if(channel == null) {
+            return false;
+        }
+
+        List<ChannelUserMapper> updatedChannelUserMapperList = ChannelService.getInstance(context).getListOfUsersFromChannelUserMapper(channel.getKey());
+
+        if(TextUtils.isEmpty(userId)) {
+            return false;
+        }
+
+        for (ChannelUserMapper channelUserMapper : updatedChannelUserMapperList) {
+            if(userId.equals(channelUserMapper.getUserKey())) {
+                return ChannelUserMapper.UserRole.ADMIN.getValue() == channelUserMapper.getRole().intValue();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the logged-in userId from {@link MobiComUserPreference#getUserId()}
+     * and checks if that user has role admin in channel.
+     *
+     * @param channel the channel to check in
+     * @return true if admin/false otherwise
+     */
+    public boolean isLoggedInUserAdminInChannel(Channel channel) {
+        return isUserAdminInChannel(loggedInUserId, channel);
     }
 }

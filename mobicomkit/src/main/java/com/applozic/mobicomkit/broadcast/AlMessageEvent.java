@@ -3,6 +3,9 @@ package com.applozic.mobicomkit.broadcast;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicommons.json.JsonMarker;
 
+/**
+ * Model class for an Applozic real-time event.
+ */
 public class AlMessageEvent extends JsonMarker {
     private String action;
     private Message message;

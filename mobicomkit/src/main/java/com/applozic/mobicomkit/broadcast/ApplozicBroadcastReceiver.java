@@ -5,16 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.listners.ApplozicUIListener;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
 
-/**
- * Created by reytum on 5/12/17.
- */
-
+@ApplozicInternal
 public class ApplozicBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "ApplozicUIReceiver";

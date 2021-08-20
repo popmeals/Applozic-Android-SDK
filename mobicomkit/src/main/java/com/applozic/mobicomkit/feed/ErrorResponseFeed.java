@@ -3,9 +3,8 @@ package com.applozic.mobicomkit.feed;
 import com.applozic.mobicommons.json.JsonMarker;
 
 /**
- * Created by sunil on 16/12/2016.
+ * Model class for storing error data for server requests.
  */
-
 public class ErrorResponseFeed extends JsonMarker {
     private String errorCode;
     private String description;

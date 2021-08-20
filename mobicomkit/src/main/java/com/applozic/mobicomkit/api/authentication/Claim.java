@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * The Claim class holds the value in a generic way so that it can be recovered in many representations.
  */
+//ApplozicInternal: protected
 public interface Claim {
 
 

@@ -1,9 +1,5 @@
 package com.applozic.mobicomkit.api.account.user;
 
-/**
- * Created by Aman on 7/12/2015.
- */
-
 import android.content.Context;
 
 import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
@@ -14,8 +10,9 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
+ * An asynchronous login/registration task used to authenticate the user.
+ * <p>It provides an async wrapper for {@link RegisterUserClientService#createAccount(User)}.
+ * It also wipes out the existing shared preferences before it starts the login process.</p>
  */
 public class UserLoginTask extends AlAsyncTask<Void, Boolean> {
 

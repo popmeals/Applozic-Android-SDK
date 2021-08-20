@@ -3,10 +3,12 @@ package com.applozic.mobicomkit.api.attachment;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.lang.ref.WeakReference;
 
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class GifDownloadAsyncTask extends AlAsyncTask<Void, String> {
     private final WeakReference<Context> contextWeakReference;
     private final String url;

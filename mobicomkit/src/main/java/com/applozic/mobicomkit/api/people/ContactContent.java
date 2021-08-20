@@ -1,8 +1,8 @@
 package com.applozic.mobicomkit.api.people;
 
-/**
- * @author devashish
- */
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
+
+@ApplozicInternal
 public class ContactContent {
 
     private String contactNumber;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.MultipleChannelFeedApiResponse;
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.notification.MuteNotificationRequest;
@@ -27,7 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by sunil on 29/12/15.
+ * This class contains methods that deal with client to server calls related to Applozic Groups/Channels.
+ *
+ * <p>All methods of these class solely deal with server calls and are meant to be run asynchronously.
+ * No method will interact with local data.</p>
  */
 public class ChannelClientService extends MobiComKitClientService {
     private static final String CHANNEL_INFO_URL = "/rest/ws/group/info";
@@ -81,6 +85,8 @@ public class ChannelClientService extends MobiComKitClientService {
         }
         return channelClientService;
     }
+
+    //ApplozicInternal: private for all getters
 
     public String getChannelInfoUrl() {
         return getBaseUrl() + CHANNEL_INFO_URL;
@@ -163,6 +169,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return getKmBaseUrl() + CREATE_CONVERSATION_URL;
     }
 
+    //ApplozicInternal: private
     public ChannelFeed getChannelInfoByParameters(String parameters) {
         String response = "";
         try {
@@ -183,15 +190,37 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Get the channel info for the channel with the given clientGroupId from the server.
+     *
+     * @param clientGroupId the client group id
+     * @return A {@link ChannelFeed} object with the required channel info
+     */
     public ChannelFeed getChannelInfo(String clientGroupId) {
         return getChannelInfoByParameters(CLIENT_GROUPID + "=" + clientGroupId);
     }
 
+    /**
+     * Get the channel info for the channel with the given channelKey from the server.
+     *
+     * @param channelKey the channel key
+     * @return A {@link ChannelFeed} object with the required channel info
+     */
     public ChannelFeed getChannelInfo(Integer channelKey) {
         return getChannelInfoByParameters(GROUP_ID + "=" + channelKey);
     }
 
-
+    /**
+     * Send a mute notification request for a channel to the server.
+     *
+     * <p>Request parameters can be passed inside the {@link MuteNotificationRequest} object.
+     * Pass non-null/non-zero values for either {@link MuteNotificationRequest#setClientGroupId(String)}
+     * or {@link MuteNotificationRequest#setId(Integer)}.
+     * See {@link MuteNotificationRequest} for more details.</p>
+     *
+     * @param muteNotificationRequest the mute notification parameter object
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse muteNotification(MuteNotificationRequest muteNotificationRequest) {
         ApiResponse apiResponse = null;
 
@@ -217,6 +246,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: default
     public SyncChannelFeed getChannelFeed(String lastChannelSyncTime) {
         String url = getChannelSyncUrl() + "?" +
                 UPDATED_AT
@@ -231,6 +261,7 @@ public class ChannelClientService extends MobiComKitClientService {
         }
     }
 
+    //ApplozicInternal: default
     @Deprecated
     public ChannelFeed createChannel(ChannelInfo channelInfo) {
         ChannelFeed channelFeed = null;
@@ -254,6 +285,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelFeed;
     }
 
+    @ApplozicInternal
     public ChannelFeedApiResponse createChannelWithReponse(ChannelInfo channelInfo) throws Exception {
         String jsonFromObject = GsonUtils.getJsonFromObject(channelInfo, channelInfo.getClass());
         String createChannelResponse = httpRequestUtils.postData(getCreateChannelUrl(),
@@ -263,6 +295,7 @@ public class ChannelClientService extends MobiComKitClientService {
                 ChannelFeedApiResponse.class);
     }
 
+    //ApplozicInternal: default
     public List<ChannelFeed> createMultipleChannels(List<ChannelInfo> channels) {
         List<ChannelFeed> channelFeeds = null;
         try {
@@ -288,11 +321,13 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelFeeds;
     }
 
+    @ApplozicInternal
     public ApiResponse removeMembersFromMultipleChannelsByChannelKeys(Set<Integer> channelKeys,
                                                                       Set<String> userIds) {
         return removeMembersFromMultipleChannels(null, channelKeys, userIds);
     }
 
+    @ApplozicInternal
     public ApiResponse removeMembersFromMultipleChannelsByClientGroupIds(Set<String>
                                                                                  clientGroupIds,
                                                                          Set<String> userIds) {
@@ -335,7 +370,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-
+    //ApplozicInternal: private
     public synchronized ApiResponse addMemberToMultipleChannels(Set<String> clientGroupIds,
                                                                 Set<Integer> channelKeys, String
                                                                         userId) {
@@ -370,16 +405,31 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    /**
+     * Sends a server request to add a given user to one or more channels.
+     *
+     * @param channelKeys the list of channel keys (to identify the channels)
+     * @param userId the id of the user to add to the channels
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToMultipleChannelsByChannelKey(Set<Integer> channelKeys, String
             userId) {
         return addMemberToMultipleChannels(null, channelKeys, userId);
     }
 
+    /**
+     * Sends a server request to add a given user to one or more channels.
+     *
+     * @param clientGroupIds the list of client group ids (to identify the channels)
+     * @param userId the id of the user to add to the channels
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToMultipleChannelsByClientGroupIds(Set<String> clientGroupIds,
                                                                    String userId) {
         return addMemberToMultipleChannels(clientGroupIds, null, userId);
     }
 
+    //ApplozicInternal: private
     public synchronized ApiResponse addMemberToChannel(String clientGroupId, Integer channelKey,
                                                        String userId) {
         try {
@@ -408,14 +458,29 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Sends a server request to add a given user to a channel.
+     *
+     * @param channelKey the channel key (to identify the channel)
+     * @param userId the id of the user to add to the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public synchronized ApiResponse addMemberToChannel(Integer channelKey, String userId) {
         return addMemberToChannel(null, channelKey, userId);
     }
 
+    /**
+     * Sends a server request to add a given user to a channel.
+     *
+     * @param clientGroupId the client group id (to identify the channel)
+     * @param userId the id of the user to add to the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public synchronized ApiResponse addMemberToChannel(String clientGroupId, String userId) {
         return addMemberToChannel(clientGroupId, null, userId);
     }
 
+    //ApplozicInternal: private
     public synchronized ApiResponse removeMemberFromChannel(String clientGroupId, Integer
             channelKey, String userId) {
         ApiResponse apiResponse = null;
@@ -444,14 +509,36 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    /**
+     * Sends a server request to remove a given user from a channel.
+     *
+     * @param channelKey the channel key (to identify the channel)
+     * @param userId the id of the user to add to the channels
+     * @return the {@link ApiResponse} for the request
+     */
     public synchronized ApiResponse removeMemberFromChannel(Integer channelKey, String userId) {
         return removeMemberFromChannel(null, channelKey, userId);
     }
 
+    /**
+     * Sends a server request to remove a given user from a channel.
+     *
+     * @param clientGroupId the client group id (to identify the channel)
+     * @param userId the id of the user to remove from the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public synchronized ApiResponse removeMemberFromChannel(String clientGroupId, String userId) {
         return removeMemberFromChannel(clientGroupId, null, userId);
     }
 
+    /**
+     * Sends a request to the server to update channel details.
+     *
+     * <p>See {@link GroupInfoUpdate} for details on parameters.</p>
+     *
+     * @param groupInfoUpdate the object used to store data to update
+     * @return the {@link ApiResponse} for the request
+     */
     public synchronized ApiResponse updateChannel(GroupInfoUpdate groupInfoUpdate) {
         ApiResponse apiResponse = null;
         try {
@@ -473,14 +560,17 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    @ApplozicInternal
     public ApiResponse leaveMemberFromChannel(Integer channelKey) {
         return leaveMemberFromChannel(null, channelKey);
     }
 
+    @ApplozicInternal
     public ApiResponse leaveMemberFromChannel(String clientGroupId) {
         return leaveMemberFromChannel(clientGroupId, null);
     }
 
+    //ApplozicInternal: private
     public synchronized ApiResponse leaveMemberFromChannel(String clientGroupId, Integer
             channelKey) {
         ApiResponse apiResponse = null;
@@ -509,10 +599,19 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: private
     public synchronized ApiResponse deleteChannel(Integer channelKey) {
         return deleteChannel(channelKey, false, false);
     }
 
+    /**
+     * Sends a request to the server to delete the channel with the given channel key.
+     *
+     * @param channelKey the channel key
+     * @param updateClientGroupId pass true if you want the client group id to be updated
+     * @param resetCount pass true if you want to reset the unread count for the channel
+     * @return the {@link ApiResponse} for the request
+     */
     public synchronized ApiResponse deleteChannel(Integer channelKey, boolean updateClientGroupId, boolean resetCount) {
         try {
             if (channelKey != null) {
@@ -543,7 +642,16 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
-
+    //ApplozicInternal: rename considering its public api
+    /**
+     * Sends a request to create a new channel to the server.
+     *
+     * <p>Details on the creation are passed with the help of the {@link ChannelInfo} object.
+     * Information about the newly created channel can be retrieved from {@link ChannelFeedApiResponse#getResponse()}.</p>
+     *
+     * @param channelInfo the channel info object
+     * @return the {@link ChannelFeedApiResponse} for the request.
+     */
     public ChannelFeedApiResponse createChannelWithResponse(ChannelInfo channelInfo) {
         try {
             String jsonFromObject = GsonUtils.getJsonFromObject(channelInfo, channelInfo.getClass
@@ -562,6 +670,15 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Sends a request to add a user/s to a contact group with the given id.
+     *
+     * <p>Contacts for a user can be grouped together. Such a group is called a contact group.</p>
+     *
+     * @param contactGroupId the id of the contact
+     * @param contactGroupMemberList list of userIds of contacts to add in group
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToContactGroup(String contactGroupId, List<String>
             contactGroupMemberList) {
         String response;
@@ -588,6 +705,17 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Sends a request to add a user/s to a contact group with the given group type and given id.
+     *
+     * <p>Contacts for a user can be grouped together. Such a group is called a contact group.
+     * Groups can have group types.</p>
+     *
+     * @param contactGroupId the id of the contact
+     * @param groupType the group type
+     * @param contactGroupMemberList list of userIds of contacts to add in group
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse addMemberToContactGroupOfType(String contactGroupId, String groupType,
                                                      List<String> contactGroupMemberList) {
         String response;
@@ -619,6 +747,14 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Sends a request to get the contacts for a group, identified by it's contactGroupId.
+     *
+     * <p>Contacts for a user can be grouped together. Such a group is called a contact group.</p>
+     *
+     * @param contactGroupId the contact group id
+     * @return {@link ChannelFeed}. User {@link ChannelFeed#getGroupUsers()} to get the contacts.
+     */
     public ChannelFeed getMembersFromContactGroup(String contactGroupId) {
         String response;
         if (!TextUtils.isEmpty(contactGroupId)) {
@@ -634,6 +770,15 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Sends a request to get the contacts for a group, identified by it's contactGroupId and groupType.
+     *
+     * <p>Contacts for a user can be grouped together. Such a group is called a contact group.</p>
+     *
+     * @param contactGroupId the contact group id
+     * @param groupType the group type
+     * @return {@link ChannelFeed}. User {@link ChannelFeed#getGroupUsers()} to get the contacts.
+     */
     public ChannelFeed getMembersFromContactGroupOfType(String contactGroupId, String groupType) {
         String response;
         if (!TextUtils.isEmpty(contactGroupId) && !TextUtils.isEmpty(groupType)) {
@@ -650,6 +795,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    //ApplozicInternal: default
     public ChannelFeedListResponse getGroupInfoFromGroupIds(List<String> groupIds, List<String>
             clientGroupIds) {
         ChannelFeedListResponse apiResponse = null;
@@ -693,6 +839,8 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
+    //ApplozicInternal: fix typo
+    @ApplozicInternal
     public ChannelFeedListResponse getMemebersFromContactGroupIds(List<String> groupIds,
                                                                   List<String> groupNames, String
                                                                           groupType) {
@@ -739,6 +887,8 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelFeedListResponse;
     }
 
+    //ApplozicInternal: remove
+    @ApplozicInternal
     public String createConversation(Integer groupId, String userId, String agentId, String
             applicationId) {
 
@@ -765,6 +915,17 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Sends a request to remove a user from a contact group with the given group type and group id.
+     *
+     * <p>Contacts for a user can be grouped together. Such a group is called a contact group.
+     * Groups can have group types.</p>
+     *
+     * @param groupName the id of the contact group. apologies for the bad naming
+     * @param groupType the group type
+     * @param userId id of contact to remove
+     * @return the {@link ApiResponse} for the request
+     */
     public ApiResponse removeMemberFromContactGroupOfType(String groupName, String groupType,
                                                           String userId) {
         String response;

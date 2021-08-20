@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.VisibleForTesting;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.notification.MuteUserResponse;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
@@ -34,15 +35,17 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by sunil on 17/3/16.
+ * Contains methods that can be used to work with users/contacts.
+ *
+ * <p>Methods here basically combine the server calls and local syncing for users or contacts.</p>
  */
 public class UserService {
 
     private static final String TAG = "UserService";
     private static UserService userService;
-    Context context;
-    UserClientService userClientService;
-    BaseContactService baseContactService;
+    Context context; //ApplozicInternal: private
+    UserClientService userClientService; //ApplozicInternal: private
+    BaseContactService baseContactService; //ApplozicInternal: private
     private MobiComUserPreference userPreference;
 
     private UserService(Context context) {
@@ -69,6 +72,7 @@ public class UserService {
         this.userClientService = userClientService;
     }
 
+    @ApplozicInternal
     public synchronized void processSyncUserBlock() {
         try {
             SyncBlockUserApiResponse apiResponse = userClientService.getSyncUserBlockList(userPreference.getUserBlockSyncTime());
@@ -115,7 +119,14 @@ public class UserService {
         }
     }
 
-
+    //ApplozicInternal: rename to something better
+    /**
+     * Blocks/unblocks the user with the given userId for the current logged in user.
+     *
+     * @param userId the userId of the user to block
+     * @param block true to block/false to unblock
+     * @return response from the backend
+     */
     public ApiResponse processUserBlock(String userId, boolean block) {
         ApiResponse apiResponse = userClientService.userBlock(userId, block);
         if (apiResponse != null && apiResponse.isSuccess()) {
@@ -125,6 +136,14 @@ public class UserService {
         return null;
     }
 
+    //Cleanup: rename (saveUsers/saveContacts)
+    /**
+     * Saves the passed user details in the local database.
+     *
+     * <p>User details are save in the form of {@link Contact} objects internally.</p>
+     *
+     * @param userDetails the set of user details to save
+     */
     public synchronized void processUserDetail(Set<UserDetail> userDetails) {
         if (userDetails != null && userDetails.size() > 0) {
             for (UserDetail userDetail : userDetails) {
@@ -133,12 +152,14 @@ public class UserService {
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void processUserDetails(String userId) {
         Set<String> userIds = new HashSet<String>();
         userIds.add(userId);
         processUserDetails(userIds);
     }
 
+    @ApplozicInternal
     public synchronized void processUserDetails(Set<String> userIds) {
         String response = userClientService.getUserDetails(userIds);
         if (!TextUtils.isEmpty(response)) {
@@ -149,14 +170,24 @@ public class UserService {
         }
     }
 
+    //ApplozicInternal: private
     public synchronized void processUser(UserDetail userDetail) {
         processUser(userDetail, Contact.ContactType.APPLOZIC);
     }
 
+    /**
+     * Converts a {@link UserDetail} object to a {@link Contact} object.
+     *
+     * <p>Note: This methods also save the Contact object to the local database.</p>
+     *
+     * @param userDetail the user details object
+     * @return the contact object
+     */
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail) {
         return getContactFromUserDetail(userDetail, Contact.ContactType.APPLOZIC);
     }
 
+    //ApplozicInternal: private
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -182,6 +213,7 @@ public class UserService {
         return contact;
     }
 
+    //ApplozicInternal: private or rename
     public synchronized void processUser(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -206,6 +238,7 @@ public class UserService {
         baseContactService.upsert(contact);
     }
 
+    //ApplozicInternal: private
     public synchronized void processMuteUserResponse(MuteUserResponse response) {
         Contact contact = new Contact();
         contact.setUserId(response.getUserId());
@@ -221,6 +254,15 @@ public class UserService {
         baseContactService.upsert(contact);
     }
 
+    /**
+     * Retrieves and syncs a list of online users from the server.
+     *
+     * <p>This methods updates the local user/contact data for these retrieved users
+     * by calling {@link UserService#processUserDetail(Set)}.</p>
+     *
+     * @param numberOfUser the number of users to return
+     * @return array of userIds of the online users
+     */
     public synchronized String[] getOnlineUsers(int numberOfUser) {
         try {
             Map<String, String> userMapList = userClientService.getOnlineUserList(numberOfUser);
@@ -246,6 +288,17 @@ public class UserService {
         return null;
     }
 
+    //Cleanup: rename (syncRegisteredUsers)
+    /**
+     * Retrieves and syncs a list of registered users from the server.
+     *
+     * <p>This methods updates the local user/contact data for these retrieved users
+     * by calling {@link UserService#processUserDetail(Set)}.</p>
+     *
+     * @param startTime the start time in milliseconds. eg: a start time of X will return all the
+     *                  registered users created after X
+     * @return the server api response. use {@link RegisteredUsersApiResponse#getUsers()}
+     */
     public synchronized RegisteredUsersApiResponse getRegisteredUsersList(Long startTime, int pageSize) {
         String response = userClientService.getRegisteredUsers(startTime, pageSize);
         RegisteredUsersApiResponse apiResponse = null;
@@ -260,6 +313,15 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Mutes notifications for the given user Id.
+     *
+     * <p>The current user will be taken from the user shared preferences.</p>
+     *
+     * @param userId the user id of the user to mute
+     * @param notificationAfterTime the time (in milliseconds) to mute the user for
+     * @return the api response
+     */
     public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
         ApiResponse response = userClientService.muteUserNotifications(userId, notificationAfterTime);
 
@@ -273,6 +335,14 @@ public class UserService {
         return response;
     }
 
+    /**
+     * Gets the list of users muted by the current user. Also syncs them locally.
+     *
+     * <p>The muted user ids can be accessed from the array list items
+     * by using {@link MuteUserResponse#getUserId()}.</p>
+     *
+     * @return an array list of {@link MuteUserResponse}
+     */
     public List<MuteUserResponse> getMutedUserList() {
         MuteUserResponse[] mutedUserList = userClientService.getMutedUserList();
 
@@ -285,14 +355,21 @@ public class UserService {
         return Arrays.asList(mutedUserList);
     }
 
+    //ApplozicInternal: private
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status) {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
     }
 
+    /**
+     * Updates details of the current user.
+     *
+     * <p>This method updates more than just the display name or image link. See the parameters.</p>
+     */
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status, String contactNumber, Map<String, String> metadata) {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
     }
 
+    //ApplozicInternal: private
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -333,6 +410,7 @@ public class UserService {
         return response.getStatus();
     }
 
+    //ApplozicInternal: private
     public ApiResponse updateUserWithResponse(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -372,19 +450,30 @@ public class UserService {
         return response;
     }
 
+    /**
+     * Updates the user details for the given user.
+     *
+     * <p>User details are updated in the backend as well as locally.
+     * Locally the Contact objects are updated in the database.</p>
+     *
+     * @param user the user data to update. don't forget the userId.
+     * @return The user update api response
+     */
     public ApiResponse updateUserWithResponse(User user) {
         return updateUserWithResponse(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
 
+    //ApplozicInternal: private
     public String updateLoggedInUser(User user) {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getMetadata());
     }
 
+    //ApplozicInternal: private
     public String updateUser(User user) {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
 
-
+    //ApplozicInternal: default
     public void processUserDetailsResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             List<UserDetail> userDetails = (List<UserDetail>) GsonUtils.getObjectFromJson(response, new TypeToken<List<UserDetail>>() {
@@ -395,14 +484,25 @@ public class UserService {
         }
     }
 
+    //ApplozicInternal: default
+    //Cleanup: this method should be renamed sync user/contact details
+    /**
+     * Syncs user data from the server.
+     *
+     * @see UserClientService#postUserDetailsByUserIds(Set)
+     *
+     * @param userIds the userIds of users to sync the data of
+     */
     public void processUserDetailsByUserIds(Set<String> userIds) {
         userClientService.postUserDetailsByUserIds(userIds);
     }
 
+    //ApplozicInternal: private
     public ApiResponse processUserReadConversation() {
         return userClientService.getUserReadServerCall();
     }
 
+    //ApplozicInternal: private
     public String processUpdateUserPassword(String oldPassword, String newPassword) {
         String response = userClientService.updateUserPassword(oldPassword, newPassword);
         if (!TextUtils.isEmpty(response) && MobiComKitConstants.SUCCESS.equals(response)) {
@@ -411,6 +511,15 @@ public class UserService {
         return response;
     }
 
+    /**
+     * Will return and sync a list of contacts matching the search term, from the server.
+     *
+     * <p>Note: The local contacts are also updated locally.</p>
+     *
+     * @param searchString the search term
+     * @return a list of users (as Contact objects)
+     * @throws ApplozicException when the backend returns an error response
+     */
     public List<Contact> getUserListBySearch(String searchString) throws ApplozicException {
         try {
             ApiResponse response = userClientService.getUsersBySearchString(searchString);
@@ -438,10 +547,19 @@ public class UserService {
         return null;
     }
 
+    //Cleanup: not needed
+    @ApplozicInternal
     public void updateUser(User user, AlCallback callback) {
         AlTask.execute(new AlUserUpdateTask(context, user, callback));
     }
 
+    /**
+     * Updates the display name for the given userId (remote and local).
+     *
+     * @param userId the user id of the user
+     * @param userDisplayName the new display name
+     * @return api response from the server
+     */
     public ApiResponse updateUserDisplayName(String userId, String userDisplayName) {
        ApiResponse response =  userClientService.updateUserDisplayName(userId,userDisplayName);
        if (response != null && response.isSuccess()) {

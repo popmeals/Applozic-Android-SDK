@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import androidx.core.app.RemoteInput;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -17,10 +18,10 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
 
 /**
- * Created by adarsh on 4/12/14.
  * This class should handle all notification types coming from server or some other client.
  * Depending upon actionType it should either do some bg service,task or open some view like activity.
  */
+@ApplozicInternal
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
     public static String LAUNCH_APP = "applozic.LAUNCH_APP";

@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.listners.MediaDownloadProgressHandler;
 import com.applozic.mobicommons.commons.image.PhotoDecodeRunnable;
@@ -37,6 +38,7 @@ import java.lang.ref.WeakReference;
  * this allows PhotoTask to start on a Thread, run a download in a delegate object, then
  * run a decode, and then start over again. This class can be pooled and reused as necessary.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class AttachmentTask implements
         AttachmentDownloader.TaskRunnableDownloadMethods, TaskRunnableDecodeMethods {
 

@@ -4,7 +4,7 @@ import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicomkit.sync.SyncUserBlockListFeed;
 
 /**
- * Created by sunil on 17/3/16.
+ * Model class for storing data related to the retrieval of blocked users from the server.
  */
 public class SyncBlockUserApiResponse extends JsonMarker {
 

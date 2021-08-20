@@ -7,7 +7,7 @@ import com.applozic.mobicommons.json.JsonMarker;
 import java.util.Map;
 
 /**
- * @author devashish
+ * Model class for the registration response returned from a register/login/update request.
  */
 public class RegistrationResponse extends JsonMarker {
 
@@ -205,6 +205,9 @@ public class RegistrationResponse extends JsonMarker {
         this.deactivate = deactivate;
     }
 
+    /**
+     * Pricing types for Applozic accounts.
+     */
     public static enum PricingType {
 
         CLOSED(Short.valueOf("-1")), BETA(Short.valueOf("0")), STARTER(Short.valueOf("1")), LAUNCH(Short.valueOf("2")), GROWTH(Short.valueOf("3")), ENTERPRISE(
@@ -220,10 +223,20 @@ public class RegistrationResponse extends JsonMarker {
         }
     }
 
+    /**
+     * Checks if the object is one for a successful registration.
+     *
+     * <p>This can be for user data updates, user registration and anonymous registration.</p>
+     *
+     * @return true/false accordingly
+     */
     public boolean isRegistrationSuccess() {
         return (!TextUtils.isEmpty(message) && (SuccessResponse.UPDATED.getValue().equals(message) || SuccessResponse.REGISTERED.getValue().equals(message) || SuccessResponse.REGISTERED_WITHOUTREGISTRATIONID.getValue().equals(message)));
     }
 
+    /**
+     * Registration success response constants (that will be received from server).
+     */
     public static enum SuccessResponse {
         UPDATED("UPDATED"), REGISTERED("REGISTERED"), REGISTERED_WITHOUTREGISTRATIONID("REGISTERED.WITHOUTREGISTRATIONID");
         private final String value;

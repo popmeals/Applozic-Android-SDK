@@ -22,6 +22,7 @@ import static com.applozic.mobicomkit.api.account.user.UserLoginTask.TaskListene
 /**
  * Created by applozic on 12/5/15.
  */
+//Cleanup: can be removed
 public class ApplozicBridge {
 
     /**

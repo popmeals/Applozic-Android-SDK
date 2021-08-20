@@ -9,6 +9,14 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+/**
+ * Task that wraps around {@link UserService#getUserListBySearch(String)}.
+ *
+ * <p>Returns a list of users for the given search term.
+ * Created for async execution of the above mentioned method.
+ * Use {@link AlUserSearchHandler#onSuccess(List, Context)} and
+ * {@link AlUserSearchHandler#onFailure(Exception, Context)} to get the results.</p>
+ */
 public class AlUserSearchTask extends AlAsyncTask<Void, List<Contact>> {
 
     private WeakReference<Context> context;

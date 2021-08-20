@@ -6,9 +6,8 @@ import com.applozic.mobicomkit.exception.ApplozicException;
 import java.util.List;
 
 /**
- * Created by reytum on 27/11/17.
+ * Callback for when retrieving a message list.
  */
-
 public interface MessageListHandler {
     void onResult(List<Message> messageList, ApplozicException e);
 }

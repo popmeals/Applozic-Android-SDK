@@ -8,13 +8,12 @@ import android.net.NetworkInfo;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.ApplozicWorker;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 
-/**
- * Created by devashish on 29/08/15.
- */
+@ApplozicInternal
 public class ConnectivityReceiver extends BroadcastReceiver {
     private static final String TAG = "ConnectivityReceiver";
 

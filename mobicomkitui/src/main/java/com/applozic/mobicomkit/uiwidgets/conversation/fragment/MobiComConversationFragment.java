@@ -855,12 +855,17 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
 
                     final Message lastMessage = !messageList.isEmpty() ? messageList.get(messageList.size() - 1) : null;
 
-                    if ((messageTemplate.getTextMessageList() != null && !messageTemplate.getTextMessageList().getMessageList().isEmpty() && messageTemplate.getTextMessageList().isSendMessageOnClick() && "text".equals(getMessageType(lastMessage)))
-                            || (messageTemplate.getImageMessageList() != null && !messageTemplate.getImageMessageList().getMessageList().isEmpty() && messageTemplate.getImageMessageList().isSendMessageOnClick() && "image".equals(getMessageType(lastMessage)))
-                            || (messageTemplate.getVideoMessageList() != null && !messageTemplate.getVideoMessageList().getMessageList().isEmpty() && messageTemplate.getVideoMessageList().isSendMessageOnClick() && "video".equals(getMessageType(lastMessage)))
-                            || (messageTemplate.getLocationMessageList() != null && !messageTemplate.getLocationMessageList().getMessageList().isEmpty() && messageTemplate.getLocationMessageList().isSendMessageOnClick() && "location".equals(getMessageType(lastMessage)))
-                            || (messageTemplate.getContactMessageList() != null && !messageTemplate.getContactMessageList().getMessageList().isEmpty() && messageTemplate.getContactMessageList().isSendMessageOnClick() && "contact".equals(getMessageType(lastMessage)))
-                            || (messageTemplate.getAudioMessageList() != null && !messageTemplate.getAudioMessageList().getMessageList().isEmpty() && messageTemplate.getAudioMessageList().isSendMessageOnClick() && "audio".equals(getMessageType(lastMessage)))
+                    String messageType = null;
+                    if (lastMessage != null) {
+                        messageType = lastMessage.getMessageType();
+                    }
+
+                    if ((messageTemplate.getTextMessageList() != null && !messageTemplate.getTextMessageList().getMessageList().isEmpty() && messageTemplate.getTextMessageList().isSendMessageOnClick() && "text".equals(messageType))
+                            || (messageTemplate.getImageMessageList() != null && !messageTemplate.getImageMessageList().getMessageList().isEmpty() && messageTemplate.getImageMessageList().isSendMessageOnClick() && "image".equals(messageType))
+                            || (messageTemplate.getVideoMessageList() != null && !messageTemplate.getVideoMessageList().getMessageList().isEmpty() && messageTemplate.getVideoMessageList().isSendMessageOnClick() && "video".equals(messageType))
+                            || (messageTemplate.getLocationMessageList() != null && !messageTemplate.getLocationMessageList().getMessageList().isEmpty() && messageTemplate.getLocationMessageList().isSendMessageOnClick() && "location".equals(messageType))
+                            || (messageTemplate.getContactMessageList() != null && !messageTemplate.getContactMessageList().getMessageList().isEmpty() && messageTemplate.getContactMessageList().isSendMessageOnClick() && "contact".equals(messageType))
+                            || (messageTemplate.getAudioMessageList() != null && !messageTemplate.getAudioMessageList().getMessageList().isEmpty() && messageTemplate.getAudioMessageList().isSendMessageOnClick() && "audio".equals(messageType))
                             || messageTemplate.getSendMessageOnClick()) {
                         sendMessage(message);
                     }
@@ -2310,12 +2315,12 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
 
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
         if (mimeType != null && (mimeType.startsWith("image"))) {
-            AttachmentAsyncTask attachmentAsyncTask = new AttachmentAsyncTask(uri, file, getActivity());
-            attachmentAsyncTask.setImageViewLayoutWeakReference(mediaContainer);
-            attachmentAsyncTask.setRelativeLayoutWeakReference(attachmentLayout);
-            attachmentAsyncTask.setTextViewWeakReference(attachedFile);
-            attachmentAsyncTask.setAlCustomizationSettingsLayoutWeakReference(alCustomizationSettings);
-            AlTask.execute(attachmentAsyncTask);
+            ImageCompressAsyncTask imageCompressAsyncTask = new ImageCompressAsyncTask(uri, file, getActivity());
+            imageCompressAsyncTask.setImageViewLayoutWeakReference(mediaContainer);
+            imageCompressAsyncTask.setRelativeLayoutWeakReference(attachmentLayout);
+            imageCompressAsyncTask.setTextViewWeakReference(attachedFile);
+            imageCompressAsyncTask.setAlCustomizationSettingsLayoutWeakReference(alCustomizationSettings);
+            AlTask.execute(imageCompressAsyncTask);
         } else {
             filePath = Uri.parse(file.getAbsolutePath()).toString();
             if (channel != null && channel.getType() != null && Channel.GroupType.OPEN.getValue().equals(channel.getType())) {
@@ -3150,26 +3155,6 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
         }
     }
 
-    private boolean isLoggedInUserAdminInCurrentChannel() {
-        if(channel == null) {
-            return false;
-        }
-
-        List<ChannelUserMapper> updatedChannelUserMapperList = ChannelService.getInstance(getActivity()).getListOfUsersFromChannelUserMapper(channel.getKey());
-
-        if(TextUtils.isEmpty(loggedInUserId)) {
-            return false;
-        }
-
-        for (ChannelUserMapper channelUserMapper : updatedChannelUserMapperList) {
-            if(loggedInUserId.equals(channelUserMapper.getUserKey())) {
-                return ChannelUserMapper.UserRole.ADMIN.getValue() == channelUserMapper.getRole().intValue();
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Checks if "chat" for the current conversation need to be disabled and hides/shows the
      * {@link #individualMessageSendLayout} and {@link #linearLayoutMessageSendDisabledInfo} accordingly.
@@ -3191,7 +3176,7 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
                 hideMessageSendLayoutAndShowUserNotInGroupInfo();
             } else if (channel.isDeleted()) { //priority 2.2
                 hideMessageSendLayoutAndShowGroupDeletedInfo();
-            } else if(channel.hasAdminOnlyMessageClientSupportRequest() && !isLoggedInUserAdminInCurrentChannel()) { //priority 2.3
+            } else if(channel.hasAdminOnlyMessageClientSupportRequest() && !ChannelService.getInstance(getContext()).isLoggedInUserAdminInChannel(channel)) { //priority 2.3
                 hideMessageSendLayoutAndShowAdminOnlyMessagesAllowedInfo();
             } else { //if no reason to disable chat then show message send layout
                 showMessageSendLayoutAndHideChatDisabledLayout();
@@ -3590,7 +3575,7 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
                 templateAdapter.notifyDataSetChanged();
                 //createMessageTemplate(Arrays.asList(messageArray));
             } else {
-                String type = getMessageType(lastMessage);
+                String type = lastMessage.getMessageType();
                 if ("audio".equals(type)) {
                     if (messageTemplate.getAudioMessageList() != null) {
                         if ((lastMessage.isTypeOutbox() && messageTemplate.getAudioMessageList().isShowOnSenderSide()) ||
@@ -3642,50 +3627,6 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
                 }
             }
         }
-    }
-
-    public String getMessageType(Message lastMessage) {
-        String type = null;
-
-        if (lastMessage == null) {
-            return null;
-        }
-
-        if (lastMessage.getContentType() == Message.ContentType.LOCATION.getValue()) {
-            type = "location";
-        } else if (lastMessage.getContentType() == Message.ContentType.AUDIO_MSG.getValue()) {
-            type = "audio";
-        } else if (lastMessage.getContentType() == Message.ContentType.VIDEO_MSG.getValue()) {
-            type = "video";
-        } else if (lastMessage.getContentType() == Message.ContentType.ATTACHMENT.getValue()) {
-            if (lastMessage.getFilePaths() != null) {
-                String filePath = lastMessage.getFilePaths().get(lastMessage.getFilePaths().size() - 1);
-                String mimeType = FileUtils.getMimeType(filePath);
-
-                if (mimeType != null) {
-                    if (mimeType.startsWith("image")) {
-                        type = "image";
-                    } else if (mimeType.startsWith("audio")) {
-                        type = "audio";
-                    } else if (mimeType.startsWith("video")) {
-                        type = "video";
-                    }
-                }
-            } else if (lastMessage.getFileMetas() != null) {
-                if (lastMessage.getFileMetas().getContentType().contains("image")) {
-                    type = "image";
-                } else if (lastMessage.getFileMetas().getContentType().contains("audio")) {
-                    type = "audio";
-                } else if (lastMessage.getFileMetas().getContentType().contains("video")) {
-                    type = "video";
-                }
-            }
-        } else if (lastMessage.getContentType() == Message.ContentType.CONTACT_MSG.getValue()) {
-            type = "contact";
-        } else {
-            type = "text";
-        }
-        return type;
     }
 
     public class DownloadConversation extends AlAsyncTask<Integer, Long> {
@@ -4093,8 +4034,7 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
         }
     }
 
-    public class AttachmentAsyncTask extends AlAsyncTask<Integer, Long> {
-
+    public class ImageCompressAsyncTask extends AlAsyncTask<Integer, Long> {
         File file;
         Uri uri;
         String mimeType;
@@ -4104,7 +4044,7 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
         WeakReference<ImageView> imageViewLayoutWeakReference;
         WeakReference<AlCustomizationSettings> alCustomizationSettingsLayoutWeakReference;
 
-        public AttachmentAsyncTask(Uri uri, File file, FragmentActivity activity) {
+        public ImageCompressAsyncTask(Uri uri, File file, FragmentActivity activity) {
             this.file = file;
             this.uri = uri;
             this.activityWeakReference = new WeakReference<>(activity);
@@ -4129,7 +4069,6 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
 
         @Override
         protected Long doInBackground() {
-
             mimeType = URLConnection.guessContentTypeFromName(file.getName());
             if (alCustomizationSettingsLayoutWeakReference.get().isImageCompressionEnabled() && mimeType != null && (mimeType.startsWith("image"))) {
                 FragmentActivity fragmentActivity = activityWeakReference.get();

@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.collection.LruCache;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.listners.MediaDownloadProgressHandler;
@@ -67,6 +68,7 @@ import java.util.concurrent.TimeUnit;
  * thread to change the bitmap to reflect the state.
  */
 @SuppressWarnings("unused")
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class AttachmentManager {
 
     /*

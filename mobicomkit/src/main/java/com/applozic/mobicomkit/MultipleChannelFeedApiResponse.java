@@ -1,13 +1,12 @@
 package com.applozic.mobicomkit;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicomkit.feed.ChannelFeed;
 
 import java.util.List;
 
-/**
- * Created by sunil on 12/1/16.
- */
+@ApplozicInternal
 public class MultipleChannelFeedApiResponse extends JsonMarker {
 
     private static final String SUCCESS = "success";

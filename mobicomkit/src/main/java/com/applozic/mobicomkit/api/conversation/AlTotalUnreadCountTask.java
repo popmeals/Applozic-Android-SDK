@@ -11,6 +11,10 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * Gets the total unread count for the current user.
+ * This count is retrieved from the server.
+ */
 public class AlTotalUnreadCountTask extends AlAsyncTask<Void, Integer> {
     private static final String TAG = "AlTotalUnreadCountTask";
 

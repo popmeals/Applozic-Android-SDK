@@ -7,9 +7,9 @@ import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
 /**
- * Created by Adarsh on 12/30/16.
+ * Mutes notification for a user or channel for a specified amount of time.
+ * Asynchronous wrapper over {@link ChannelService#muteNotifications(MuteNotificationRequest)}.
  */
-
 public class MuteNotificationAsync extends AlAsyncTask<Void, Boolean> {
 
     private final MuteNotificationAsync.TaskListener taskListener;

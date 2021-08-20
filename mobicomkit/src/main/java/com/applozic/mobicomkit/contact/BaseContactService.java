@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by adarsh on 7/7/15.
+ * Base class for contact related operations.
  */
 public interface BaseContactService {
 

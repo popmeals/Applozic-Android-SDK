@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicommons.ApplozicService;
@@ -13,7 +14,7 @@ import com.applozic.mobicommons.data.AlPrefSettings;
 import java.io.File;
 import java.util.Set;
 
-
+@ApplozicInternal //move the code used here to Applozic class eg: Applozic.getCurrentUser();
 public class MobiComUserPreference {
 
     private static final String USER_ID = "userId";

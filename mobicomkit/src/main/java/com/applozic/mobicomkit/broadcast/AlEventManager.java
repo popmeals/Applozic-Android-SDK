@@ -13,11 +13,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles real time update events that are registered to listen for.
- * multiple listeners can be registered by unique id
+ * Handles real-time update events.
+ * These include but not limited to callbacks for events like message sent, received, user online etc.
+ *
+ * <p>The listener can be registered for using {@link AlEventManager#registerUIListener(String, ApplozicUIListener)}.
+ * Callbacks will be sent for all registered listeners.
+ * Do unregister the listener when not required.</p>
  */
 public class AlEventManager {
-    public static final String AL_EVENT = "AL_EVENT";
+    public static final String AL_EVENT = "AL_EVENT"; //ApplozicInternal: protected
     private static AlEventManager eventManager;
     private Map<String, ApplozicUIListener> listenerMap;
     private Map<String, AlMqttListener> mqttListenerMap;
@@ -54,6 +58,7 @@ public class AlEventManager {
         }
     }
 
+    //ApplozicInternal: private
     public void registerMqttListener(String id, AlMqttListener mqttListener) {
         if (mqttListenerMap == null) {
             mqttListenerMap = new HashMap<>();
@@ -64,6 +69,7 @@ public class AlEventManager {
         }
     }
 
+    //ApplozicInternal: private
     public void unregisterMqttListener(String id) {
         if (mqttListenerMap != null) {
             mqttListenerMap.remove(id);
@@ -80,6 +86,7 @@ public class AlEventManager {
         }
     }
 
+    //ApplozicInternal: default
     public void postMqttEventData(MqttMessageResponse messageResponse) {
         if (mqttListenerMap != null && !mqttListenerMap.isEmpty()) {
             for (AlMqttListener alMqttListener : mqttListenerMap.values()) {

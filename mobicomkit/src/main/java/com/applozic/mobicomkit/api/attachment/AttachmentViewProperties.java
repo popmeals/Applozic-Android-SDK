@@ -2,12 +2,11 @@ package com.applozic.mobicomkit.api.attachment;
 
 import android.content.Context;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.conversation.Message;
 
-/**
- * Created by devashish on 22/07/16.
- */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class AttachmentViewProperties {
 
     public AttachmentViewProperties(int width, int height, Context context, Message message) {

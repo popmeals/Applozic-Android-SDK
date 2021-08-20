@@ -5,7 +5,14 @@ import android.content.Context;
 import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-
+/**
+ * Task that wraps around {@link UserService#processUserBlock(String, boolean)}.
+ *
+ * <p>Blocks the contact/user with the given userId. Remotely as well as locally.
+ *
+ * Created for async execution of the above mentioned method.
+ * Use {@link TaskListener} to get the results.</p>
+ */
 public class UserBlockTask extends AlAsyncTask<Void, Boolean> {
 
     private final TaskListener taskListener;

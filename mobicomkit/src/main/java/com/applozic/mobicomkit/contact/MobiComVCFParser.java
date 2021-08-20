@@ -1,22 +1,20 @@
 package com.applozic.mobicomkit.contact;
 
-/**
- * Created by devashish on 08/03/16.
- */
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import android.util.Base64;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-
 /**
  * Parser code for parsing the vCard file and creating a CSV file.
  */
+@ApplozicInternal
 public class MobiComVCFParser {
 
     public static final String BEGIN_VCARD = "BEGIN:VCARD";
@@ -103,6 +101,7 @@ public class MobiComVCFParser {
      * @param encodedString
      * @return bitmap (from given string)
      */
+    //ApplozicInternal: private
     public Bitmap stringToBitMap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);

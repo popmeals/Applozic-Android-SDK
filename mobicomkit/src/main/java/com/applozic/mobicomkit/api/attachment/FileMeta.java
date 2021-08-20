@@ -3,7 +3,11 @@ package com.applozic.mobicomkit.api.attachment;
 import com.applozic.mobicommons.json.JsonMarker;
 
 /**
- * Created by adarsh on 4/10/14.
+ * Model class to store the file attachments to a message.
+ * This includes the remote file data such as thumbnail key, file key etc.
+ * The blob keys can be used with the appropriate URLs to download the files.
+ * See {@link com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider}
+ * for downloading the files.
  */
 public class FileMeta extends JsonMarker {
 

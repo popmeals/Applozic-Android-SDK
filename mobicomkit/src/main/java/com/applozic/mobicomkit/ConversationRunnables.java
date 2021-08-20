@@ -3,6 +3,7 @@ package com.applozic.mobicomkit;
 import android.content.Context;
 import android.os.Process;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MessageWorker;
@@ -14,10 +15,7 @@ import com.applozic.mobicommons.people.contact.Contact;
 
 import java.util.List;
 
-/**
- * Created by ashish on 27/03/18.
- */
-
+@ApplozicInternal
 public class ConversationRunnables {
 
     Context context;

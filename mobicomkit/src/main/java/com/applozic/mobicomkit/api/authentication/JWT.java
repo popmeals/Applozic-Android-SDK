@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//ApplozicInternal: default
 public class JWT {
 
     private Map<String, String> header;
@@ -269,6 +270,7 @@ public class JWT {
                 }).create();
     }
 
+    //ApplozicInternal: default
     public static void parseToken(Context context, String token) {
         JWT jwtService = new JWT(token);
         MobiComUserPreference.getInstance(context)

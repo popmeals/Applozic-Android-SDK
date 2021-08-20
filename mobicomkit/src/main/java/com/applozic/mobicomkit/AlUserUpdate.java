@@ -4,6 +4,9 @@ import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.Map;
 
+/**
+ * Model class for storing data for a user/contact update.
+ */
 public class AlUserUpdate extends JsonMarker {
     private String displayName;
     private String imageLink;

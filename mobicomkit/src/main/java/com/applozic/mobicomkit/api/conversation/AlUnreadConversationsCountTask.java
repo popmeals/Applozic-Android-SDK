@@ -11,6 +11,10 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+/**
+ * Gets the number of unread conversations for the current user.
+ * This count is retrieved from the server.
+ */
 public class AlUnreadConversationsCountTask extends AlAsyncTask<Void, Integer> {
     private static final String TAG = "AlUnreadConversationsCountTask";
 

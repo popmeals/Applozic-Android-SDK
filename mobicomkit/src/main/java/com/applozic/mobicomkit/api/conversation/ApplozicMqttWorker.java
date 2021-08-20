@@ -1,7 +1,9 @@
 package com.applozic.mobicomkit.api.conversation;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
@@ -12,6 +14,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.ApplozicMqttService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -19,11 +22,12 @@ import com.applozic.mobicommons.json.GsonUtils;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Handles all the real-time MQTT related code. Example: typing, subscribing etc.
- *
- * Created by sunil on 30/12/15.
  */
+@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible (maybe keep it at the root)
 public class ApplozicMqttWorker extends Worker {
     public static final String TAG = "ApplozicMqttWorker";
 
@@ -45,11 +49,15 @@ public class ApplozicMqttWorker extends Worker {
         super(context, workerParams);
     }
 
-    private static void enqueueWork(Context context, Data data) {
+    private static void enqueueWork(Context context, Data data, int minutes) {
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
-        OneTimeWorkRequest mqttWorkerRequest = new OneTimeWorkRequest.Builder(ApplozicMqttWorker.class)
-                .setInputData(data).setConstraints(constraints)
-                .build();
+        OneTimeWorkRequest.Builder builder = new OneTimeWorkRequest.Builder(ApplozicMqttWorker.class)
+                .setInputData(data)
+                .setConstraints(constraints);
+        if (minutes > 0 && minutes < 60) {
+            builder.setInitialDelay(minutes, TimeUnit.MINUTES);
+        }
+        OneTimeWorkRequest mqttWorkerRequest = builder.build();
         WorkManager.getInstance(context).enqueue(mqttWorkerRequest);
     }
 
@@ -64,34 +72,35 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
 
         Utils.printLog(context, TAG, "Enqueue work disconnect publish...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
-    public static void enqueueWorkSubscribeAndConnectPublish(Context context, boolean useEncrypted) {
+    public static void enqueueWorkSubscribeAndConnectPublishAfter(Context context, boolean useEncrypted, int minutes) {
+        Utils.printLog(context, TAG, "Enqueue work subscribe and connect publish after " + minutes + " minutes...");
         Data.Builder dataBuilder = new Data.Builder();
         dataBuilder.putBoolean(ApplozicMqttWorker.SUBSCRIBE, true);
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
-
-        Utils.printLog(context, TAG, "Enqueue work subscribe and connect publish...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), minutes);
     }
 
+    //Cleanup: can be removed
     public static void enqueueWorkSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         Data.Builder dataBuilder = new Data.Builder();
         dataBuilder.putBoolean(ApplozicMqttWorker.CONNECT_TO_SUPPORT_GROUP_TOPIC, true);
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
 
         Utils.printLog(context, TAG, "Enqueue work subscribe to support group...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
+    //Cleanup: can be removed
     public static void enqueueWorkUnSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         Data.Builder dataBuilder = new Data.Builder();
         dataBuilder.putBoolean(ApplozicMqttWorker.DISCONNECT_FROM_SUPPORT_GROUP_TOPIC, true);
         dataBuilder.putBoolean(ApplozicMqttWorker.USE_ENCRYPTED_TOPIC, useEncrypted);
 
         Utils.printLog(context, TAG, "Enqueue work unsubscribe to support group...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkSubscribeToTyping(Context context, Channel channel, Contact contact) {
@@ -108,7 +117,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.SUBSCRIBE_TO_TYPING, true);
 
         Utils.printLog(context, TAG, "Enqueue work subscribe to typing...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkUnSubscribeToTyping(Context context, Channel channel, Contact contact) {
@@ -125,7 +134,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.UN_SUBSCRIBE_TO_TYPING, true);
 
         Utils.printLog(context, TAG, "Enqueue work unsubscribe to support group...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkPublishTypingStatus(Context context, Channel channel, Contact contact, boolean typingStarted) {
@@ -142,7 +151,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.TYPING, typingStarted);
 
         Utils.printLog(context, TAG, "Enqueue work publish typing status...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     public static void enqueueWorkConnectPublish(Context context) {
@@ -150,7 +159,7 @@ public class ApplozicMqttWorker extends Worker {
         dataBuilder.putBoolean(ApplozicMqttWorker.CONNECTED_PUBLISH, true);
 
         Utils.printLog(context, TAG, "Enqueue work connect publish...");
-        enqueueWork(context, dataBuilder.build());
+        enqueueWork(context, dataBuilder.build(), 0);
     }
 
     @NonNull
@@ -178,7 +187,14 @@ public class ApplozicMqttWorker extends Worker {
         boolean typing = data.getBoolean(TYPING, false);
 
         if (subscribe) {
-            ApplozicMqttService.getInstance(getApplicationContext()).subscribe(useEncryptedTopic);
+            if (isAppInBackground()) {
+                Log.d(TAG, "App is in background, MQTT method call not required...");
+                return Result.success();
+            }
+            ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(getApplicationContext());
+            applozicMqttService.connectClient(true);
+            applozicMqttService.subscribe(useEncryptedTopic);
+            applozicMqttService.publishClientStatus(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
         }
 
         if (subscribeToTyping) {
@@ -208,11 +224,13 @@ public class ApplozicMqttWorker extends Worker {
         }
 
         if (!TextUtils.isEmpty(userKeyString) && !TextUtils.isEmpty(deviceKeyString)) {
-            ApplozicMqttService.getInstance(getApplicationContext()).disconnectPublish(userKeyString, deviceKeyString, "0", useEncryptedTopic);
+            ApplozicMqttService.getInstance(getApplicationContext()).publishOfflineStatusUnsubscribeAndDisconnect(userKeyString, deviceKeyString, useEncryptedTopic);
         }
 
         if (connectedStatus) {
-            ApplozicMqttService.getInstance(getApplicationContext()).connectPublish(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
+            ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(getApplicationContext());
+            applozicMqttService.connectClient(true);
+            applozicMqttService.publishClientStatus(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
         }
 
         if (contact != null && stop) {
@@ -232,5 +250,13 @@ public class ApplozicMqttWorker extends Worker {
         }
 
         return Result.success();
+    }
+
+    //this method will not work perfectly
+    //however for now there is no other suitable method to check if app is in background without using the lifecycle library
+    private boolean isAppInBackground() {
+        ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(myProcess);
+        return myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
     }
 }

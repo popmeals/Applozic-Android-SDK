@@ -294,7 +294,7 @@ public class ConversationActivity extends AppCompatActivity implements MessageCo
     @Override
     protected void onResume() {
         super.onResume();
-        Applozic.connectPublishWithVerifyToken(this, getString(R.string.auth_token_loading_message));
+        Applozic.connectPublishWithVerifyTokenAfter(this, getString(R.string.auth_token_loading_message), 0);
         if (!Utils.isInternetAvailable(getApplicationContext())) {
             String errorMessage = getResources().getString(R.string.internet_connection_not_available);
             showErrorMessageView(errorMessage);

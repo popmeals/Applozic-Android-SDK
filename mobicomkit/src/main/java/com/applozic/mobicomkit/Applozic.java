@@ -193,6 +193,14 @@ public class Applozic {
     }
 
     //ApplozicInternal: private
+    /**
+     * Publish offline status, unsubscribe from conversation topic (for real time updates) and disconnect MQTT.
+     *
+     * @param context the context
+     * @param deviceKeyString the device key string (id)
+     * @param userKeyString the user key string (id)
+     * @param useEncrypted true will send a encrypted topic filter along with a non-encrypted while un-subscribing, false will send only non-encrypted
+     */
     public static void disconnectPublish(Context context, String deviceKeyString, String userKeyString, boolean useEncrypted) {
         if (!TextUtils.isEmpty(userKeyString) && !TextUtils.isEmpty(deviceKeyString)) {
             ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
@@ -214,7 +222,6 @@ public class Applozic {
      */
     public static void disconnectPublish(Context context) {
         disconnectPublish(context, true);
-        disconnectPublish(context, false);
     }
 
     /**
@@ -222,28 +229,42 @@ public class Applozic {
      *
      * @param context the context
      */
+    //Cleanup: can be removed, not used in SDK
     public static void connectPublish(Context context) {
-        connectPublish(context, true);
-        connectPublish(context, false);
+        ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, 0);
     }
 
     /**
-     * Connect to MQTT for publishing and receiving events after verifying and refreshing the JWT auth token.
+     * Connect to MQTT after for publishing and receiving events after verifying and refreshing the JWT auth token.
      *
      * @param context the context
+     * @param loadingMessage the message to display in the progress dialog while loading
      */
     public static void connectPublishWithVerifyToken(final Context context, String loadingMessage) {
+        connectPublishWithVerifyTokenAfter(context, loadingMessage, 0);
+    }
+
+    /**
+     * Connect to MQTT after the given interval in minutes for publishing and receiving events
+     * after verifying and refreshing the JWT auth token.
+     *
+     * @param context the context
+     * @param loadingMessage the message to display in the progress dialog while loading
+     * @param minutes the minutes after which to schedule the MQTT connection request, pass 0 for immediate
+     */
+    public static void connectPublishWithVerifyTokenAfter(final Context context, String loadingMessage, int minutes) {
+        if (context == null) {
+            return;
+        }
+        AlLog.d("Applozic", "MQTTRetry", "Refreshing JWT Token if required...");
         AlAuthService.verifyToken(context, loadingMessage, new AlCallback() {
             @Override
             public void onSuccess(Object response) {
-                connectPublish(context, true);
-                connectPublish(context, false);
+                ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, minutes);
             }
 
             @Override
-            public void onError(Object error) {
-
-            }
+            public void onError(Object error) { }
         });
     }
 
@@ -252,11 +273,6 @@ public class Applozic {
         final String deviceKeyString = MobiComUserPreference.getInstance(context).getDeviceKeyString();
         final String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
         disconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
-    }
-
-    //ApplozicInternal: private
-    public static void connectPublish(Context context, boolean useEncrypted) {
-        ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublish(context, useEncrypted);
     }
 
     //ApplozicInternal: private

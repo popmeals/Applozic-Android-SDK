@@ -114,7 +114,9 @@ public class MobiComKitBroadcastReceiver extends BroadcastReceiver {
         } else if (BroadcastService.INTENT_ACTIONS.UPDATE_LAST_SEEN_AT_TIME.toString().equals(action)) {
             conversationUIService.updateLastSeenStatus(intent.getStringExtra("contactId"));
         } else if (BroadcastService.INTENT_ACTIONS.MQTT_DISCONNECTED.toString().equals(action)) {
-            conversationUIService.reconnectMQTT();
+            if (intent.getBooleanExtra("isMQTTReconnectionBroadcast", false)) {
+                conversationUIService.reconnectMQTT();
+            }
         }else if(BroadcastService.INTENT_ACTIONS.MQTT_CONNECTED.toString().equals(action)){
             conversationUIService.onMqttConnected();
         } else if (BroadcastService.INTENT_ACTIONS.CHANNEL_SYNC.toString().equals(action)) {

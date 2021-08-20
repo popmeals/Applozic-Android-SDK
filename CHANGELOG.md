@@ -1,7 +1,7 @@
 
 ## Changelog
 
-**Version  5.102.0** - TThursday, 20 August 2021
+**Version  5.102.0** - Thursday, 20 August 2021
 
 * MQTT Client Retry Policy Change:
 - The MQTT client now will retry 3 times per connection session. Each will happen after a random interval between 1-40 minutes.

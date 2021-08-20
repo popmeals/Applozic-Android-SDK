@@ -1,7 +1,9 @@
 package com.applozic.mobicomkit.api.conversation;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
@@ -185,6 +187,10 @@ public class ApplozicMqttWorker extends Worker {
         boolean typing = data.getBoolean(TYPING, false);
 
         if (subscribe) {
+            if (isAppInBackground()) {
+                Log.d(TAG, "App is in background, MQTT method call not required...");
+                return Result.success();
+            }
             ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(getApplicationContext());
             applozicMqttService.connectClient(true);
             applozicMqttService.subscribe(useEncryptedTopic);
@@ -223,7 +229,7 @@ public class ApplozicMqttWorker extends Worker {
 
         if (connectedStatus) {
             ApplozicMqttService applozicMqttService = ApplozicMqttService.getInstance(getApplicationContext());
-            applozicMqttService.connectClient(false);
+            applozicMqttService.connectClient(true);
             applozicMqttService.publishClientStatus(MobiComUserPreference.getInstance(getApplicationContext()).getSuUserKeyString(), MobiComUserPreference.getInstance(getApplicationContext()).getDeviceKeyString(), "1");
         }
 
@@ -244,5 +250,13 @@ public class ApplozicMqttWorker extends Worker {
         }
 
         return Result.success();
+    }
+
+    //this method will not work perfectly
+    //however for now there is no other suitable method to check if app is in background without using the lifecycle library
+    private boolean isAppInBackground() {
+        ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(myProcess);
+        return myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
     }
 }

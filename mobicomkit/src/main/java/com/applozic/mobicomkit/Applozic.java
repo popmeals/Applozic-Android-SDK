@@ -253,6 +253,9 @@ public class Applozic {
      * @param minutes the minutes after which to schedule the MQTT connection request, pass 0 for immediate
      */
     public static void connectPublishWithVerifyTokenAfter(final Context context, String loadingMessage, int minutes) {
+        if (context == null) {
+            return;
+        }
         AlLog.d("Applozic", "MQTTRetry", "Refreshing JWT Token if required...");
         AlAuthService.verifyToken(context, loadingMessage, new AlCallback() {
             @Override

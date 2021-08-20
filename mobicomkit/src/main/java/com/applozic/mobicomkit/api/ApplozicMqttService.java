@@ -42,10 +42,10 @@ import java.util.Date;
  *
  * <p>Methods of this class are mainly concerned with real-time events from the server.
  * MQTT Connection and Retry policy:
- * - Whenever the UI with conversations is opened, a MQTT connect call is done. On failure 3 retries will happen:
- * The first one immediately, 2nd 0-10 minutes, 3rd 10-20 minutes.
- * - Whenever MQTT connection is lost, retries happen as per the same policy as in the previous point, however
- * the retry index variable is used (from the other retry).</p>
+ * - Whenever the *UI with conversations* is opened, a MQTT client.connect() call is done. On failure *from the call*
+ * 3 retries will happen after a random interval of 1 - 41 minutes. The retry index scope is tied with the conversation UI lifecycle.
+ * - Whenever MQTT connection is lost, retries happen as per the same policy as in the previous point, and
+ * the same retry index is used.</p>
  */
 @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ApplozicMqttService extends MobiComKitClientService implements MqttCallback {
@@ -140,6 +140,8 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
                         BroadcastService.sendMQTTDisconnectBroadcastUpdate(context, requestReconnect);
                     }
                 });
+            } else {
+                Utils.printLog(context, TAG, "MQTT already connected...");
             }
         } catch (MqttException e) {
             Utils.printLog(context, TAG, "MQTT exception: " + e.getMessage());
@@ -634,7 +636,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
     public synchronized void connectAndPublishMessageStatus(final String messageStatusTopic, final String data) {
         try {
             Log.d(TAG, "Connect and publish message status...");
-            final AlMqttClient client = connectClient(false);
+            final AlMqttClient client = getClientInstance();
             if (client == null || !client.isConnected()) {
                 return;
             }

@@ -877,7 +877,9 @@ public class ConversationUIService {
     }
 
     public void onMqttConnected() {
-        // TODO Maybe if someone wants the connection status, send a callback from here
+        if (fragmentActivity != null && (fragmentActivity instanceof ConversationActivity || getConversationFragment() != null || getQuickConversationFragment() != null)) {
+            Applozic.connectPublishWithVerifyTokenAfter(fragmentActivity, fragmentActivity.getString(R.string.auth_token_loading_message), 0);
+        }
     }
 
     public void startMessageInfoFragment(String messageJson) {
@@ -1026,33 +1028,33 @@ public class ConversationUIService {
     }
 
     /**
-     * Connects to MQTT after a certain random interval.
-     * <p>The retry policy: There will be a max of 3 retries for each lifecycle of the
-     * activity ({@link ConversationActivity} in this case).
-     * 1: The 1st retry will happen immediately.
-     * 2: The second retry will happen after a random interval between 1 to 11 minutes.
-     * 3: The third retry will happen after a random interval between 10 to 20 minutes.</p>
-     *
-     * @param retryIndex 1st retry (index 0), 2nd retry (index 1) or 3rd retry (index 2)
+     * Connects to MQTT after a random time interval between 1 - 41 minutes.
      */
-    private void connectMQTTWithRetryPolicy(int retryIndex) {
+    private void connectMQTTAndSubscribeAfterRandomTime() {
         if (fragmentActivity == null) {
             AlLog.d(TAG, "MQTTRetry", "Fragment activity object is null. Can't retry...");
             return;
         }
-        int boundRandom = new Random().nextInt(10); //a random integer between 0 - 10 minutes
-        int minutes = retryIndex == 1 ? (boundRandom + 1) : (retryIndex == 2 ? (boundRandom + 10) : 0);
-        AlLog.i(TAG, "MQTTRetry", "MQTT connection retry (Index: " + retryIndex + ") for activity: "+ fragmentActivity.toString() +". Will retry after " + minutes + "minutes...");
+        int minutes = new Random().nextInt(40) + 1;  //a random integer between 1 - 41 minutes
+        AlLog.i(TAG, "MQTTRetry", "MQTT connect for activity: " + fragmentActivity.toString() + ". Will do a client.connect() call after " + minutes + "minutes...");
         Applozic.connectPublishWithVerifyTokenAfter(fragmentActivity, Utils.getString(fragmentActivity, R.string.auth_token_loading_message), minutes);
     }
 
+    /**
+     * <p>The retry policy: There will be a max of 3 connect calls for each lifecycle of the
+     * activity ({@link ConversationActivity} in this case).
+     * Each connect() call internally tries to connect to the web-hook twice.
+     * 1st: 1 - 41 minutes.
+     * 2nd: 1 - 41 minutes.
+     * 3rd: 1 - 41 minutes.</p>
+     */
     public void reconnectMQTT() {
         try {
             int retryIndex = ((MobiComKitActivityInterface) fragmentActivity).getRetryCount();
             if (retryIndex < 3 && Utils.isInternetAvailable(fragmentActivity)) {
                 Utils.printLog(fragmentActivity, TAG, "Reconnecting to MQTT...");
                 ((MobiComKitActivityInterface) fragmentActivity).retry(); //will increment retry index by 1
-                connectMQTTWithRetryPolicy(retryIndex);
+                connectMQTTAndSubscribeAfterRandomTime();
             }
         } catch (Exception e) {
             e.printStackTrace();

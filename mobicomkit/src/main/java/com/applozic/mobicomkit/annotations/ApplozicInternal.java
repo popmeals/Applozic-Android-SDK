@@ -1,5 +1,8 @@
 package com.applozic.mobicomkit.annotations;
 
+import java.lang.annotation.Documented;
+
+@Documented
 public @interface ApplozicInternal {
 
     /**

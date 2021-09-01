@@ -208,6 +208,10 @@ public class SyncCallService {
         UserService.getInstance(context).processSyncUserBlock();
     }
 
+    //Cleanup: can be removed
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
     public void checkAccountStatus() {
         new Thread(new Runnable() {
             @Override

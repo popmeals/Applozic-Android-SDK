@@ -2,12 +2,15 @@ package com.applozic.mobicomkit.api.account.register;
 
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.Map;
 
 /**
- * Model class for the registration response returned from a register/login/update request.
+ * This is the model class for the registration response returned from a register/login/update request.
+ *
+ * <p>You will rarely need to use fields in this object.</p>
  */
 public class RegistrationResponse extends JsonMarker {
 
@@ -33,174 +36,264 @@ public class RegistrationResponse extends JsonMarker {
     private Long notificationAfter;
     private boolean deactivate;
 
+    /**
+     * This is the response message.
+     */
     public String getMessage() {
         return message;
     }
 
+    @ApplozicInternal
     public void setMessage(String message) {
         this.message = message;
     }
 
+    /**
+     * This is the identification used for a user's device.
+     */
     public String getDeviceKey() {
         return deviceKey;
     }
 
+    @ApplozicInternal
     public void setDeviceKey(String deviceKeyString) {
         this.deviceKey = deviceKeyString;
     }
 
+    /**
+     * The user identification.
+     */
     public String getUserKey() {
         return userKey;
     }
 
+    @ApplozicInternal
     public void setUserKey(String suUserKeyString) {
         this.userKey = suUserKeyString;
     }
 
+    /**
+     * Gets is the contact number for the concerned user.
+     */
     public String getContactNumber() {
         return contactNumber;
     }
 
+    @ApplozicInternal
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
 
+    /**
+     * @deprecated This method and concerning field is no longer used and will be removed soon.
+     */
+    @Deprecated
     public Long getLastSyncTime() {
         return lastSyncTime == null ? 0L : lastSyncTime;
     }
 
+    /**
+     * @deprecated This method and concerning field is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setLastSyncTime(Long lastSyncTime) {
         this.lastSyncTime = lastSyncTime;
     }
 
+    /**
+     * Gets the timestamp of the last sync that took place.
+     */
     public Long getCurrentTimeStamp() {
         return currentTimeStamp == null ? 0L : currentTimeStamp;
     }
 
+    @ApplozicInternal
     public void setCurrentTimeStamp(Long currentTimeStamp) {
         this.currentTimeStamp = currentTimeStamp;
     }
 
+    /**
+     * @ApplozicInternal Used internally.
+     */
+    @ApplozicInternal
     public String getNotificationResponse() {
         return notificationResponse;
     }
 
+    @ApplozicInternal
     public void setNotificationResponse(String notificationResponse) {
         this.notificationResponse = notificationResponse;
     }
 
+    /**
+     * @ApplozicInternal Used internally.
+     * Gets the URL for the MQTT broker, used for the web-socket connection.
+     */
+    @ApplozicInternal
     public String getBrokerUrl() {
         return brokerUrl;
     }
 
+    @ApplozicInternal
     public void setBrokerUrl(String brokerUrl) {
         this.brokerUrl = brokerUrl;
     }
 
+    /**
+     * @deprecated Backend changes can cause this method to return a wrong result.
+     * You can use the {@link RegistrationResponse#message} field to get response details.
+     */
+    @Deprecated
     public boolean isPasswordInvalid() {
         return (!TextUtils.isEmpty(message) && ("PASSWORD_INVALID".equals(message) || "PASSWORD_REQUIRED".equals(message)));
     }
 
+    /**
+     * The pricing of your Applozic account.
+     */
+    @ApplozicInternal
     public Short getPricingPackage() {
         return pricingPackage;
     }
 
+    @ApplozicInternal
     public void setPricingPackage(Short pricingPackage) {
         this.pricingPackage = pricingPackage;
     }
 
+    /**
+     * User-id of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public String getUserId() {
         return userId;
     }
 
+    @ApplozicInternal
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
+    /**
+     * Display name of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public String getDisplayName() {
         return displayName;
     }
 
+    @ApplozicInternal
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
+    /**
+     * Display profile image link of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public String getImageLink() {
         return imageLink;
     }
 
+    @ApplozicInternal
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
 
+    @ApplozicInternal
     public String getStatusMessage() {
         return statusMessage;
     }
 
+    @ApplozicInternal
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
 
+    @ApplozicInternal
     public String getEncryptionKey() {
         return encryptionKey;
     }
 
+    @ApplozicInternal
     public void setEncryptionKey(String encryptionKey) {
         this.encryptionKey = encryptionKey;
     }
 
+    @ApplozicInternal
     public boolean isEnableEncryption() {
         return enableEncryption;
     }
 
+    @ApplozicInternal
     public void setEnableEncryption(boolean enableEncryption) {
         this.enableEncryption = enableEncryption;
     }
 
+    /**
+     * Get the role type of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public Short getRoleType() {
         return roleType;
     }
 
+    @ApplozicInternal
     public void setRoleType(Short roleType) {
         this.roleType = roleType;
     }
 
+    @ApplozicInternal
     public String getUserEncryptionKey() {
         return userEncryptionKey;
     }
 
+    @ApplozicInternal
     public void setUserEncryptionKey(String userEncryptionKey) {
         this.userEncryptionKey = userEncryptionKey;
     }
 
+    /**
+     * Gets the metadata sent with the response, if any.
+     */
     public Map<String, String> getMetadata() {
         return metadata;
     }
 
+    @ApplozicInternal
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
 
+    /**
+     * Gets the time (milliseconds) after which notifications are set to be received by the concerned user.
+     */
     public Long getNotificationAfter() {
         return notificationAfter;
     }
 
+    @ApplozicInternal
     public void setNotificationAfter(Long notificationAfter) {
         this.notificationAfter = notificationAfter;
     }
 
+    /**
+     * Gets the JWT authentication token. This token is passed in the API call header to
+     * authenticate the requests.
+     */
     public String getAuthToken() {
         return authToken;
     }
 
+    @ApplozicInternal
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
 
+    /**
+     * Returns true if the concerned user has been deactivated.
+     */
     public boolean isDeactivate() {
         return deactivate;
     }
 
+    @ApplozicInternal
     public void setDeactivate(boolean deactivate) {
         this.deactivate = deactivate;
     }
@@ -235,8 +328,11 @@ public class RegistrationResponse extends JsonMarker {
     }
 
     /**
+     * @ApplozicInternal These constants are used internally.
+     *
      * Registration success response constants (that will be received from server).
      */
+    @ApplozicInternal
     public static enum SuccessResponse {
         UPDATED("UPDATED"), REGISTERED("REGISTERED"), REGISTERED_WITHOUTREGISTRATIONID("REGISTERED.WITHOUTREGISTRATIONID");
         private final String value;

@@ -415,6 +415,10 @@ public class HttpRequestUtils {
         return null;
     }
 
+    /**
+     * @ApplozicInternal This is an internal method. Do not use.
+     */
+    @ApplozicInternal
     public void addGlobalHeaders(HttpURLConnection connection, String userId) {
         try {
             if (MobiComKitClientService.getAppModuleName(context) != null) {

@@ -57,7 +57,7 @@ public class ConversationWorker extends Worker {
     }
 
     /**
-     * Will sync messages and other data locally. See {@link MobiComMessageService#syncMessages()}.
+     * Will sync messages, contacts, channels and other data from the server. See {@link MobiComMessageService#syncMessages()}.
      *
      * @param context the context
      */

@@ -390,6 +390,10 @@ public class Applozic {
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is not longer used and will be removed soon.
+     */
+    @Deprecated
     public static boolean isRegistered(Context context) {
         return MobiComUserPreference.getInstance(context).isRegistered();
     }
@@ -429,12 +433,18 @@ public class Applozic {
         AlTask.execute(new UserLogoutTask(logoutHandler, context));
     }
 
-    //ApplozicInternal: private
+    /**
+     * @deprecated This method has been deprecated. You can directly use the {@link PushNotificationTask}.
+     */
+    @Deprecated
     public static void registerForPushNotification(Context context, String pushToken, AlPushNotificationHandler handler) {
         AlTask.execute(new PushNotificationTask(context, pushToken, handler));
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method has been deprecated. You can directly use the {@link PushNotificationTask}.
+     */
     public static void registerForPushNotification(Context context, AlPushNotificationHandler handler) {
         registerForPushNotification(context, Applozic.getInstance(context).getDeviceRegistrationId(), handler);
     }

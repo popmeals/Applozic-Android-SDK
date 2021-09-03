@@ -11,8 +11,35 @@ import java.lang.ref.WeakReference;
 
 /**
  * An asynchronous login/registration task used to authenticate the user.
+ *
  * <p>It provides an async wrapper for {@link RegisterUserClientService#createAccount(User)}.
  * It also wipes out the existing shared preferences before it starts the login process.</p>
+ *
+ * <code>
+ *     User user = new User();
+ *     user.setUserId(“userId”); //mandatory
+ *     user.setDisplayName(“displayName”);
+ *     user.setEmail(“email”);
+ *     user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //use this by default
+ *     user.setPassword("password");
+ *     user.setImageLink("url/to/profile/image");
+ *
+ *     UserLoginTask userLoginTask = new UserLoginTask(user, new AlLoginHandler() {
+ *         @Override
+ *         public void onSuccess(RegistrationResponse registrationResponse, Context context) {
+ *             //registrationResponse.getMessage();
+ *         }
+ *
+ *         @Override
+ *         public void onFailure(RegistrationResponse registrationResponse, Exception exception) { }
+ *     }, context.get());
+ *     AlTask.execute(userLoginTask);
+ *
+ *     //for versions prior to v5.95 use:
+ *     userLoginTask.execute();
+ * </code>
+ *
+ * <p>Use this or {@link com.applozic.mobicomkit.Applozic#connectUser(Context, User, AlLoginHandler)}</p>
  */
 public class UserLoginTask extends AlAsyncTask<Void, Boolean> {
 
@@ -25,6 +52,10 @@ public class UserLoginTask extends AlAsyncTask<Void, Boolean> {
     private RegisterUserClientService registerUserClientService;
     private AlLoginHandler loginHandler;
 
+    /**
+     * @deprecated Use {@link UserLoginTask#UserLoginTask(User, AlLoginHandler, Context)} instead.
+     */
+    @Deprecated
     public UserLoginTask(User user, TaskListener listener, Context context) {
         this.taskListener = listener;
         this.context = new WeakReference<Context>(context);
@@ -33,6 +64,11 @@ public class UserLoginTask extends AlAsyncTask<Void, Boolean> {
         this.registerUserClientService = new RegisterUserClientService(context);
     }
 
+    /**
+     * @param user the {@link User} to login/register
+     * @param listener the callback
+     * @param context the context
+     */
     public UserLoginTask(User user, AlLoginHandler listener, Context context) {
         this.loginHandler = listener;
         this.context = new WeakReference<Context>(context);

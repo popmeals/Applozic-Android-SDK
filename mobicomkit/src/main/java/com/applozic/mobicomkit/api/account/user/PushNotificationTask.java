@@ -10,12 +10,32 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * Task that wraps around {@link RegisterUserClientService#updatePushNotificationId(String)}.
+ * An asynchronous task that updates the server with a "device-id" (or "registration-id") that will be used
+ * to identify the device for FCM push notifications.
  *
- * <p>Updates the server with a "device id"/"registration id" that will be used
- * to identify the device for push notifications.
- * Created for async execution of the above mentioned method.
- * Use either {@link TaskListener} or {@link AlPushNotificationHandler} to get the results.</p>
+ <p>Created for async execution of the {@link RegisterUserClientService#updatePushNotificationId(String)}.
+ *
+ * <code>
+ *     PushNotificationTask pushNotificationTask = new PushNotificationTask(context, "pushNotificationId", new AlPushNotificationHandler() {
+ *                 @Override
+ *                 public void onSuccess(RegistrationResponse registrationResponse) {
+ *                     //registrationResponse.getMessage();
+ *                 }
+ *
+ *                 @Override
+ *                 public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+ *                     //if(exception != null) {
+ *                         //exception.printStackTrace();
+ *                     //}
+ *                 }
+ *             });
+ *             AlTask.execute(pushNotificationTask);
+ *
+ *             //for versions prior to v5.95 use:
+ *             //pushNotificationTask.execute();
+ * </code>
+ *
+ * Use {@link AlPushNotificationHandler} to get the results.</p>
  */
 public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
 
@@ -26,12 +46,22 @@ public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
     private RegistrationResponse registrationResponse;
     private AlPushNotificationHandler pushNotificationHandler;
 
+    /**
+     * @deprecated Instantiation using this constructor solves no unique purpose.
+     * Use {@link PushNotificationTask#PushNotificationTask(Context, String, AlPushNotificationHandler)} instead.
+     */
+    @Deprecated
     public PushNotificationTask(String pushNotificationId, TaskListener listener, Context context) {
         this.pushNotificationId = pushNotificationId;
         this.taskListener = listener;
         this.context = new WeakReference<Context>(context);
     }
 
+    /**
+     * @param context the context
+     * @param pushNotificationId the registration-id/push-notification-id received from Firebase
+     * @param listener the callback
+     */
     public PushNotificationTask(Context context, String pushNotificationId, AlPushNotificationHandler listener) {
         this.pushNotificationId = pushNotificationId;
         this.pushNotificationHandler = listener;

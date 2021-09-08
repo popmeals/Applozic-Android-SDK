@@ -5,12 +5,18 @@ import android.content.Context;
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
+import com.applozic.mobicomkit.api.attachment.FileMeta;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicommons.ApplozicService;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+/**
+ * Class that provides the appropriate URL service class({@link URLService}).
+ *
+ * @ApplozicInternal Direct access to methods of this class will not be required.
+ */
 @ApplozicInternal
 public class URLServiceProvider {
 
@@ -19,6 +25,7 @@ public class URLServiceProvider {
     private MobiComKitClientService mobiComKitClientService;
 
     //ApplozicInternal: default
+    @ApplozicInternal
     public URLServiceProvider(Context context) {
         this.context = ApplozicService.getContext(context);
         mobiComKitClientService = new MobiComKitClientService(context);
@@ -57,6 +64,11 @@ public class URLServiceProvider {
         return connection;
     }
 
+    /**
+     * @ApplozicInternal The thumbnail URL is either taken from {@link FileMeta#getThumbnailUrl()} or generated using {@link FileMeta#getThumbnailBlobKey()}.
+     *
+     * <p>This {@link FileMeta} object is retrieved for the using {@link Message#getFileMetas()}.</p>
+     */
     @ApplozicInternal
     public String getThumbnailURL(Message message) throws IOException {
         try {

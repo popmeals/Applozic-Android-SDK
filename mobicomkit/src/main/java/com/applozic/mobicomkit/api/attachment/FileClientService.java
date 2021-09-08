@@ -21,6 +21,7 @@ import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider;
 import com.applozic.mobicomkit.api.conversation.Message;
+import com.applozic.mobicomkit.api.conversation.MessageBuilder;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
 import com.applozic.mobicomkit.api.conversation.service.ConversationService;
 import com.applozic.mobicomkit.feed.TopicDetail;
@@ -45,7 +46,13 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by devashish on 26/12/14.
+ * The <code>FileClientService</code> provides methods that can be used to upload/download Applozic media/attachment files.
+ *
+ * <p>See {@link FileMeta}, {@link Message} and {@link MessageBuilder} for more information on how attachments are handled.</p>
+ *
+ * <p><i><b>Note:</b></i>All methods of this class run synchronously. Run them in a background thread.</p>
+ *
+ * <p>Attachment uploads are handled internally when a message is sent using the {@link MessageBuilder} class.</p>
  */
 public class FileClientService extends MobiComKitClientService {
 
@@ -70,6 +77,11 @@ public class FileClientService extends MobiComKitClientService {
     private HttpRequestUtils httpRequestUtils;
     private MobiComKitClientService mobiComKitClientService;
 
+    /**
+     * Creates a new {@link FileClientService} object with the given context.
+     *
+     * @param context the context, can be application level
+     */
     public FileClientService(Context context) {
         super(context);
         this.httpRequestUtils = new HttpRequestUtils(context);
@@ -77,6 +89,15 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: rename to getApplozicInternalFilePath
+    /**
+     * @ApplozicInternal This method is used internally to get the local file path of media files based on their content type.
+     *
+     * @param fileName the name of the media file
+     * @param context the context
+     * @param contentType the content type (image, video, text/x-vCard). it is usually retrieved for a message using {@link Message#getFileMetas()} and then {@link FileMeta#getContentType()}.
+     * @param isThumbnail if the file is to be used as a thumbnail
+     * @return the {@link File} object for the given filepath
+     */
     @ApplozicInternal
     public static File getFilePath(String fileName, Context context, String contentType, boolean isThumbnail) {
         File filePath;
@@ -110,12 +131,19 @@ public class FileClientService extends MobiComKitClientService {
         return filePath;
     }
 
+    /**
+     * See {@link #getFilePath(String, Context, String, boolean)}.
+     */
     @ApplozicInternal
     public static File getFilePath(String fileName, Context context, String contentType) {
         return getFilePath(fileName, context, contentType, false);
     }
 
     //ApplozicInternal: private
+    /**
+     * @ApplozicInternal Gets the URL that will be used to upload the profile image for the logged in user.
+     */
+    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.WILL_BREAK_CODE)
     public String profileImageUploadURL() {
         return getBaseUrl() + AL_UPLOAD_FILE_URL;
     }
@@ -139,7 +167,26 @@ public class FileClientService extends MobiComKitClientService {
         return FileUtils.getName(message.getFileMetas().getName()) + message.getCreatedAtTime() + "." + thumbnailExtension;
     }
 
-    @ApplozicInternal
+    /**
+     * This method downloads and saves the <i>thumbnail</i> for the message attachment (if image/video) to the appropriate folder. It also returns a bitmap of the image.
+     *
+     * <p>In the case where the message object being passed to this method already has the thumbnail downloaded and saved, this method will simply return a bitmap of that existing thumbnail.</p>
+     *
+     * <p>The thumbnail is retrieved/generated using {@link URLServiceProvider#getThumbnailURL(Message)}.
+     * The thumbnail is then downloaded and saved locally ({@link FileClientService#getFilePath(String, Context, String, boolean)}).</p>
+     *
+     * <p>The thumbnail image bitmap once downloaded and saved can be accessed calling the method again:
+     * <code>
+     *     Bitmap thumbnailImage = downloadAndSaveThumbnailImage(context, theMessageObject, 0, 200);
+     * </code>
+     *
+     * @param context the context
+     * @param message the message object for which the thumbnail image is to be download and saved locally
+     * @param reqHeight the requested height of the bitmap returned
+     * @param reqWidth ignore, not used
+     *
+     * @return the image bitmap
+     */
     public Bitmap downloadAndSaveThumbnailImage(Context context, Message message, int reqWidth, int reqHeight) {
         HttpURLConnection connection = null;
         try {
@@ -200,9 +247,22 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     /**
-     * @param message
+     * This method will downloads and saves the contact attachment card for the given message object (if it has one).
+     *
+     * <p>The local path for this contact card is decided by the {@link #getFilePath(String, Context, String)} method.</p>
+     *
+     * <p><i>NOTE: This local path is also updated in the local database for the message object.</i></p>
+     *
+     * <p>Note: Multiple calls to this method <i>DO NOT</i> download the contact multiple time.</p>
+     *
+     * <p>To later get the local path of the contact card use:
+     * <code>
+     *     Message updatedMessage = new MessageDatabaseService(context).getMessage(messageKeyString); //message.getKeyString();
+     *     updatedMessage.getFilePaths();
+     * </code></p>
+     *
+     * @param message the message object to download the contact card for
      */
-    @ApplozicInternal
     public void loadContactsvCard(Message message) {
         File file = null;
         HttpURLConnection connection = null;
@@ -258,7 +318,22 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * This method downloads and saves the <i>GIF</i> file from the given URL. It returns the local path where the downloaded GIF is saved.
+     *
+     * <p>Some things to note:
+     * <ul>
+     *     <li>The download is done using a {@link java.net.URLConnection}.</li>
+     *     <li>This name of the GIF will be generated as such: <code>"GIF_" + System.currentTimeMillis() + ".gif"</code>.</li>
+     *     <li>The local path of the GIF will be decided by {@link #getFilePath(String, Context, String, boolean)}.</li>
+     *     <li>There is no check for if the file being downloaded is a GIF or not.</li>
+     * </ul></p>
+     *
+     * See the asynchronous {@link GifDownloadAsyncTask}.
+     *
+     * @param url the URL of the GIF to download
+     * @return the absolute local file path for the downloaded GIF
+     */
     public String downloadGif(String url) {
         InputStream input = null;
         OutputStream output = null;
@@ -305,6 +380,9 @@ public class FileClientService extends MobiComKitClientService {
         }
     }
 
+    /**
+     * @ApplozicInternal Gets a bitmap from the URL, if found.
+     */
     @ApplozicInternal
     public Bitmap loadMessageImage(Context context, String url) {
         try {
@@ -328,6 +406,9 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * @ApplozicInternal Uploads the message attachment image/video if any. This method is called internally when the message is being sent to the server({@link MessageBuilder#send()}.
+     */
     @ApplozicInternal
     public String uploadBlobImage(String path, Handler handler, String oldMessageKey) throws
             UnsupportedEncodingException {
@@ -348,12 +429,27 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: private
+    /**
+     * @ApplozicInternal Gets the upload URL based on the URL provider.
+     */
+    @ApplozicInternal
     public String getUploadURL() {
         String fileUrl = new URLServiceProvider(context).getFileUploadUrl();
         return fileUrl;
     }
 
     //ApplozicInternal: default
+    /**
+     * Downloads the display image for a {@link Contact} or {@link Channel} and returns the bitmap.
+     *
+     * <p>To get the image URL, {@link Contact#getImageURL()} and {@link Channel#getImageUrl()} is used.</p>
+     *
+     * <p>Note: Only one of the two parameters is used (either the contact or the channel). If the contact is <i>non-null</i> it is used, otherwise channel.</p>
+     *
+     * @param contact the contact object to download the image for, can be null
+     * @param channel the channel object to download the image for, can be null
+     * @return the image bitmap, null in-case of failure
+     */
     public Bitmap downloadBitmap(Contact contact, Channel channel) {
         HttpURLConnection connection = null;
         MarkStream inputStream = null;
@@ -406,6 +502,10 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: private
+    /**
+     * @ApplozicInternal Returns a path with a ".Thumbnail" directory added to the passed filepath.
+     */
+    @ApplozicInternal
     public String getThumbnailParentDir(String filePath) {
         String[] parts = getParts(filePath);
         String thumbnailDir = "";
@@ -418,9 +518,12 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     /**
+     * @ApplozicInternal Generates and returns a thumbnail path for the <i>video</i> with the given <code>filepath</code>.
+     *
      * This path is supposed to be the same as the path where video thumbnails are downloaded.
      * see {@link FileClientService#downloadAndSaveThumbnailImage(Context, Message, int, int)}
      */
+    @ApplozicInternal
     public String getThumbnailPath(String filePath) { //ApplozicInternal: default
         String thumbnailParentDir = getThumbnailParentDir(filePath);
         File dir = new File(thumbnailParentDir);
@@ -432,6 +535,10 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: default
+    /**
+     * @ApplozicInternal Generates and saves a thumbnail image for the video with the passed <code>filepath</code>. Also returns the thumbnail bitmap.
+     */
+    @ApplozicInternal
     public Bitmap createThumbnailFileInLocalStorageAndReturnBitmap(String filePath) {
         Bitmap videoThumbnail;
         OutputStream fOut;
@@ -451,6 +558,8 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     /**
+     * @ApplozicInternal Returns the thumbnail for the video with the passed <code>filepath</code>. Generates and returns one if it does not exist.
+     *
      * This methods aims to save the video thumbnail in the same location where it will save downloaded thumbnails from the server.
      * see {@link FileClientService#downloadAndSaveThumbnailImage(Context, Message, int, int)}
      */
@@ -468,6 +577,9 @@ public class FileClientService extends MobiComKitClientService {
         return videoThumbnail;
     }
 
+    /**
+     * @ApplozicInternal Uploads the logged in user's profile/display image to the servers.
+     */
     @ApplozicInternal
     public String uploadProfileImage(String path) throws UnsupportedEncodingException {
         try {
@@ -480,6 +592,10 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * @deprecated This method has been deprecated and will be removed soon. Conversations are being deprecated.
+     */
+    @Deprecated
     @ApplozicInternal
     public Bitmap loadMessageImage(Context context, Conversation conversation) {
         try {
@@ -508,6 +624,11 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method has been deprecated and will be removed soon. Conversations are being deprecated.
+     */
+    @Deprecated
+    @ApplozicInternal
     public Bitmap downloadProductImage(Conversation conversation) {
         TopicDetail topicDetail = (TopicDetail) GsonUtils.getObjectFromJson(conversation.getTopicDetail(), TopicDetail.class);
         if (TextUtils.isEmpty(topicDetail.getLink())) {
@@ -558,6 +679,9 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
+    /**
+     * Writes file from given URI to the {@link File} object.
+     */
     @ApplozicInternal
     public void writeFile(Uri uri, File file) {
         InputStream in = null;
@@ -608,7 +732,7 @@ public class FileClientService extends MobiComKitClientService {
     }
 
     /**
-     * Saves the file to the Applozic apps media/file folder.
+     * @ApplozicInternal Saves the file to the Applozic apps media/file folder.
      *
      * <p>Name of the file will be set using {@link DateUtils#getDateStringForLocalFileName()}.
      * and the path from {@link FileClientService#getFilePath(String, Context, String)}.<p/>
@@ -617,6 +741,7 @@ public class FileClientService extends MobiComKitClientService {
      * @param mimeType mime type of the file to save
      * @return the saved file object
      */
+    @ApplozicInternal
     public @Nullable File saveFileToApplozicLocalStorage(@NonNull Uri fromUri, @Nullable String mimeType) {
         if (context != null && !TextUtils.isEmpty(mimeType)) {
             String fileFormat = getFileFormatFromMimeType(mimeType);

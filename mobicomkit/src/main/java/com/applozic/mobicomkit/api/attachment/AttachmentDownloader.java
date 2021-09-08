@@ -21,6 +21,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.util.Log;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -38,15 +39,15 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 /**
- * This task downloads bytes from a resource addressed by a URL.  When the task
- * has finished, it calls handleState to report its results.
- * <p/>
- * Objects of this class are instantiated and managed by instances of PhotoTask, which
+ * @ApplozicInternal This task downloads bytes from a resource addressed by a URL. When the task has finished, it calls handleState to report its results.
+
+ * <p>Objects of this class are instantiated and managed by instances of PhotoTask, which
  * implements the methods of TaskRunnableDecodeMethods. PhotoTask objects call
  * {@link #AttachmentDownloader(AttachmentDownloader.TaskRunnableDownloadMethods) PhotoDownloadRunnable()} with
  * themselves as the argument. In effect, an PhotoTask object and a
- * PhotoDownloadRunnable object communicate through the fields of the PhotoTask.
+ * PhotoDownloadRunnable object communicate through the fields of the PhotoTask.</p>
  */
+@ApplozicInternal
 class AttachmentDownloader extends MobiComKitClientService implements Runnable {
 
     // Constants for indicating the state of the download

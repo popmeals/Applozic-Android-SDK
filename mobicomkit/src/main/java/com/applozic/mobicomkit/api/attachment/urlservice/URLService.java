@@ -6,6 +6,9 @@ import com.applozic.mobicomkit.api.conversation.Message;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+/**
+ * Interface for classes that provide upload/download URLs. To be implemented for different storage services.
+ */
 @ApplozicInternal //ApplozicInternal: protected
 public interface URLService {
 

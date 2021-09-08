@@ -33,9 +33,12 @@ import com.applozic.mobicomkit.api.conversation.Message;
 
 /**
  * This class extends the standard Android ImageView View class with some features
- * that are useful for downloading, decoding, and displaying Picasa images.
+ * that are useful for downloading, decoding, and displaying Applozic images.
+ *
+ * @deprecated This class will be moved to the UI Kit.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
+@ApplozicInternal
+@Deprecated
 public class AttachmentView extends ImageView {
 
     // Indicates if caching should be used

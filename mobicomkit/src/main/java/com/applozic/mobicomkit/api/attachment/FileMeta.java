@@ -3,11 +3,14 @@ package com.applozic.mobicomkit.api.attachment;
 import com.applozic.mobicommons.json.JsonMarker;
 
 /**
- * Model class to store the file attachments to a message.
- * This includes the remote file data such as thumbnail key, file key etc.
- * The blob keys can be used with the appropriate URLs to download the files.
- * See {@link com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider}
- * for downloading the files.
+ * Model class to store the file attachments information for a {@link com.applozic.mobicomkit.api.conversation.Message}.
+ *
+ * <p>This includes the remote file data such as thumbnail key, file key, file URLs etc.
+ * You do not need to access fields of this class directly. {@link FileClientService} has most of the
+ * methods needed to download/upload attachments and other Applozic media.</p>
+ *
+ * <p>The blob keys when appended to the appropriate URLs can be used to download the files.
+ * See {@link com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider}.</p>
  */
 public class FileMeta extends JsonMarker {
 
@@ -22,6 +25,9 @@ public class FileMeta extends JsonMarker {
     private String thumbnailUrl;
     private Long createdAtTime;
 
+    /**
+     * Returns the id of the <code>FileMeta</code> object.
+     */
     public String getKeyString() {
         return key;
     }
@@ -30,18 +36,32 @@ public class FileMeta extends JsonMarker {
         this.key = keyString;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public String getSuUserKeyString() {
         return userKey;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setSuUserKeyString(String suUserKeyString) {
         this.userKey = suUserKeyString;
     }
 
+    /**
+     * Gets the blob key for the file. This key can be appended to the appropriate URLs to download the file. See {@link com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider}.
+     */
     public String getBlobKeyString() {
         return blobKey;
     }
 
+    /**
+     * Gets the blob key for the file thumbnail (image/video). This key can be appended to the appropriate URLs to download the file. See {@link com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider}.
+     */
     public String getThumbnailBlobKey() {
         return thumbnailBlobKey;
     }
@@ -54,6 +74,9 @@ public class FileMeta extends JsonMarker {
         this.blobKey = blobKeyString;
     }
 
+    /**
+     * Gets the name fo the file.
+     */
     public String getName() {
         return name;
     }
@@ -62,6 +85,9 @@ public class FileMeta extends JsonMarker {
         this.name = name;
     }
 
+    /**
+     * Gets the time at which the file was uploaded to the server.
+     */
     public Long getCreatedAtTime() {
         return createdAtTime;
     }
@@ -70,6 +96,9 @@ public class FileMeta extends JsonMarker {
         this.createdAtTime = createdAtTime;
     }
 
+    /**
+     * Gets the size of the file in bytes.
+     */
     public int getSize() {
         return size;
     }
@@ -78,6 +107,9 @@ public class FileMeta extends JsonMarker {
         this.size = size;
     }
 
+    /**
+     * Gets the file content type (image,video,contact etc)
+     */
     public String getContentType() {
         return contentType;
     }
@@ -86,6 +118,9 @@ public class FileMeta extends JsonMarker {
         this.contentType = contentType;
     }
 
+    /**
+     * Gets the URL of the file thumbnail, if present. This is usually non-empty if the file is being stored in the Applozic servers.
+     */
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
@@ -94,6 +129,9 @@ public class FileMeta extends JsonMarker {
         this.thumbnailUrl = thumbnailUrl;
     }
 
+    /**
+     * Gets the URL of the file, if present. This is usually non-empty if the file is being stored in the Applozic servers.
+     */
     public String getUrl() {
         return url;
     }
@@ -102,6 +140,10 @@ public class FileMeta extends JsonMarker {
         this.url = url;
     }
 
+    /**
+     * @deprecated This method is not usable. Will be removed soon.
+     */
+    @Deprecated
     public String getSizeInReadableFormat() {
         String value = "0 KB";
         if (size / 1024 >= 1024) {

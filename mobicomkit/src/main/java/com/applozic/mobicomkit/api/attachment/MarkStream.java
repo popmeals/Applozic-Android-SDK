@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 //ApplozicInternal: default
+/**
+ * @deprecated This class is no longer used and will be removed soon.
+ */
+@Deprecated
 public class MarkStream extends InputStream {
 
     private static final int DEFAULT_BUFFER_SIZE = 4096;

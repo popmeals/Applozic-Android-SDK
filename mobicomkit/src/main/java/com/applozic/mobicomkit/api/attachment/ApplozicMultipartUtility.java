@@ -25,7 +25,7 @@ import java.net.URLConnection;
 /**
  * @ApplozicInternal This is an internal class.
  */
-@ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+@ApplozicInternal
 public class ApplozicMultipartUtility {
     private static final String LINE_FEED = "\r\n";
     final String TAG = "AlMultipartUtility";

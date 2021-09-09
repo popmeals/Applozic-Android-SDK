@@ -143,7 +143,7 @@ public class FileClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal Gets the URL that will be used to upload the profile image for the logged in user.
      */
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.WILL_BREAK_CODE)
+    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public String profileImageUploadURL() {
         return getBaseUrl() + AL_UPLOAD_FILE_URL;
     }

@@ -63,7 +63,7 @@ public class DefaultURLService implements URLService {
      * Gets the URL that can be used to upload media files to the Applozic servers.
      * @return the string URL
      */
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+    @ApplozicInternal
     @Override
     public String getFileUploadUrl() {
         return httpRequestUtils.getResponse(mobiComKitClientService.getFileBaseUrl() + FileClientService.FILE_UPLOAD_URL

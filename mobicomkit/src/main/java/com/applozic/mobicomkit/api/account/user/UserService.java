@@ -282,7 +282,7 @@ public class UserService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+    @ApplozicInternal
     public synchronized void processMuteUserResponse(MuteUserResponse response) {
         Contact contact = new Contact();
         contact.setUserId(response.getUserId());

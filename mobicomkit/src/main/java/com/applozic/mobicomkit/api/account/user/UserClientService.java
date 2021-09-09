@@ -204,7 +204,7 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
      */
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.WILL_BREAK_CODE)
+    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
         final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
@@ -275,7 +275,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+    @ApplozicInternal
     public void updateCodeVersion(final String deviceKeyString) {
         String url = getAppVersionUpdateUrl() + "?appVersionCode=" + MOBICOMKIT_VERSION_CODE + "&deviceKey=" + deviceKeyString;
         String response = httpRequestUtils.getResponse(url, "text/plain", "text/plain");

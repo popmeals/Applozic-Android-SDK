@@ -71,7 +71,7 @@ public class S3URLService implements URLService {
      * Gets the URL that can be used to upload media files to the Amazon S3 servers.
      * @return the string URL
      */
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+    @ApplozicInternal
     @Override
     public String getFileUploadUrl() {
         return mobiComKitClientService.getBaseUrl() + S3_SIGNED_URL_END_POINT + "?" + S3_SIGNED_URL_PARAM + "=" + true;

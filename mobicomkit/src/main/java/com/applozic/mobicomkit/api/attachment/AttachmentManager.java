@@ -63,7 +63,7 @@ import java.util.concurrent.TimeUnit;
  * thread to change the bitmap to reflect the state.</p>
  */
 @SuppressWarnings("unused")
-@ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+@ApplozicInternal
 public class AttachmentManager {
 
     /*

@@ -69,7 +69,7 @@ public class GoogleCloudURLService implements URLService {
      * Gets the URL that can be used to upload media files to the Google Cloud Storage.
      * @return the string URL
      */
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.USE_WITH_CAUTION)
+    @ApplozicInternal
     @Override
     public String getFileUploadUrl() {
         return mobiComKitClientService.getFileBaseUrl() + UPLOAD_URL;

@@ -1,6 +1,6 @@
 /**
- * This package contains classes that provide URLs for the uploading/downloading of media files (Applozic server, Ba).
+ * This package contains classes that deal with the parsing and refreshing of the JWT authentication token.
  *
- * @ApplozicInternal Classes of this package are meant for internal use. Refer to {@link com.applozic.mobicomkit.api.attachment.FileClientService}.
+ * <p>Upon login, the JWT token is received and saved in the Applozic storage.</p>
  */
 package com.applozic.mobicomkit.api.authentication;

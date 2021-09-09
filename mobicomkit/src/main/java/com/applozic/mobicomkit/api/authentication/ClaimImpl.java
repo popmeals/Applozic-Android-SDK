@@ -3,6 +3,7 @@ package com.applozic.mobicomkit.api.authentication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,8 +15,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The ClaimImpl class implements the Claim interface.
+ * @ApplozicInternal The ClaimImpl class implements the Claim interface.
  */
+@ApplozicInternal
 class ClaimImpl extends BaseClaim {
 
     private final JsonElement value;

@@ -2,12 +2,18 @@ package com.applozic.mobicomkit.api.authentication;
 
 import androidx.annotation.Nullable;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
+
 import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 //ApplozicInternal: default
+/**
+ * @ApplozicInternal Class for storing the JWT Payload values.
+ */
+@ApplozicInternal
 public class BaseClaim implements Claim {
     @Nullable
     @Override

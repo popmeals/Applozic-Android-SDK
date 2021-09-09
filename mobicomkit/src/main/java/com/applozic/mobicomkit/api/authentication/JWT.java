@@ -6,6 +6,7 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.google.gson.Gson;
@@ -28,6 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 //ApplozicInternal: default
+/**
+ * @ApplozicInternal The <code>JWT</code> class stores data for the JWT authentication token.
+ */
+@ApplozicInternal
 public class JWT {
 
     private Map<String, String> header;
@@ -40,6 +45,7 @@ public class JWT {
         decode(token);
     }
 
+    @Deprecated
     public boolean isExpired(long leeway) {
         if (leeway < 0) {
             throw new IllegalArgumentException("The leeway must be a positive value.");

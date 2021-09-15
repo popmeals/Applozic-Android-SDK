@@ -16,10 +16,11 @@ import com.applozic.mobicommons.people.contact.Contact;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by sunil on 12/2/16.
- */
 //ApplozicInternal: default
+/**
+ * @deprecated This class has been deprecated. Conversations will be merged with {@link Channel}s in the future.
+ */
+@Deprecated
 public class ConversationDatabaseService {
 
     private static final String TAG = "ConversationDatabase";

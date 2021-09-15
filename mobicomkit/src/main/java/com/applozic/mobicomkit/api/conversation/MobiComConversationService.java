@@ -478,6 +478,10 @@ public class MobiComConversationService {
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     @ApplozicInternal
     public synchronized List<Message> getAlConversationList(int status, int pageSize, Long lastFetchTime, boolean makeServerCall) throws Exception {
         List<Message> conversationList = new ArrayList<>();

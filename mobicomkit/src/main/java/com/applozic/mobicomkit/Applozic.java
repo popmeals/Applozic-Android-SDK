@@ -7,7 +7,6 @@ import android.text.TextUtils;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
@@ -109,7 +108,6 @@ public class Applozic {
         AlPrefSettings.getInstance(context).setGeoApiKey(geoApiKey);
     }
 
-    @ApplozicInternal
     public String getGeoApiKey() {
         String geoApiKey = AlPrefSettings.getInstance(context).getGeoApiKey();
         if (!TextUtils.isEmpty(geoApiKey)) {
@@ -153,12 +151,10 @@ public class Applozic {
     }
 
     @SuppressLint("NewApi")
-    @ApplozicInternal
     public int getNotificationChannelVersion() {
         return sharedPreferences.getInt(NOTIFICATION_CHANNEL_VERSION_STATE, NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
     }
 
-    @ApplozicInternal
     public void setNotificationChannelVersion(int version) {
         sharedPreferences.edit().putInt(NOTIFICATION_CHANNEL_VERSION_STATE, version).commit();
     }
@@ -187,7 +183,6 @@ public class Applozic {
         return this;
     }
 
-    @ApplozicInternal
     public String getCustomNotificationSound() {
         return sharedPreferences.getString(CUSTOM_NOTIFICATION_SOUND, null);
     }
@@ -398,7 +393,6 @@ public class Applozic {
         return MobiComUserPreference.getInstance(context).isRegistered();
     }
 
-    @ApplozicInternal
     public static boolean isApplozicNotification(Context context, Map<String, String> data) {
         if (MobiComPushReceiver.isMobiComPushNotification(data)) {
             MobiComPushReceiver.processMessageAsync(context, data);

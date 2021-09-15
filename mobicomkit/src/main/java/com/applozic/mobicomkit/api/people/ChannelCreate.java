@@ -1,11 +1,9 @@
 package com.applozic.mobicomkit.api.people;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.List;
 
-@ApplozicInternal
 public class ChannelCreate extends JsonMarker {
     private String groupName;
     private List<String> groupMemberList;

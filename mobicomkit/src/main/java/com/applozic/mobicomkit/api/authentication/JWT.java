@@ -6,7 +6,6 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.google.gson.Gson;
@@ -32,7 +31,6 @@ import java.util.Map;
 /**
  * @ApplozicInternal The <code>JWT</code> class stores data for the JWT authentication token.
  */
-@ApplozicInternal
 public class JWT {
 
     private Map<String, String> header;

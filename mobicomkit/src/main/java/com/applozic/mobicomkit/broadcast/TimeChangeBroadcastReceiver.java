@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Process;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.ApplozicWorker;
 import com.applozic.mobicommons.commons.core.utils.DateUtils;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 
-@ApplozicInternal
 public class TimeChangeBroadcastReceiver extends BroadcastReceiver {
 
     @Override

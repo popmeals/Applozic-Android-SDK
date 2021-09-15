@@ -7,7 +7,6 @@ import android.text.TextUtils;
 
 import com.applozic.mobicomkit.AlUserUpdate;
 import com.applozic.mobicomkit.Applozic;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
@@ -82,86 +81,72 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUserProfileUpdateUrl() {
         return getBaseUrl() + USER_PROFILE_UPDATE_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getAppVersionUpdateUrl() {
         return getBaseUrl() + APP_VERSION_UPDATE_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUpdateUserDisplayNameUrl() {
         return getBaseUrl() + USER_DISPLAY_NAME_UPDATE;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUserInfoUrl() {
         return getBaseUrl() + USER_INFO_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getBlockUserUrl() {
         return getBaseUrl() + BLOCK_USER_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getBlockUserSyncUrl() {
         return getBaseUrl() + BLOCK_USER_SYNC_URL;
     }
 
     //ApplozicInternal: private
     //Cleanup: the name says sync but the url isn't for sync
-    @ApplozicInternal
     public String getUnBlockUserSyncUrl() {
         return getBaseUrl() + UNBLOCK_USER_SYNC_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUserDetailsListUrl() {
         return getBaseUrl() + USER_DETAILS_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getOnlineUserListUrl() {
         return getBaseUrl() + ONLINE_USER_LIST_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getRegisteredUserListUrl() {
         return getBaseUrl() + REGISTERED_USER_LIST_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUserDetailsListPostUrl() {
         return getBaseUrl() + USER_DETAILS_LIST_POST_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUserReadUrl() {
         return getBaseUrl() + USER_READ_URL;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUpdateUserPasswordUrl() {
         return getBaseUrl() + UPDATE_USER_PASSWORD;
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getUserLogout() {
         return getBaseUrl() + USER_LOGOUT;
     }
@@ -195,7 +180,6 @@ public class UserClientService extends MobiComKitClientService {
      * @see UserClientService#logout(boolean)
      * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
      */
-    @ApplozicInternal
     public ApiResponse logout() {
         return logout(false);
     }
@@ -204,7 +188,6 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
      */
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
         final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
@@ -275,7 +258,6 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    @ApplozicInternal
     public void updateCodeVersion(final String deviceKeyString) {
         String url = getAppVersionUpdateUrl() + "?appVersionCode=" + MOBICOMKIT_VERSION_CODE + "&deviceKey=" + deviceKeyString;
         String response = httpRequestUtils.getResponse(url, "text/plain", "text/plain");
@@ -392,7 +374,6 @@ public class UserClientService extends MobiComKitClientService {
      *
      * <p>Returns the users that were blocked since the last sync time.</p>
      */
-    @ApplozicInternal
     public SyncBlockUserApiResponse getSyncUserBlockList(String lastSyncTime) {
         try {
             String url = getBlockUserSyncUrl() + "?lastSyncTime=" + lastSyncTime;
@@ -450,7 +431,6 @@ public class UserClientService extends MobiComKitClientService {
      * @param userIds set of user ids to sync
      * @return api response from the server
      */
-    @ApplozicInternal
     public String postUserDetailsByUserIds(Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
@@ -567,7 +547,6 @@ public class UserClientService extends MobiComKitClientService {
      *
      * <p>Despite the name, this method updates more than just the display name or image link. See the parameters.</p>
      */
-    @ApplozicInternal
     public ApiResponse updateDisplayNameORImageLink(String displayName, String profileImageLink, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
         AlUserUpdate userUpdate = new AlUserUpdate();
         try {

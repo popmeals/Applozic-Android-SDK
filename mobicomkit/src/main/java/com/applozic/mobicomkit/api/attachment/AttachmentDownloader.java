@@ -21,7 +21,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.util.Log;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -47,7 +46,6 @@ import java.util.ArrayList;
  * themselves as the argument. In effect, an PhotoTask object and a
  * PhotoDownloadRunnable object communicate through the fields of the PhotoTask.</p>
  */
-@ApplozicInternal
 class AttachmentDownloader extends MobiComKitClientService implements Runnable {
 
     // Constants for indicating the state of the download

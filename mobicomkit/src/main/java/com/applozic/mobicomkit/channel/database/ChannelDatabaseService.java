@@ -12,7 +12,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
 import com.applozic.mobicomkit.feed.GroupInfoUpdate;
@@ -289,7 +288,6 @@ public class ChannelDatabaseService {
         return null;
     }
 
-    @ApplozicInternal
     public Channel getChannel(Cursor cursor) {
         Channel channel = new Channel();
         channel.setKey(cursor.getInt(cursor.getColumnIndex(MobiComDatabaseHelper.CHANNEL_KEY)));
@@ -569,7 +567,6 @@ public class ChannelDatabaseService {
         return deletedRows;
     }
 
-    @ApplozicInternal
     public Loader<Cursor> getSearchCursorForGroupsLoader(final String searchString) {
 
         return new CursorLoader(context, null, null, null, null, MobiComDatabaseHelper.CHANNEL_DISPLAY_NAME + " asc") {
@@ -596,7 +593,6 @@ public class ChannelDatabaseService {
         };
     }
 
-    @ApplozicInternal
     public String getGroupOfTwoReceiverId(Integer channelKey) {
         Cursor cursor = null;
         try {
@@ -624,7 +620,6 @@ public class ChannelDatabaseService {
         return null;
     }
 
-    @ApplozicInternal
     public String[] getChannelMemberByName(String name, String type) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         List<String> userIds = new ArrayList<String>();
@@ -757,7 +752,6 @@ public class ChannelDatabaseService {
         dbHelper.getWritableDatabase().update(CHANNEL_USER_X, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=?", new String[]{String.valueOf(channelKey)});
     }
 
-    @ApplozicInternal
     public Integer getParentGroupKey(String parentClientGroupId) {
         if (TextUtils.isEmpty(parentClientGroupId)) {
             return null;

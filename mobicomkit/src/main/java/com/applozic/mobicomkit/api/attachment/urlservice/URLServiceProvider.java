@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.attachment.urlservice;
 import android.content.Context;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.attachment.FileMeta;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -17,7 +16,6 @@ import java.net.HttpURLConnection;
  *
  * @ApplozicInternal Direct access to methods of this class will not be required.
  */
-@ApplozicInternal
 public class URLServiceProvider {
 
     private Context context;
@@ -25,7 +23,6 @@ public class URLServiceProvider {
     private MobiComKitClientService mobiComKitClientService;
 
     //ApplozicInternal: default
-    @ApplozicInternal
     public URLServiceProvider(Context context) {
         this.context = ApplozicService.getContext(context);
         mobiComKitClientService = new MobiComKitClientService(context);
@@ -52,7 +49,6 @@ public class URLServiceProvider {
         return urlService;
     }
 
-    @ApplozicInternal
     public HttpURLConnection getDownloadConnection(Message message) throws IOException {
         HttpURLConnection connection;
 
@@ -69,7 +65,6 @@ public class URLServiceProvider {
      *
      * <p>This {@link FileMeta} object is retrieved for the using {@link Message#getFileMetas()}.</p>
      */
-    @ApplozicInternal
     public String getThumbnailURL(Message message) throws IOException {
         try {
             return getUrlService(context).getThumbnailURL(message);
@@ -78,12 +73,10 @@ public class URLServiceProvider {
         }
     }
 
-    @ApplozicInternal
     public String getFileUploadUrl() {
         return getUrlService(context).getFileUploadUrl();
     }
 
-    @ApplozicInternal
     public String getImageURL(Message message) {
         return getUrlService(context).getImageUrl(message);
     }

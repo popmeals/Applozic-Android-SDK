@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 
 import android.util.Base64;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,7 +12,6 @@ import java.io.FileReader;
 /**
  * Parser code for parsing the vCard file and creating a CSV file.
  */
-@ApplozicInternal
 public class MobiComVCFParser {
 
     public static final String BEGIN_VCARD = "BEGIN:VCARD";

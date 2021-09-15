@@ -11,7 +11,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserDetail;
@@ -108,7 +107,6 @@ public class MobiComConversationService {
         this.baseContactService = appContactService;
     }
 
-    @ApplozicInternal
     public void sendMessageWithHandler(Message message, final MediaUploadProgressHandler progressHandler) {
         if (message == null) {
             return;
@@ -134,22 +132,18 @@ public class MobiComConversationService {
         MessageWorker.enqueueWork(context, message, null, handler);
     }
 
-    @ApplozicInternal
     public void sendMessage(Message message, String userDisplayName) {
         MessageWorker.enqueueWork(context, message, userDisplayName, null);
     }
 
-    @ApplozicInternal
     public void sendMessage(Message message) {
         sendMessage(message, null);
     }
 
-    @ApplozicInternal
     public List<Message> getLatestMessagesGroupByPeople() {
         return getLatestMessagesGroupByPeople(null, null);
     }
 
-    @ApplozicInternal
     public synchronized List<Message> getLatestMessagesGroupByPeople(Long createdAt, String searchString, Integer parentGroupKey) {
 
         if (!ApplozicClient.getInstance(context).wasServerCallDoneBefore(null, null, null) || createdAt != null && createdAt != 0) {
@@ -159,7 +153,6 @@ public class MobiComConversationService {
         return messageDatabaseService.getMessages(createdAt, searchString, parentGroupKey);
     }
 
-    @ApplozicInternal
     public synchronized NetworkListDecorator<Message> getLatestMessagesGroupByPeopleWithNetworkMetaData(Long createdAt, String searchString, Integer parentGroupKey) {
         boolean networkFail = false;
         
@@ -171,7 +164,6 @@ public class MobiComConversationService {
         return new NetworkListDecorator<>(messageDatabaseService.getMessages(createdAt, searchString, parentGroupKey), networkFail);
     }
 
-    @ApplozicInternal
     public synchronized List<Message> getLatestMessagesGroupByPeople(Long createdAt, String searchString) {
         return getLatestMessagesGroupByPeople(createdAt, searchString, null);
     }
@@ -181,7 +173,6 @@ public class MobiComConversationService {
         return getMessagesWithNetworkMetaData(startTime, endTime, new Contact(userId), null, null, false, false).getList();
     }
 
-    @ApplozicInternal
     public synchronized List<Message> getMessages(Long startTime, Long endTime, Contact contact, Channel channel, Integer conversationId) {
         return getMessagesWithNetworkMetaData(startTime, endTime, contact, channel, conversationId, false, false).getList();
     }
@@ -262,7 +253,7 @@ public class MobiComConversationService {
         return new NetworkListDecorator<>(messageList, wasNetworkFail);
     }
 
-    @ApplozicInternal //ApplozicInternal: try to get to default
+    //ApplozicInternal: try to get to default
     public synchronized NetworkListDecorator<Message> getMessagesWithNetworkMetaData(Long startTime, Long endTime, Contact contact, Channel channel, Integer conversationId, boolean isSkipRead, boolean isForSearch) {
         if (isForSearch) {
             return getMessagesForParticularThreadWithNetworkMetaData(startTime, endTime, contact, channel, conversationId, isSkipRead);
@@ -482,7 +473,6 @@ public class MobiComConversationService {
      * @deprecated This method is no longer used and will be deprecated soon.
      */
     @Deprecated
-    @ApplozicInternal
     public synchronized List<Message> getAlConversationList(int status, int pageSize, Long lastFetchTime, boolean makeServerCall) throws Exception {
         List<Message> conversationList = new ArrayList<>();
         List<Message> cachedConversationList = messageDatabaseService.getAlConversationList(status, lastFetchTime);
@@ -735,17 +725,14 @@ public class MobiComConversationService {
         return messageDatabaseService.deleteMessage(message, contactNumber);
     }
 
-    @ApplozicInternal
     public void deleteConversationFromDevice(String contactNumber) {
         messageDatabaseService.deleteConversation(contactNumber);
     }
 
-    @ApplozicInternal
     public void deleteChannelConversationFromDevice(Integer channelKey) {
         messageDatabaseService.deleteChannelConversation(channelKey);
     }
 
-    @ApplozicInternal
     public void deleteAndBroadCast(final Contact contact, boolean deleteFromServer) {
         deleteConversationFromDevice(contact.getContactIds());
         if (deleteFromServer) {
@@ -761,7 +748,6 @@ public class MobiComConversationService {
         BroadcastService.sendConversationDeleteBroadcast(context, BroadcastService.INTENT_ACTIONS.DELETE_CONVERSATION.toString(), contact.getContactIds(), 0, "success");
     }
 
-    @ApplozicInternal
     public String deleteSync(final Contact contact, final Channel channel, Integer conversationId) {
         String response = "";
         if (contact != null || channel != null) {
@@ -784,12 +770,10 @@ public class MobiComConversationService {
         return response;
     }
 
-    @ApplozicInternal
     public String deleteMessageFromDevice(String keyString, String contactNumber) {
         return deleteMessageFromDevice(messageDatabaseService.getMessage(keyString), contactNumber);
     }
 
-    @ApplozicInternal
     public synchronized void processLastSeenAtStatus() {
         try {
             SyncUserDetailsResponse userDetailsResponse = messageClientService.getUserDetailsList(MobiComUserPreference.getInstance(context).getLastSeenAtSyncTime());
@@ -826,7 +810,6 @@ public class MobiComConversationService {
         }
     }
 
-    @ApplozicInternal
     public String getConversationIdString(Integer conversationId) {
         return BroadcastService.isContextBasedChatEnabled() && conversationId != null && conversationId != 0 ? "_" + conversationId : "";
     }
@@ -852,17 +835,14 @@ public class MobiComConversationService {
         }
     }
 
-    @ApplozicInternal
     public void readServerAndLocal(Contact contact, Channel channel, String pairedMessageKeyString) {
         UserWorker.enqueueWork(context, null, contact, channel, pairedMessageKeyString, 0, false);
     }
 
-    @ApplozicInternal
     public void updateLastSeenAtForAllUsers() {
         UserWorker.enqueueWork(context, null, null, null, null, 0, true);
     }
 
-    @ApplozicInternal
     public void syncUserDetail(String userId) {
         UserWorker.enqueueWork(context, userId, null, null, null, 0, false);
     }
@@ -926,7 +906,6 @@ public class MobiComConversationService {
      *
      * @param <E> data type for liked list
      */
-    @ApplozicInternal
     public static class NetworkListDecorator<E> {
         private List<E> list;
         private boolean wasNetworkFail;

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicommons.ApplozicService;
@@ -19,14 +18,13 @@ import java.util.Set;
  *
  * @ApplozicInternal This class is not a part of Applozic's public API. Direct access to the methods and fields of this class will not be required.
  */
-@ApplozicInternal //move the code used here to Applozic class eg: Applozic.getCurrentUser();
+//move the code used here to Applozic class eg: Applozic.getCurrentUser();
 public class MobiComUserPreference {
 
     private static final String USER_ID = "userId";
 
-    public static final @ApplozicInternal String AL_USER_PREF_KEY = "al_user_pref_key";
+    public static final String AL_USER_PREF_KEY = "al_user_pref_key";
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public static MobiComUserPreference userpref; //ApplozicInternal: private
 
     private static String device_registration_id = "device_registration_id";
@@ -108,7 +106,6 @@ public class MobiComUserPreference {
         moveKeysToSecured();
     }
 
-    @ApplozicInternal
     public static MobiComUserPreference getInstance(Context context) {
         if (userpref == null) {
             userpref = new MobiComUserPreference(ApplozicService.getContext(context));
@@ -116,7 +113,6 @@ public class MobiComUserPreference {
         return userpref;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public synchronized static void renameSharedPrefFile(Context context) {
         File oldFile = new File("/data/data/" + Utils.getPackageName(context) + "/shared_prefs/" + MobiComKitClientService.getApplicationKey(context) + ".xml");
         if (oldFile.exists()) {
@@ -126,7 +122,6 @@ public class MobiComUserPreference {
 
     //These Keys might not be used in the SDK and until then won't me moved.
     //The user might still see them in the prefs, so moving them even if they are not used
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public synchronized void moveKeysToSecured() {
         if (sharedPreferences != null) {
             if (sharedPreferences.contains(password)) {
@@ -149,7 +144,6 @@ public class MobiComUserPreference {
         return !TextUtils.isEmpty(getDeviceKeyString());
     }
 
-    @ApplozicInternal
     public String getDeviceRegistrationId() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(device_registration_id, null);
@@ -157,14 +151,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setDeviceRegistrationId(String deviceRegistrationId) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(device_registration_id, deviceRegistrationId).commit();
         }
     }
 
-    @ApplozicInternal
     public String getDeviceKeyString() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(device_key_string, null);
@@ -172,7 +164,6 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setDeviceKeyString(String deviceKeyString) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(device_key_string, deviceKeyString).commit();
@@ -211,7 +202,6 @@ public class MobiComUserPreference {
         sharedPreferences.edit().putBoolean(delivery_report_pref_key, reportEnable).commit();
     }
 
-    @ApplozicInternal
     public String getLastSyncTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(last_sms_sync_time, "0");
@@ -219,19 +209,16 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setLastSyncTime(String lastSyncTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(last_sms_sync_time, lastSyncTime).commit();
         }
     }
 
-    @ApplozicInternal
     public long getLastInboxSyncTime() {
         return sharedPreferences.getLong(last_inbox_sync_time, 0L);
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setLastInboxSyncTime(long lastInboxSyncTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putLong(last_inbox_sync_time, lastInboxSyncTime).commit();
@@ -270,7 +257,6 @@ public class MobiComUserPreference {
         sharedPreferences.edit().putBoolean(sent_sms_sync_pref_key, sentSmsSyncFlag).commit();
     }
 
-    @ApplozicInternal
     public String getEmailIdValue() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(email, null);
@@ -278,14 +264,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setEmailIdValue(String emailIdValue) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(email, emailIdValue).commit();
         }
     }
 
-    @ApplozicInternal
     public String getUserId() {
         if (sharedPreferences != null) {
             String userId = sharedPreferences.getString(USER_ID, null);
@@ -297,26 +281,22 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUserId(String userId) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(USER_ID, userId).commit();
         }
     }
 
-    @ApplozicInternal
     public boolean isEmailVerified() {
         return sharedPreferences.getBoolean(email_verified, true);
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setEmailVerified(boolean emailVerified) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(email_verified, emailVerified).commit();
         }
     }
 
-    @ApplozicInternal
     public String getSuUserKeyString() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(user_key_string, null);
@@ -324,7 +304,6 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setSuUserKeyString(String suUserKeyString) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(user_key_string, suUserKeyString).commit();
@@ -425,12 +404,10 @@ public class MobiComUserPreference {
         sharedPreferences.edit().putBoolean(update_push_registration, updateRegFlag).commit();
     }
 
-    @ApplozicInternal
     public String getCountryCode() {
         return countryCode;
     }
 
-    @ApplozicInternal
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
@@ -467,7 +444,6 @@ public class MobiComUserPreference {
         sharedPreferences.edit().putBoolean(received_sms_sync_pref_key, receivedSmsSyncFlag).commit();
     }
 
-    @ApplozicInternal
     public String getContactNumber() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(phone_number_key, null);
@@ -475,7 +451,6 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal
     public void setContactNumber(String contactNumber) {
         // contactNumber = ContactNumberUtils.getPhoneNumber(contactNumber, getCountryCode());
         if (sharedPreferences != null) {
@@ -483,7 +458,6 @@ public class MobiComUserPreference {
         }
     }
 
-    @ApplozicInternal
     public boolean isDisplayCallRecordEnable() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(call_history_display_within_messages_pref_key, false);
@@ -491,12 +465,10 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal
     public void setDisplayCallRecordEnable(boolean enable) {
         sharedPreferences.edit().putBoolean(call_history_display_within_messages_pref_key, enable).commit();
     }
 
-    @ApplozicInternal
     public boolean getNewMessageFlag() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(new_message_flag, false);
@@ -504,14 +476,12 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setNewMessageFlag(boolean enable) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(new_message_flag, enable).commit();
         }
     }
 
-    @ApplozicInternal
     public long getDeviceTimeOffset() {
         if (sharedPreferences != null) {
             return sharedPreferences.getLong(device_time_offset_from_UTC, 0L);
@@ -519,7 +489,6 @@ public class MobiComUserPreference {
         return 0;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public boolean setDeviceTimeOffset(long diiference) {
         if (sharedPreferences != null) {
             return sharedPreferences.edit().putLong(device_time_offset_from_UTC, diiference).commit();
@@ -544,7 +513,6 @@ public class MobiComUserPreference {
                 putBoolean(mobitexter_contact_sync_key, status).commit();
     }
 
-    @ApplozicInternal
     public String getUrl() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(base_url, null);
@@ -552,14 +520,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUrl(String url) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(base_url, url).commit();
         }
     }
 
-    @ApplozicInternal
     public String getMqttBrokerUrl() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(mqtt_broker_url, null);
@@ -567,14 +533,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setMqttBrokerUrl(String url) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(mqtt_broker_url, url).commit();
         }
     }
 
-    @ApplozicInternal
     public int getPricingPackage() {
         if (sharedPreferences != null) {
             return sharedPreferences.getInt(pricing_package, RegistrationResponse.PricingType.STARTER.getValue());
@@ -582,14 +546,12 @@ public class MobiComUserPreference {
         return 0;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setPricingPackage(int pricingPackage) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putInt(pricing_package, pricingPackage).commit();
         }
     }
 
-    @ApplozicInternal
     public String getDisplayName() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(display_name, null);
@@ -597,14 +559,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal
     public void setDisplayName(String displayName) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(display_name, displayName).commit();
         }
     }
 
-    @ApplozicInternal
     public boolean isLoggedIn() {
         if (sharedPreferences != null) {
             return !TextUtils.isEmpty(getUserId());
@@ -612,7 +572,6 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal
     public String getLastSeenAtSyncTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(lastSeenAtSyncTime, "0");
@@ -620,14 +579,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setLastSeenAtSyncTime(String lastSeenAtTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(lastSeenAtSyncTime, lastSeenAtTime).commit();
         }
     }
 
-    @ApplozicInternal
     public String getChannelSyncTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(channelSyncTime, "0");
@@ -635,14 +592,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setChannelSyncTime(String syncChannelTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(channelSyncTime, syncChannelTime).commit();
         }
     }
 
-    @ApplozicInternal
     public int getCompressedImageSizeInMB() {
         if (sharedPreferences != null) {
             return sharedPreferences.getInt(max_compressed_image_size, 10);
@@ -650,24 +605,20 @@ public class MobiComUserPreference {
         return 0;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setCompressedImageSizeInMB(int maxSize) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putInt(max_compressed_image_size, maxSize).commit();
         }
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setLastSyncTimeForMetadataUpdate(String lastSyncTime) {
         sharedPreferences.edit().putString(last_sync_time_for_metadata_update, lastSyncTime).commit();
     }
 
-    @ApplozicInternal
     public String getLastSyncTimeForMetadataUpdate() {
         return sharedPreferences.getString(last_sync_time_for_metadata_update, null);
     }
 
-    @ApplozicInternal
     public String getUserBlockSyncTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(userBlockSyncTime, "0");
@@ -675,14 +626,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUserBlockSyncTime(String lastUserBlockSyncTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(userBlockSyncTime, lastUserBlockSyncTime).commit();
         }
     }
 
-    @ApplozicInternal
     public long getRegisteredUsersLastFetchTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getLong(registered_users_last_fetch_time, 0l);
@@ -690,14 +639,12 @@ public class MobiComUserPreference {
         return 0;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setRegisteredUsersLastFetchTime(long lastFetchTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putLong(registered_users_last_fetch_time, lastFetchTime).commit();
         }
     }
 
-    @ApplozicInternal
     public String getImageLink() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(image_link, null);
@@ -705,7 +652,6 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal
     public void setImageLink(String imageUrl) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(image_link, imageUrl).commit();
@@ -732,12 +678,10 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setPassword(String val) {
         AlPrefSettings.getInstance(context).setPassword(val);
     }
 
-    @ApplozicInternal
     public String getAuthenticationType() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(authenticationType, "0");
@@ -745,21 +689,18 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setAuthenticationType(String val) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(authenticationType, val).commit();
         }
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setDeleteChannel(boolean channelDelete) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(delete_channel, channelDelete).commit();
         }
     }
 
-    @ApplozicInternal
     public boolean isChannelDeleted() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(delete_channel, false);
@@ -767,13 +708,11 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public MobiComUserPreference setUserAuthToken(String authToken) {
         AlPrefSettings.getInstance(context).setUserAuthToken(authToken);
         return this;
     }
 
-    @ApplozicInternal
     public String getUserAuthToken() {
         String decodedUserAuthToken = AlPrefSettings.getInstance(context).getUserAuthToken();
         if (!TextUtils.isEmpty(decodedUserAuthToken)) {
@@ -800,7 +739,6 @@ public class MobiComUserPreference {
                 '}';
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public boolean clearAll() {
         if (sharedPreferences != null) {
             return sharedPreferences.edit().clear().commit();
@@ -808,7 +746,6 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal
     public boolean isImageCompressionEnabled() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(image_compression_enabled, true);
@@ -816,14 +753,12 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal
     public void setImageCompressionEnabled(boolean imageCompressionEnabled) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(image_compression_enabled, imageCompressionEnabled).commit();
         }
     }
 
-    @ApplozicInternal
     public boolean getWasContactListServerCallAlreadyDone() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(contact_list_server_call, false);
@@ -831,14 +766,12 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setWasContactListServerCallAlreadyDone(Boolean serverCallAlreadyDone) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(contact_list_server_call, serverCallAlreadyDone).commit();
         }
     }
 
-    @ApplozicInternal
     public String getEncryptionKey() {
         String decodedEncryptionKey = AlPrefSettings.getInstance(context).getEncryptionKey();
         if (!TextUtils.isEmpty(decodedEncryptionKey)) {
@@ -855,12 +788,10 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setEncryptionKey(String encryptionKey) {
         AlPrefSettings.getInstance(context).setEncryptionKey(encryptionKey);
     }
 
-    @ApplozicInternal
     public boolean isEncryptionEnabled() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(enable_encryption, false);
@@ -868,7 +799,6 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal
     public void enableEncryption(boolean enableEncryption) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(enable_encryption, enableEncryption).commit();
@@ -924,7 +854,6 @@ public class MobiComUserPreference {
 
     }
 
-    @ApplozicInternal
     public String getUserTypeId() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(user_type_id, null);
@@ -932,7 +861,6 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUserTypeId(String userTypeId) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(user_type_id, userTypeId).commit();
@@ -955,7 +883,6 @@ public class MobiComUserPreference {
         sharedPreferences.edit().putBoolean(application_info_call_done, customerResponse).commit();
     }
 
-    @ApplozicInternal
     public String getContactsGroupId() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(CONTACTS_GROUP_ID, null);
@@ -963,17 +890,14 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setContactsGroupId(String contactsGroupId) {
         sharedPreferences.edit().putString(CONTACTS_GROUP_ID, contactsGroupId).commit();
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setContactGroupIdList(Set<String> contactGroupList) {
         sharedPreferences.edit().putStringSet(CONTACT_GROUP_ID_LISTS, contactGroupList).commit();
     }
 
-    @ApplozicInternal
     public Set<String> getContactGroupIdList() {
         if (sharedPreferences != null) {
             return sharedPreferences.getStringSet(CONTACT_GROUP_ID_LISTS, null);
@@ -981,7 +905,6 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal
     public boolean isContactGroupNameList() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(IS_CONTACT_GROUP_NAME_LIST, false);
@@ -989,17 +912,14 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setIsContactGroupNameList(boolean isContactGroupNameList) {
         sharedPreferences.edit().putBoolean(IS_CONTACT_GROUP_NAME_LIST, isContactGroupNameList).commit();
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setStartTimeForPagination(Long startTime) {
         sharedPreferences.edit().putLong(START_TIME_FOR_MESSAGE_LIST_SCROLL, startTime).commit();
     }
 
-    @ApplozicInternal
     public Long getStartTimeForPagination() {
         if (sharedPreferences != null) {
             return sharedPreferences.getLong(START_TIME_FOR_MESSAGE_LIST_SCROLL, 0);
@@ -1007,14 +927,12 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUserRoleType(Short roleType) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putInt(USER_ROLE_TYPE, roleType).commit();
         }
     }
 
-    @ApplozicInternal
     public Short getUserRoleType() {
         if (sharedPreferences != null) {
             return Short.valueOf((short) sharedPreferences.getInt(USER_ROLE_TYPE, 0));
@@ -1085,17 +1003,14 @@ public class MobiComUserPreference {
         }
     }
 
-    @ApplozicInternal
     public Integer getParentGroupKey() {
         return sharedPreferences.getInt(PARENT_GROUP_KEY, 0);
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setParentGroupKey(Integer parentGroupKey) {
         sharedPreferences.edit().putInt(PARENT_GROUP_KEY, parentGroupKey).commit();
     }
 
-    @ApplozicInternal
     public String getUserEncryptionKey() {
         String decodedUserEncryptionKey = AlPrefSettings.getInstance(context).getUserEncryptionKey();
         if (!TextUtils.isEmpty(decodedUserEncryptionKey)) {
@@ -1112,12 +1027,10 @@ public class MobiComUserPreference {
         return null;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUserEncryptionKey(String userEncryptionKey) {
         AlPrefSettings.getInstance(context).setUserEncryptionKey(userEncryptionKey);
     }
 
-    @ApplozicInternal
     public String getCategoryName() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(CATEGORY_NAME_KEY, null);
@@ -1135,7 +1048,6 @@ public class MobiComUserPreference {
         }
     }
 
-    @ApplozicInternal
     public long getTokenCreatedAtTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getLong(AUTH_TOKEN_CREATED_AT_TIME, 0);
@@ -1143,7 +1055,6 @@ public class MobiComUserPreference {
         return 0;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public MobiComUserPreference setTokenCreatedAtTime(Long authTokenCreatedAtTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putLong(AUTH_TOKEN_CREATED_AT_TIME, authTokenCreatedAtTime).commit();
@@ -1151,7 +1062,6 @@ public class MobiComUserPreference {
         return this;
     }
 
-    @ApplozicInternal
     public int getTokenValidUptoMins() {
         if (sharedPreferences != null) {
             return sharedPreferences.getInt(AUTH_TOKEN_VALID_UPTO_MINS, 0);
@@ -1159,7 +1069,6 @@ public class MobiComUserPreference {
         return 0;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public MobiComUserPreference setTokenValidUptoMins(Integer validUptoMins) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putInt(AUTH_TOKEN_VALID_UPTO_MINS, validUptoMins).commit();
@@ -1167,14 +1076,12 @@ public class MobiComUserPreference {
         return this;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setUserDeactivated(boolean isDeactivated) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(USER_DEACTIVATED, isDeactivated).commit();
         }
     }
 
-    @ApplozicInternal
     public boolean isUserDeactivated() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(USER_DEACTIVATED, false);
@@ -1182,14 +1089,12 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setChannelListLastGeneratedAtTime(String generatedAt) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(CHANNEL_LIST_LAST_GENERATED_TIME, generatedAt).commit();
         }
     }
 
-    @ApplozicInternal
     public String getChannelListLastGeneratedAtTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getString(CHANNEL_LIST_LAST_GENERATED_TIME, CHANNEL_LIST_LAST_GENERATED_DEFAULT_VALUE);
@@ -1197,7 +1102,6 @@ public class MobiComUserPreference {
         return CHANNEL_LIST_LAST_GENERATED_DEFAULT_VALUE;
     }
 
-    @ApplozicInternal
     public boolean isLoggedUserDeletedFromDashboard() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(LOGGED_USER_DELETE_FROM_DASHBOARD, false);
@@ -1205,7 +1109,6 @@ public class MobiComUserPreference {
         return false;
     }
 
-    @ApplozicInternal(warningLevel = ApplozicInternal.WarningLevel.DO_NOT_USE)
     public void setLoggedUserDeletedFromDashboard(boolean deletedFromDashboard) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(LOGGED_USER_DELETE_FROM_DASHBOARD, deletedFromDashboard).commit();

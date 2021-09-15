@@ -2,8 +2,6 @@ package com.applozic.mobicomkit.api.authentication;
 
 import androidx.annotation.Nullable;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +11,6 @@ import java.util.List;
  *
  * The Claim class holds the value in a generic way so that it can be recovered in many representations.
  */
-@ApplozicInternal
 public interface Claim {
 
 

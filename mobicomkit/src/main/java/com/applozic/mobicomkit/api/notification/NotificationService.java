@@ -17,7 +17,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.attachment.FileClientService;
@@ -46,10 +45,9 @@ import static com.applozic.mobicomkit.api.notification.VideoCallNotificationHelp
  * This class manages Android Notifications for Applozic.
  * Methods of this class are used to notify when messages arrive etc.
  */
-@ApplozicInternal
 public class NotificationService {
     //ApplozicInternal: private all
-    public @ApplozicInternal static final int NOTIFICATION_ID = 1000;
+    public static final int NOTIFICATION_ID = 1000;
     private static final String TAG = "NotificationService";
     private static final String NOTIFICATION_SMALL_ICON_METADATA = "com.applozic.mobicomkit.notification.smallIcon";
     private static final String NOTIFICATION_COLOR_METADATA = "com.applozic.mobicomkit.notification.color";
@@ -93,7 +91,6 @@ public class NotificationService {
     }
 
     //ApplozicInternal: rename to a public api name eg: createApplozicNotification()
-    @ApplozicInternal
     public void notifyUser(Contact contact, Channel channel, Message message, int index) {
         if (ApplozicClient.getInstance(context).isNotificationDisabled()) {
             Utils.printLog(context, TAG, "Notification is disabled !!");
@@ -370,7 +367,6 @@ public class NotificationService {
     }
 
     //ApplozicInternal: rename to a public api method eg: createApplozicMessageNotification()
-    @ApplozicInternal
     public void notifyUserForNormalMessage(Contact contact, Channel channel, Message message, int index) {
         String notificationText;
         NotificationInfo notificationInfo = getNotificationInfo(contact, channel, message);
@@ -462,7 +458,6 @@ public class NotificationService {
     }
 
     //ApplozicInternal: rename to a public api name eg: createApplozicCallNotification()
-    @ApplozicInternal
     public void startCallNotification(Contact contact, Message message, String isAudioCallOnly, String callId) {
         NotificationInfo notificationInfo = getNotificationInfo(contact, null, message);
         if (notificationInfo == null) {
@@ -531,7 +526,6 @@ public class NotificationService {
     }
 
     //ApplozicInternal: rename to public api method eg: isNotificationMuted()
-    @ApplozicInternal
     public boolean muteNotifications(int index) {
         return !(notificationDisableThreshold == 0 || (notificationDisableThreshold > 0 && index < notificationDisableThreshold));
     }

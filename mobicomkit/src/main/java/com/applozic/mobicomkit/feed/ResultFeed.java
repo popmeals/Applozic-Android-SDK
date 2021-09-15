@@ -1,13 +1,10 @@
 package com.applozic.mobicomkit.feed;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
 import java.io.Serializable;
 
 /**
  * Class to be serialized to response.
  */
-@ApplozicInternal
 public class ResultFeed implements Serializable {
 
     private int code;

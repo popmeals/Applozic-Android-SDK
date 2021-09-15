@@ -12,7 +12,6 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
@@ -22,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Message, Contact and Channel syncing.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible
+//ApplozicInternal: default if possible
 public class ConversationWorker extends Worker {
     private static final String TAG = "ConversationWorker";
 

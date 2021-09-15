@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.attachment.FileClientService;
 import com.applozic.mobicomkit.api.people.AlGetPeopleTask;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
@@ -243,7 +242,6 @@ public class AppContactService implements BaseContactService {
         return bitmap;
     }
 
-    @ApplozicInternal
     public Contact getContactReceiver(List<String> items, List<String> userIds) {
         if (userIds != null && !userIds.isEmpty()) {
             return getContactById(userIds.get(0));
@@ -266,7 +264,6 @@ public class AppContactService implements BaseContactService {
     }
 
     @Override
-    @ApplozicInternal
     public void updateConnectedStatus(String contactId, Date date, boolean connected) {
         Contact contact = contactDatabase.getContactById(contactId);
         if (contact != null && contact.isConnected() != connected) {
@@ -276,7 +273,6 @@ public class AppContactService implements BaseContactService {
     }
 
     @Override
-    @ApplozicInternal
     public void updateUserBlocked(String userId, boolean userBlocked) {
         if (!TextUtils.isEmpty(userId)) {
             contactDatabase.updateUserBlockStatus(userId, userBlocked);
@@ -285,7 +281,6 @@ public class AppContactService implements BaseContactService {
     }
 
     @Override
-    @ApplozicInternal
     public void updateUserBlockedBy(String userId, boolean userBlockedBy) {
         if (!TextUtils.isEmpty(userId)) {
             contactDatabase.updateUserBlockByStatus(userId, userBlockedBy);
@@ -305,25 +300,21 @@ public class AppContactService implements BaseContactService {
     }
 
     @Override
-    @ApplozicInternal
     public int getChatConversationCount() {
         return contactDatabase.getChatUnreadCount();
     }
 
     @Override
-    @ApplozicInternal
     public int getGroupConversationCount() {
         return contactDatabase.getGroupUnreadCount();
     }
 
     @Override
-    @ApplozicInternal
     public void updateLocalImageUri(Contact contact) {
         contactDatabase.updateLocalImageUri(contact);
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public void getContactByIdAsync(String userId, AlContactListener contactListener) {
         AlTask.execute(new AlGetPeopleTask(context, userId, null, null, null, contactListener, this, null));
     }

@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.attachment.urlservice.URLServiceProvider;
 import com.applozic.mobicomkit.api.conversation.Message;
 
@@ -37,7 +36,6 @@ import com.applozic.mobicomkit.api.conversation.Message;
  *
  * @deprecated This class will be moved to the UI Kit.
  */
-@ApplozicInternal
 @Deprecated
 public class AttachmentView extends ImageView {
 

@@ -2,7 +2,6 @@ package com.applozic.mobicomkit.api.account.register;
 
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.Map;
@@ -43,7 +42,6 @@ public class RegistrationResponse extends JsonMarker {
         return message;
     }
 
-    @ApplozicInternal
     public void setMessage(String message) {
         this.message = message;
     }
@@ -55,7 +53,6 @@ public class RegistrationResponse extends JsonMarker {
         return deviceKey;
     }
 
-    @ApplozicInternal
     public void setDeviceKey(String deviceKeyString) {
         this.deviceKey = deviceKeyString;
     }
@@ -67,7 +64,6 @@ public class RegistrationResponse extends JsonMarker {
         return userKey;
     }
 
-    @ApplozicInternal
     public void setUserKey(String suUserKeyString) {
         this.userKey = suUserKeyString;
     }
@@ -79,7 +75,6 @@ public class RegistrationResponse extends JsonMarker {
         return contactNumber;
     }
 
-    @ApplozicInternal
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
@@ -107,7 +102,6 @@ public class RegistrationResponse extends JsonMarker {
         return currentTimeStamp == null ? 0L : currentTimeStamp;
     }
 
-    @ApplozicInternal
     public void setCurrentTimeStamp(Long currentTimeStamp) {
         this.currentTimeStamp = currentTimeStamp;
     }
@@ -115,12 +109,10 @@ public class RegistrationResponse extends JsonMarker {
     /**
      * @ApplozicInternal Used internally.
      */
-    @ApplozicInternal
     public String getNotificationResponse() {
         return notificationResponse;
     }
 
-    @ApplozicInternal
     public void setNotificationResponse(String notificationResponse) {
         this.notificationResponse = notificationResponse;
     }
@@ -129,12 +121,10 @@ public class RegistrationResponse extends JsonMarker {
      * @ApplozicInternal Used internally.
      * Gets the URL for the MQTT broker, used for the web-socket connection.
      */
-    @ApplozicInternal
     public String getBrokerUrl() {
         return brokerUrl;
     }
 
-    @ApplozicInternal
     public void setBrokerUrl(String brokerUrl) {
         this.brokerUrl = brokerUrl;
     }
@@ -151,12 +141,10 @@ public class RegistrationResponse extends JsonMarker {
     /**
      * The pricing of your Applozic account.
      */
-    @ApplozicInternal
     public Short getPricingPackage() {
         return pricingPackage;
     }
 
-    @ApplozicInternal
     public void setPricingPackage(Short pricingPackage) {
         this.pricingPackage = pricingPackage;
     }
@@ -168,7 +156,6 @@ public class RegistrationResponse extends JsonMarker {
         return userId;
     }
 
-    @ApplozicInternal
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -180,7 +167,6 @@ public class RegistrationResponse extends JsonMarker {
         return displayName;
     }
 
-    @ApplozicInternal
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
@@ -192,37 +178,30 @@ public class RegistrationResponse extends JsonMarker {
         return imageLink;
     }
 
-    @ApplozicInternal
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
 
-    @ApplozicInternal
     public String getStatusMessage() {
         return statusMessage;
     }
 
-    @ApplozicInternal
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
 
-    @ApplozicInternal
     public String getEncryptionKey() {
         return encryptionKey;
     }
 
-    @ApplozicInternal
     public void setEncryptionKey(String encryptionKey) {
         this.encryptionKey = encryptionKey;
     }
 
-    @ApplozicInternal
     public boolean isEnableEncryption() {
         return enableEncryption;
     }
 
-    @ApplozicInternal
     public void setEnableEncryption(boolean enableEncryption) {
         this.enableEncryption = enableEncryption;
     }
@@ -234,17 +213,14 @@ public class RegistrationResponse extends JsonMarker {
         return roleType;
     }
 
-    @ApplozicInternal
     public void setRoleType(Short roleType) {
         this.roleType = roleType;
     }
 
-    @ApplozicInternal
     public String getUserEncryptionKey() {
         return userEncryptionKey;
     }
 
-    @ApplozicInternal
     public void setUserEncryptionKey(String userEncryptionKey) {
         this.userEncryptionKey = userEncryptionKey;
     }
@@ -256,7 +232,6 @@ public class RegistrationResponse extends JsonMarker {
         return metadata;
     }
 
-    @ApplozicInternal
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
@@ -268,7 +243,6 @@ public class RegistrationResponse extends JsonMarker {
         return notificationAfter;
     }
 
-    @ApplozicInternal
     public void setNotificationAfter(Long notificationAfter) {
         this.notificationAfter = notificationAfter;
     }
@@ -281,7 +255,6 @@ public class RegistrationResponse extends JsonMarker {
         return authToken;
     }
 
-    @ApplozicInternal
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
@@ -293,7 +266,6 @@ public class RegistrationResponse extends JsonMarker {
         return deactivate;
     }
 
-    @ApplozicInternal
     public void setDeactivate(boolean deactivate) {
         this.deactivate = deactivate;
     }
@@ -332,7 +304,6 @@ public class RegistrationResponse extends JsonMarker {
      *
      * Registration success response constants (that will be received from server).
      */
-    @ApplozicInternal
     public static enum SuccessResponse {
         UPDATED("UPDATED"), REGISTERED("REGISTERED"), REGISTERED_WITHOUTREGISTRATIONID("REGISTERED.WITHOUTREGISTRATIONID");
         private final String value;

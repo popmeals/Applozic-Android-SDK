@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
@@ -234,7 +233,6 @@ public class MessageClientService extends MobiComKitClientService {
         return getBaseUrl() + UPDATE_MESSAGE_METADATA_URL;
     }
 
-    @ApplozicInternal
     public synchronized void syncPendingMessages(boolean broadcast) {
         List<Message> pendingMessages = messageDatabaseService.getPendingMessages();
         Utils.printLog(context, TAG, "Found " + pendingMessages.size() + " pending messages to sync.");
@@ -244,7 +242,6 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public synchronized void syncDeleteMessages(boolean deleteMessage) {
         List<Message> pendingDeleteMessages = messageDatabaseService.getPendingDeleteMessages();
         Utils.printLog(context, TAG, "Found " + pendingDeleteMessages.size() + " pending messages for Delete.");
@@ -373,7 +370,6 @@ public class MessageClientService extends MobiComKitClientService {
         sendMessageToServer(message, handler, null, null);
     }
 
-    @ApplozicInternal
     public void sendMessageToServer(Message message, Handler handler, Class intentClass, String userDisplayName) throws Exception {
         processMessage(message, handler, userDisplayName);
         if (message.getScheduledAt() != null && message.getScheduledAt() != 0 && intentClass != null) {
@@ -795,7 +791,6 @@ public class MessageClientService extends MobiComKitClientService {
         Utils.printLog(context, TAG, "Read status response is " + response);
     }
 
-    @ApplozicInternal
     public void updateReadStatusForSingleMessage(String pairedmessagekey) {
         String singleReadMessageParm = "";
         String response = "";
@@ -903,7 +898,6 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public String[] getConnectedUsers() {
         try {
             String response = getMessages(null, null, null, null, null);
@@ -955,18 +949,15 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public void processUserStatus(String userId) {
         processUserStatus(userId, false);
     }
 
-    @ApplozicInternal
     public void processLoggedUserDeletedFromServer() {
         setLoggedInUserDeletedSharedPrefEntry();
         BroadcastService.sendLoggedUserDeletedBroadcast(context);
     }
 
-    @ApplozicInternal
     public void processUserStatus(String userId, boolean isProfileImageUpdated) {
         try {
             UserDetail[] userDetails = getUserDetails(userId);
@@ -1002,7 +993,6 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public String getTopicId(Integer conversationId) {
         try {
             String topicId = null;
@@ -1023,7 +1013,6 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    @ApplozicInternal
     public MessageInfoResponse getMessageInfoList(String messageKey) {
 
         String url = getMessageInfoUrl() + "?key=" + messageKey;

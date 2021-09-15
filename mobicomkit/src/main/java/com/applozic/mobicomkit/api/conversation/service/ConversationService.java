@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.conversation.service;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.database.ConversationDatabaseService;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicomkit.feed.ChannelFeed;
@@ -14,7 +13,6 @@ import com.applozic.mobicommons.people.contact.Contact;
 
 import java.util.List;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ConversationService {
 
     private static ConversationService conversationService;

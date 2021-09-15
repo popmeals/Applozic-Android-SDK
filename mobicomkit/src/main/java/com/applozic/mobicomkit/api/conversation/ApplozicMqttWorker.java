@@ -14,7 +14,6 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.ApplozicMqttService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Handles all the real-time MQTT related code. Example: typing, subscribing etc.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: default if possible (maybe keep it at the root)
+//ApplozicInternal: default if possible (maybe keep it at the root)
 public class ApplozicMqttWorker extends Worker {
     public static final String TAG = "ApplozicMqttWorker";
 

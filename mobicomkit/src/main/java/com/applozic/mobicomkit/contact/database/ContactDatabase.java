@@ -11,7 +11,6 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
 import com.applozic.mobicommons.ApplozicService;
@@ -53,7 +52,6 @@ public class ContactDatabase {
         return getContact(cursor, null);
     }
 
-    @ApplozicInternal
     public Contact getContact(Cursor cursor, String primaryKeyAliash) {
         Contact contact = new Contact();
 
@@ -146,7 +144,6 @@ public class ContactDatabase {
         }
     }
 
-    @ApplozicInternal
     public Cursor getContactCursorByIdForLoader(String id) {
         Cursor cursor = null;
         try {
@@ -240,7 +237,6 @@ public class ContactDatabase {
         }
     }
 
-    @ApplozicInternal
     public void updateLastSeenTimeAt(String userId, long lastSeenTime) {
         try {
             ContentValues contentValues = new ContentValues();
@@ -480,7 +476,6 @@ public class ContactDatabase {
         dbHelper.getWritableDatabase().update(CONTACT, contentValues, MobiComDatabaseHelper.USERID + "=?", new String[]{userId});
     }
 
-    @ApplozicInternal
     public int getChatUnreadCount() {
         Cursor cursor = null;
         try {
@@ -503,7 +498,6 @@ public class ContactDatabase {
         return 0;
     }
 
-    @ApplozicInternal
     public int getGroupUnreadCount() {
         Cursor cursor = null;
         try {
@@ -526,17 +520,14 @@ public class ContactDatabase {
         return 0;
     }
 
-    @ApplozicInternal
     public Loader<Cursor> getSearchCursorLoader(final String searchString, final String[] userIdArray) {
         return getSearchCursorLoader(searchString, userIdArray, null, null);
     }
 
-    @ApplozicInternal
     public Loader<Cursor> getSearchCursorLoader(final String searchString, final String[] userIdArray, final Integer parentGroupKey) {
         return getSearchCursorLoader(searchString, userIdArray, parentGroupKey, null);
     }
 
-    @ApplozicInternal
     public Loader<Cursor> getSearchCursorLoader(final String searchString, final String[] userIdArray, final Integer parentGroupKey, final String pinnedContactUserId) {
 
         return new CursorLoader(context, null, null, null, null, MobiComDatabaseHelper.DISPLAY_NAME + " asc") {
@@ -606,7 +597,6 @@ public class ContactDatabase {
     }
 
     //ApplozicInternal: private, remove
-    @ApplozicInternal
     public boolean isContactPresent(String contactNumber, Contact.ContactType contactType) {
         Cursor cursor = null;
         try {
@@ -626,7 +616,6 @@ public class ContactDatabase {
     }
 
     //ApplozicInternal: private, remove
-    @ApplozicInternal
     public void saveOrUpdate(Contact contact) {
         Contact existingContact = getContactById(contact.getUserId());
         if (existingContact == null) {

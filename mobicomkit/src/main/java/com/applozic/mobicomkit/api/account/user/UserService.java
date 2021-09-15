@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.notification.MuteUserResponse;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
@@ -77,13 +76,11 @@ public class UserService {
     }
 
     @VisibleForTesting
-    @ApplozicInternal
     public void setBaseContactService(BaseContactService baseContactService) {
         this.baseContactService = baseContactService;
     }
 
     @VisibleForTesting
-    @ApplozicInternal
     public void setUserClientService(UserClientService userClientService) {
         this.userClientService = userClientService;
     }
@@ -91,7 +88,6 @@ public class UserService {
     /**
      * @ApplozicInternal This method handle block user syncing. Calling this method is done internally by the SDK.
      */
-    @ApplozicInternal
     public synchronized void processSyncUserBlock() {
         try {
             SyncBlockUserApiResponse apiResponse = userClientService.getSyncUserBlockList(userPreference.getUserBlockSyncTime());
@@ -178,14 +174,12 @@ public class UserService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public synchronized void processUserDetails(String userId) {
         Set<String> userIds = new HashSet<String>();
         userIds.add(userId);
         processUserDetails(userIds);
     }
 
-    @ApplozicInternal
     public synchronized void processUserDetails(Set<String> userIds) {
         String response = userClientService.getUserDetails(userIds);
         if (!TextUtils.isEmpty(response)) {
@@ -197,7 +191,6 @@ public class UserService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public synchronized void processUser(UserDetail userDetail) {
         processUser(userDetail, Contact.ContactType.APPLOZIC);
     }
@@ -221,7 +214,6 @@ public class UserService {
     /**
      * @ApplozicInternal Use {@link #getContactFromUserDetail(UserDetail)}.
      */
-    @ApplozicInternal
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -256,7 +248,6 @@ public class UserService {
      * @param userDetail the user detail to save
      * @param contactType the contact type of the user
      */
-    @ApplozicInternal
     public synchronized void processUser(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -282,7 +273,6 @@ public class UserService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public synchronized void processMuteUserResponse(MuteUserResponse response) {
         Contact contact = new Contact();
         contact.setUserId(response.getUserId());
@@ -428,7 +418,6 @@ public class UserService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -470,7 +459,6 @@ public class UserService {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public ApiResponse updateUserWithResponse(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -544,7 +532,6 @@ public class UserService {
     }
 
     //ApplozicInternal: default
-    @ApplozicInternal
     public void processUserDetailsResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             List<UserDetail> userDetails = (List<UserDetail>) GsonUtils.getObjectFromJson(response, new TypeToken<List<UserDetail>>() {
@@ -631,7 +618,6 @@ public class UserService {
     }
 
     //Cleanup: not needed
-    @ApplozicInternal
     public void updateUser(User user, AlCallback callback) {
         AlTask.execute(new AlUserUpdateTask(context, user, callback));
     }

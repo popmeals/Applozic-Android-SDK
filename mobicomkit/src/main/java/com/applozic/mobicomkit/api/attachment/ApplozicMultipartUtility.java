@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.attachment;
 import android.content.Context;
 import android.os.Handler;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -25,7 +24,6 @@ import java.net.URLConnection;
 /**
  * @ApplozicInternal This is an internal class.
  */
-@ApplozicInternal
 public class ApplozicMultipartUtility {
     private static final String LINE_FEED = "\r\n";
     final String TAG = "AlMultipartUtility";
@@ -35,7 +33,6 @@ public class ApplozicMultipartUtility {
     private PrintWriter writer;
 
     //ApplozicInternal: default
-    @ApplozicInternal
     public ApplozicMultipartUtility(String requestURL, String charset, Context context)
             throws IOException {
 
@@ -56,7 +53,6 @@ public class ApplozicMultipartUtility {
     }
 
     //ApplozicInternal: default
-    @ApplozicInternal
     public void addFilePart(String fieldName, File uploadFile, Handler handler, String oldMessageKey)
             throws IOException, InterruptedException {
         String fileName = uploadFile.getName();
@@ -126,7 +122,6 @@ public class ApplozicMultipartUtility {
     }
 
     //ApplozicInternal: private
-    @ApplozicInternal
     public String getResponse() throws IOException {
         StringBuilder sb = new StringBuilder();
         writer.append(LINE_FEED).flush();

@@ -1,7 +1,5 @@
 package com.applozic.mobicomkit.api.authentication;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.Map;
 /**
  * @ApplozicInternal This class stores the JWT payload.
  */
-@ApplozicInternal
 public class JWTPayload {
     final String iss;
     final String sub;

@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
@@ -51,7 +50,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
     /**
      * This is an internal field. Do not use.
      */
-    public static final @ApplozicInternal Short MOBICOMKIT_VERSION_CODE = 112;
+    public static final Short MOBICOMKIT_VERSION_CODE = 112;
     private static final String TAG = "RegisterUserClient";
     //Cleanup: can be removed
     private static final String INVALID_APP_ID = "INVALID_APPLICATIONID";
@@ -74,7 +73,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal This is an internal method. Do not use.
      */
-    @ApplozicInternal
     public String getCreateAccountUrl() {
         return getBaseUrl() + CREATE_ACCOUNT_URL;
     }
@@ -83,7 +81,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal This is an internal method. Do not use.
      */
-    @ApplozicInternal
     public String getPricingPackageUrl() {
         return getBaseUrl() + CHECK_PRICING_PACKAGE;
     }
@@ -92,7 +89,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal This is an internal method. Do not use.
      */
-    @ApplozicInternal
     public String getUpdateAccountUrl() {
         return getBaseUrl() + UPDATE_ACCOUNT_URL;
     }
@@ -101,7 +97,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
     /**
      * @ApplozicInternal This is an internal method. Do not use.
      */
-    @ApplozicInternal
     public String getRefreshTokenUrl() {
         return getBaseUrl() + REFRESH_TOKEN_URL;
     }
@@ -129,7 +124,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
      * @return the {@link RegistrationResponse}
      * @throws Exception in case of empty or invalid user-id (see {@link User#isValidUserId()}, and connection errors
      */
-    @ApplozicInternal
     public RegistrationResponse createAccount(User user) throws Exception {
         if (user.getDeviceType() == null) {
             user.setDeviceType(Short.valueOf("1"));
@@ -307,7 +301,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
      * @deprecated This method is no longer used and will be removed soon.
      */
     @Deprecated
-    @ApplozicInternal
     private RegistrationResponse updateAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
         User user = new User();
         user.setUserId(userId);
@@ -451,7 +444,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
      * @deprecated This method is no longer used and will be removed soon.
      */
     @Deprecated
-    @ApplozicInternal
     public void syncAccountStatus() {
         try {
             String response = httpRequestUtils.getResponse(getPricingPackageUrl(), "application/json", "application/json");

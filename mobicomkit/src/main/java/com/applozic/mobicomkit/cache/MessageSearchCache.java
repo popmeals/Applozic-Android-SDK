@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.cache;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.UserDetail;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.channel.service.ChannelService;
@@ -19,7 +18,6 @@ import java.util.Map;
 /**
  * This is a temporary static data storage class.
  */
-@ApplozicInternal
 public class MessageSearchCache {
 
     private static SparseArray<Channel> channelSparseArray;

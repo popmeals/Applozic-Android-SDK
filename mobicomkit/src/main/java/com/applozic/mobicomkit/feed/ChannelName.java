@@ -1,9 +1,8 @@
 package com.applozic.mobicomkit.feed;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
-@ApplozicInternal //Cleanup: can be removed
+//Cleanup: can be removed
 public class ChannelName extends JsonMarker {
 
     private Integer groupId;

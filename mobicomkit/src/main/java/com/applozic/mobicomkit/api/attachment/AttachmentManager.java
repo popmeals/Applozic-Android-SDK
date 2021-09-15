@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import androidx.collection.LruCache;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.listners.MediaDownloadProgressHandler;
@@ -63,7 +62,6 @@ import java.util.concurrent.TimeUnit;
  * thread to change the bitmap to reflect the state.</p>
  */
 @SuppressWarnings("unused")
-@ApplozicInternal
 public class AttachmentManager {
 
     /*
@@ -75,7 +73,7 @@ public class AttachmentManager {
     static final int DOWNLOAD_COMPLETE = 2;
     static final int DECODE_STARTED = 3;
     static final int TASK_COMPLETE = 4;
-    public static @ApplozicInternal final int DOWNLOAD_PROGRESS = 5;
+    public static final int DOWNLOAD_PROGRESS = 5;
     private static final String TAG = "AttachmentManager";
     // Sets the size of the storage that's used to cache images
     // Sets the amount of time an idle thread will wait for a task before terminating
@@ -113,8 +111,8 @@ public class AttachmentManager {
         sInstance = new AttachmentManager();
     }
 
-    public final @ApplozicInternal List<String> attachmentInProgress;
-    public final @ApplozicInternal List<AttachmentTask> attachmentTaskList;
+    public final List<String> attachmentInProgress;
+    public final List<AttachmentTask> attachmentTaskList;
     // A queue of Runnables for the image download pool
     private final BlockingQueue<Runnable> mDownloadWorkQueue;
     // A queue of Runnables for the image decoding pool
@@ -376,13 +374,11 @@ public class AttachmentManager {
      *
      * @return the global AttachmentManager object
      */
-    @ApplozicInternal
     public static AttachmentManager getInstance() {
 
         return sInstance;
     }
 
-    @ApplozicInternal
     public static boolean isAttachmentInProgress(String messageKeyString) {
         boolean result = false;
         if (sInstance != null) {
@@ -394,7 +390,6 @@ public class AttachmentManager {
     /**
      * Cancels all threads in the <i>ThreadPool</i>.
      */
-    @ApplozicInternal
     public static void cancelAll() {
 
         /*
@@ -433,7 +428,6 @@ public class AttachmentManager {
      *
      * @param downloaderTask the download task associated with the thread
      */
-    @ApplozicInternal
     static public void removeDownload(AttachmentTask downloaderTask, boolean documentView) {
 
         // If the Thread object still exists and the download matches the specified URL
@@ -474,7 +468,6 @@ public class AttachmentManager {
      * @param cacheFlag determines if caching should be used
      * @return the task instance that will handle the work
      */
-    @ApplozicInternal
     static public AttachmentTask startDownload(
             AttachmentView imageView,
             boolean cacheFlag, com.applozic.mobicomkit.api.conversation.Message message, MediaDownloadProgressHandler handler, Context context) {
@@ -527,7 +520,6 @@ public class AttachmentManager {
         return downloadTask;
     }
 
-    @ApplozicInternal
     static public AttachmentTask startDownload(
             AttachmentView imageView,
             boolean cacheFlag) {
@@ -576,7 +568,6 @@ public class AttachmentManager {
         return downloadTask;
     }
 
-    @ApplozicInternal
     static public AttachmentTask startDownload(AttachmentViewProperties attachmentViewProperties,
                                                boolean cacheFlag) {
 
@@ -621,7 +612,6 @@ public class AttachmentManager {
         return downloadTask;
     }
 
-    @ApplozicInternal
     public static AttachmentTask getBGThreadForAttachment(String messageKeyString) {
         Log.d(TAG, "Worker length... " + sInstance.attachmentTaskList.size());
         synchronized (sInstance) {
@@ -644,7 +634,6 @@ public class AttachmentManager {
      * @param state     the state of the task
      */
     @SuppressLint("HandlerLeak")
-    @ApplozicInternal
     public void handleState(AttachmentTask photoTask, int state) {
         switch (state) {
 
@@ -711,7 +700,6 @@ public class AttachmentManager {
      *
      * @param downloadTask the task to recycle
      */
-    @ApplozicInternal
     void recycleTask(AttachmentTask downloadTask) {
 
         // Frees up memory in the task
@@ -721,7 +709,6 @@ public class AttachmentManager {
         mPhotoTaskWorkQueue.offer(downloadTask);
     }
 
-    @ApplozicInternal
     public Bitmap getBitMapFromCache(String key) {
         if (mPhotoCache != null && !TextUtils.isEmpty(key)) {
             return mPhotoCache.get(key);

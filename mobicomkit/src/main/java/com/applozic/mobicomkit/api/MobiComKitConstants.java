@@ -1,8 +1,5 @@
 package com.applozic.mobicomkit.api;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public final class MobiComKitConstants {
 
     public static final String MESSAGE_JSON_INTENT = "message_json";

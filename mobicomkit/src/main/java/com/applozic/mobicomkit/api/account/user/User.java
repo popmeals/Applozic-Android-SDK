@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.account.user;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.listners.AlLoginHandler;
 import com.applozic.mobicommons.json.JsonMarker;
 
@@ -74,12 +73,10 @@ public class User extends JsonMarker {
     private boolean hideActionMessages;
     private Short roleType = RoleType.USER_ROLE.getValue();
 
-    @ApplozicInternal
     public List<String> getFeatures() {
         return features;
     }
 
-    @ApplozicInternal
     public void setFeatures(List<String> features) {
         this.features = features;
     }
@@ -187,72 +184,58 @@ public class User extends JsonMarker {
         this.applicationId = applicationId;
     }
 
-    @ApplozicInternal
     public String getCountryCode() {
         return countryCode;
     }
 
-    @ApplozicInternal
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
 
-    @ApplozicInternal
     public Short getPrefContactAPI() {
         return prefContactAPI;
     }
 
-    @ApplozicInternal
     public void setPrefContactAPI(Short prefContactAPI) {
         this.prefContactAPI = prefContactAPI;
     }
 
-    @ApplozicInternal
     public boolean isEmailVerified() {
         return emailVerified;
     }
 
-    @ApplozicInternal
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
     }
 
-    @ApplozicInternal
     public String getTimezone() {
         return timezone;
     }
 
-    @ApplozicInternal
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
 
-    @ApplozicInternal
     public Short getAppVersionCode() {
         return appVersionCode;
     }
 
-    @ApplozicInternal
     public void setAppVersionCode(Short appVersionCode) {
         this.appVersionCode = appVersionCode;
     }
 
-    @ApplozicInternal
     public String getRoleName() {
         return roleName;
     }
 
-    @ApplozicInternal
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 
-    @ApplozicInternal
     public Short getDeviceType() {
         return deviceType;
     }
 
-    @ApplozicInternal
     public void setDeviceType(Short deviceType) {
         this.deviceType = deviceType;
     }
@@ -268,12 +251,10 @@ public class User extends JsonMarker {
         this.authenticationTypeId = authenticationTypeId;
     }
 
-    @ApplozicInternal
     public String getAppModuleName() {
         return appModuleName;
     }
 
-    @ApplozicInternal
     public void setAppModuleName(String appModuleName) {
         this.appModuleName = appModuleName;
     }
@@ -289,127 +270,102 @@ public class User extends JsonMarker {
         this.imageLink = imageLink;
     }
 
-    @ApplozicInternal
     public boolean isEnableEncryption() {
         return enableEncryption;
     }
 
-    @ApplozicInternal
     public void setEnableEncryption(boolean enableEncryption) {
         this.enableEncryption = enableEncryption;
     }
 
-    @ApplozicInternal
     public Short getUserTypeId() {
         return userTypeId;
     }
 
-    @ApplozicInternal
     public void setUserTypeId(Short userTypeId) {
         this.userTypeId = userTypeId;
     }
 
-    @ApplozicInternal
     public String getNotificationSoundFilePath() {
         return notificationSoundFilePath;
     }
 
-    @ApplozicInternal
     public void setNotificationSoundFilePath(String notificationSoundFilePath) {
         this.notificationSoundFilePath = notificationSoundFilePath;
     }
 
-    @ApplozicInternal
     public Short getPushNotificationFormat() {
         return pushNotificationFormat;
     }
 
-    @ApplozicInternal
     public void setPushNotificationFormat(Short pushNotificationFormat) {
         this.pushNotificationFormat = pushNotificationFormat;
     }
 
-    @ApplozicInternal
     public Long getLastMessageAtTime() {
         return lastMessageAtTime;
     }
 
-    @ApplozicInternal
     public void setLastMessageAtTime(Long lastMessageAtTime) {
         this.lastMessageAtTime = lastMessageAtTime;
     }
 
-    @ApplozicInternal
     public Map<String, String> getMetadata() {
         return metadata;
     }
 
-    @ApplozicInternal
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
 
-    @ApplozicInternal
     public void setRoleType(Short roleType) {
         this.roleType = roleType;
     }
 
-    @ApplozicInternal
     public Short getRoleType() {
         return roleType;
     }
 
-    @ApplozicInternal
     public String getAlBaseUrl() {
         return alBaseUrl;
     }
 
-    @ApplozicInternal
     public void setAlBaseUrl(String alBaseUrl) {
         this.alBaseUrl = alBaseUrl;
     }
 
-    @ApplozicInternal
     public String getKmBaseUrl() {
         return kmBaseUrl;
     }
 
-    @ApplozicInternal
     public void setKmBaseUrl(String kmBaseUrl) {
         this.kmBaseUrl = kmBaseUrl;
     }
 
-    @ApplozicInternal
     public boolean isSkipDeletedGroups() {
         return skipDeletedGroups;
     }
 
-    @ApplozicInternal
     public void setSkipDeletedGroups(boolean skipDeletedGroups) {
         this.skipDeletedGroups = skipDeletedGroups;
     }
 
-    @ApplozicInternal
     public boolean isHideActionMessages() {
         return hideActionMessages;
     }
 
-    @ApplozicInternal
     public void setHideActionMessages(boolean hideActionMessages) {
         this.hideActionMessages = hideActionMessages;
     }
 
-    @ApplozicInternal
     public String getUserIdRegex() {
         return userIdRegex;
     }
 
-    @ApplozicInternal
     public void setUserIdRegex(String regex) {
         this.userIdRegex = regex;
     }
 
-    @ApplozicInternal
     public boolean isValidUserId() {
         if (TextUtils.isEmpty(userIdRegex)) {
             setUserIdRegex(DEFAULT_USER_ID_REGEX);
@@ -417,7 +373,6 @@ public class User extends JsonMarker {
         return Pattern.compile(userIdRegex).matcher(getUserId()).matches();
     }
 
-    @ApplozicInternal
     public static String getEncodedUserId(String userId) {
         if (!TextUtils.isEmpty(userId) && (userId.contains("+") || userId.contains("#"))) {
             try {
@@ -429,7 +384,6 @@ public class User extends JsonMarker {
         return userId;
     }
 
-    @ApplozicInternal
     public static String getDecodedUserId(String encodedId) {
         if (!TextUtils.isEmpty(encodedId)) {
             try {
@@ -461,7 +415,6 @@ public class User extends JsonMarker {
         }
     }
 
-    @ApplozicInternal
     public enum Features {
 
         IP_AUDIO_CALL("100"), IP_VIDEO_CALL("101");
@@ -476,7 +429,6 @@ public class User extends JsonMarker {
         }
     }
 
-    @ApplozicInternal
     public enum RoleType {
         BOT(Short.valueOf("1")),
         APPLICATION_ADMIN(Short.valueOf("2")),
@@ -498,7 +450,6 @@ public class User extends JsonMarker {
         }
     }
 
-    @ApplozicInternal
     public enum PushNotificationFormat {
         NATIVE(Short.valueOf("0")),
         PHONEGAP(Short.valueOf("1")),
@@ -517,7 +468,6 @@ public class User extends JsonMarker {
         }
     }
 
-    @ApplozicInternal
     public enum RoleName {
         BOT("BOT"),
         APPLICATION_ADMIN("APPLICATION_ADMIN"),

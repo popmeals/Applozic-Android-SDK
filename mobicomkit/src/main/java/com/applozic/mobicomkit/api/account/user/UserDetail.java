@@ -1,6 +1,5 @@
 package com.applozic.mobicomkit.api.account.user;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.util.Map;
@@ -52,12 +51,10 @@ public class UserDetail extends JsonMarker {
         this.metadata = metadata;
     }
 
-    @ApplozicInternal
     public void setRoleType(Short roleType){
         this.roleType = roleType;
     }
 
-    @ApplozicInternal
     public Short getRoleType(){
         return roleType;
     }
@@ -153,7 +150,6 @@ public class UserDetail extends JsonMarker {
         this.statusMessage = statusMessage;
     }
 
-    @ApplozicInternal
     public Short getUserTypeId() {
         return userTypeId;
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.Applozic;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 
 import com.applozic.mobicommons.ALSpecificSettings;
@@ -23,7 +22,7 @@ import java.net.URLConnection;
  *
  * <p>All other client classes for messages, users etc based on this.</p>
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default if possible (add to root maybe)
+//ApplozicInternal: make default if possible (add to root maybe)
 public class MobiComKitClientService {
     //ApplozicInternal: all to private
     public static final String BASE_URL_METADATA = "com.applozic.server.url";
@@ -33,7 +32,7 @@ public class MobiComKitClientService {
     public static String APPLICATION_KEY_HEADER = "Application-Key";
     public static String APP_MOUDLE_NAME_KEY_HEADER = "App-Module-Name";
     public static String APPLICATION_KEY_HEADER_VALUE_METADATA = "com.applozic.application.key";
-    public @ApplozicInternal static String GIPHY_API_METADATA_KEY = "com.giphy.api.key";
+    public static String GIPHY_API_METADATA_KEY = "com.giphy.api.key";
     public static String APP_MODULE_NAME_META_DATA_KEY = "com.applozic.module.key";
     protected Context context;
     protected String DEFAULT_URL = "https://apps.applozic.com";

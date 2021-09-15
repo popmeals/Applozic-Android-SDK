@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//ApplozicInternal: default
+//Cleanup: default
 /**
  * The <code>JWT</code> class stores data for the JWT authentication token.
  */
@@ -274,7 +274,7 @@ public class JWT {
                 }).create();
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public static void parseToken(Context context, String token) {
         JWT jwtService = new JWT(token);
         MobiComUserPreference.getInstance(context)

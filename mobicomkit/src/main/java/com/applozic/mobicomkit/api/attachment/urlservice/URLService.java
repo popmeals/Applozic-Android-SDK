@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 /**
  * Interface for classes that provide upload/download URLs. To be implemented for different storage services.
  */
-//ApplozicInternal: protected
+//Cleanup: protected
 public interface URLService {
 
     HttpURLConnection getAttachmentConnection(Message message) throws IOException;

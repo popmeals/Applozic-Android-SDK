@@ -21,7 +21,7 @@ import java.util.Map;
  * Do unregister the listener when not required.</p>
  */
 public class AlEventManager {
-    public static final String AL_EVENT = "AL_EVENT"; //ApplozicInternal: protected
+    public static final String AL_EVENT = "AL_EVENT"; //Cleanup: protected
     private static AlEventManager eventManager;
     private Map<String, ApplozicUIListener> listenerMap;
     private Map<String, AlMqttListener> mqttListenerMap;
@@ -58,7 +58,7 @@ public class AlEventManager {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void registerMqttListener(String id, AlMqttListener mqttListener) {
         if (mqttListenerMap == null) {
             mqttListenerMap = new HashMap<>();
@@ -69,7 +69,7 @@ public class AlEventManager {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void unregisterMqttListener(String id) {
         if (mqttListenerMap != null) {
             mqttListenerMap.remove(id);
@@ -86,7 +86,7 @@ public class AlEventManager {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void postMqttEventData(MqttMessageResponse messageResponse) {
         if (mqttListenerMap != null && !mqttListenerMap.isEmpty()) {
             for (AlMqttListener alMqttListener : mqttListenerMap.values()) {

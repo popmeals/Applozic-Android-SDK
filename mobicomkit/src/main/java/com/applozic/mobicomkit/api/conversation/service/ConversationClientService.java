@@ -46,27 +46,27 @@ public class ConversationClientService extends MobiComKitClientService {
         return conversationClientService;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getCreateConversationUrl() {
         return getBaseUrl() + CREATE_CONVERSATION_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getConversationUrl() {
         return getBaseUrl() + CONVERSATION_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getConversationCloseUrl() {
         return getBaseUrl() + CONVERSATION_CLOSE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getConversationCloseByTopicIdUrl() {
         return getBaseUrl() + CONVERSATION_CLOSE_TOPIC_ID_URL;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public ChannelFeed createConversation(Conversation conversation) {
         ChannelFeed channelFeed = null;
         try {
@@ -85,7 +85,7 @@ public class ConversationClientService extends MobiComKitClientService {
         return channelFeed;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public Conversation getConversation(Integer conversationId) {
         String response = "";
         try {

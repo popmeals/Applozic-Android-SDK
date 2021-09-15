@@ -187,7 +187,7 @@ public class Applozic {
         return sharedPreferences.getString(CUSTOM_NOTIFICATION_SOUND, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Publish offline status, unsubscribe from conversation topic (for real time updates) and disconnect MQTT.
      *
@@ -263,19 +263,19 @@ public class Applozic {
         });
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void disconnectPublish(Context context, boolean useEncrypted) {
         final String deviceKeyString = MobiComUserPreference.getInstance(context).getDeviceKeyString();
         final String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
         disconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void subscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkSubscribeToSupportGroup(context, useEncrypted);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void unSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkUnSubscribeToSupportGroup(context, useEncrypted);
     }
@@ -367,7 +367,7 @@ public class Applozic {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void connectUserWithoutCheck(Context context, User user, AlLoginHandler loginHandler) {
         AlTask.execute(new UserLoginTask(user, loginHandler, context));
     }
@@ -384,7 +384,7 @@ public class Applozic {
         return MobiComUserPreference.getInstance(context).isLoggedIn();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */
@@ -435,7 +435,7 @@ public class Applozic {
         AlTask.execute(new PushNotificationTask(context, pushToken, handler));
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method has been deprecated. You can directly use the {@link PushNotificationTask}.
      */

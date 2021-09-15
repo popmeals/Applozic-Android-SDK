@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
-//ApplozicInternal: default
+//Cleanup: default
 /**
  * This class provides URLs for upload/download of media stored at Applozic servers.
  */
@@ -21,13 +21,13 @@ public class DefaultURLService implements URLService {
     private MobiComKitClientService mobiComKitClientService;
     private HttpRequestUtils httpRequestUtils;
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public DefaultURLService(Context context) {
         this.httpRequestUtils = new HttpRequestUtils(context);
         mobiComKitClientService = new MobiComKitClientService(context);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the HTTP connection object that can be used to download the attachment image for the given message.
      *
@@ -40,7 +40,7 @@ public class DefaultURLService implements URLService {
         return !TextUtils.isEmpty(message.getFileMetas().getUrl()) ? mobiComKitClientService.openHttpConnection(message.getFileMetas().getUrl()) : mobiComKitClientService.openHttpConnection(mobiComKitClientService.getFileUrl() + message.getFileMetas().getBlobKeyString());
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL to download the image/video attachment thumbnail.
      *
@@ -53,7 +53,7 @@ public class DefaultURLService implements URLService {
         return message.getFileMetas().getThumbnailUrl();
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL that can be used to upload media files to the Applozic servers.
      * @return the string URL
@@ -64,7 +64,7 @@ public class DefaultURLService implements URLService {
                 + "?data=" + new Date().getTime(), "text/plain", "text/plain", true);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL that can be used to download media files from the Applozic servers.
      * @return the string URL

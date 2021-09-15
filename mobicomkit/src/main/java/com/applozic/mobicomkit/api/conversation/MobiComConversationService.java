@@ -168,7 +168,7 @@ public class MobiComConversationService {
         return getLatestMessagesGroupByPeople(createdAt, searchString, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public List<Message> getMessages(String userId, Long startTime, Long endTime) {
         return getMessagesWithNetworkMetaData(startTime, endTime, new Contact(userId), null, null, false, false).getList();
     }
@@ -177,7 +177,7 @@ public class MobiComConversationService {
         return getMessagesWithNetworkMetaData(startTime, endTime, contact, channel, conversationId, false, false).getList();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized NetworkListDecorator<Message> getMessagesForParticularThreadWithNetworkMetaData(Long startTime, Long endTime, Contact contact, Channel channel, Integer conversationId, boolean isSkipRead) {
         String data = null;
         try {
@@ -253,7 +253,7 @@ public class MobiComConversationService {
         return new NetworkListDecorator<>(messageList, wasNetworkFail);
     }
 
-    //ApplozicInternal: try to get to default
+    //Cleanup: try to get to default
     public synchronized NetworkListDecorator<Message> getMessagesWithNetworkMetaData(Long startTime, Long endTime, Contact contact, Channel channel, Integer conversationId, boolean isSkipRead, boolean isForSearch) {
         if (isForSearch) {
             return getMessagesForParticularThreadWithNetworkMetaData(startTime, endTime, contact, channel, conversationId, isSkipRead);
@@ -445,7 +445,7 @@ public class MobiComConversationService {
         return new NetworkListDecorator<>(channel != null && Channel.GroupType.OPEN.getValue().equals(channel.getType()) ? messageList : finalMessageList, wasNetworkFail);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public List<Message> getConversationSearchList(String searchString) throws Exception {
         String response = messageClientService.getMessageSearchResult(searchString);
         ApiResponse<AlConversationResponse> apiResponse = (ApiResponse<AlConversationResponse>) GsonUtils.getObjectFromJson(response, new TypeToken<ApiResponse<AlConversationResponse>>() {
@@ -642,7 +642,7 @@ public class MobiComConversationService {
         MobiComUserPreference.getInstance(context).setLastSeenAtSyncTime(userDetailsResponse.getGeneratedAt());
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public Message[] getMessageListByKeyList(List<String> messageKeyList) {
         String response = messageClientService.getMessageByMessageKeys(messageKeyList);
         if (!TextUtils.isEmpty(response)) {
@@ -668,7 +668,7 @@ public class MobiComConversationService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void setFilePathifExist(Message message) {
         FileMeta fileMeta = message.getFileMetas();
         File file = FileClientService.getFilePath(FileUtils.getName(fileMeta.getName()) + message.getCreatedAtTime() + "." + FileUtils.getFileFormat(fileMeta.getName()), context.getApplicationContext(), fileMeta.getContentType());
@@ -716,7 +716,7 @@ public class MobiComConversationService {
         return deleteMessage(message, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove 2nd parameter
     public String deleteMessageFromDevice(Message message, String contactNumber) {
         if (message == null) {
@@ -785,7 +785,7 @@ public class MobiComConversationService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void processUserDetails(UserDetail[] userDetails) {
         if (userDetails != null && userDetails.length > 0) {
             for (UserDetail userDetail : userDetails) {
@@ -814,12 +814,12 @@ public class MobiComConversationService {
         return BroadcastService.isContextBasedChatEnabled() && conversationId != null && conversationId != 0 ? "_" + conversationId : "";
     }
 
-    //ApplozicInternal: private, remove from here
+    //Cleanup: private, remove from here
     public String reportMessage(String messageKey) {
         return messageClientService.reportMessage(messageKey);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void read(Contact contact, Channel channel) {
         try {
             int unreadCount = 0;

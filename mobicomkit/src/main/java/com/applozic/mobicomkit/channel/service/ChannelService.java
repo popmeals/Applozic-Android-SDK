@@ -50,7 +50,7 @@ public class ChannelService {
 
     public static boolean isUpdateTitle = false;
     private static ChannelService channelService;
-    public Context context; //ApplozicInternal: private
+    public Context context; //Cleanup: private
     private ChannelDatabaseService channelDatabaseService;
     private ChannelClientService channelClientService;
     private BaseContactService baseContactService;
@@ -169,7 +169,7 @@ public class ChannelService {
         }
     }
 
-    //ApplozicInternal: or rename
+    //Cleanup: private or rename
     public void processChannelFeedList(ChannelFeed[] channelFeeds, boolean isUserDetails) {
         if (channelFeeds != null && channelFeeds.length > 0) {
             for (ChannelFeed channelFeed : channelFeeds) {
@@ -178,7 +178,7 @@ public class ChannelService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void processChannelFeed(ChannelFeed channelFeed, boolean isUserDetails) {
         if (channelFeed != null) {
             Set<String> memberUserIds = null;
@@ -872,7 +872,7 @@ public class ChannelService {
         return channelDatabaseService.getChildGroupIds(parentGroupKey);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public List<ChannelFeed> getGroupInfoFromGroupIds(List<String> groupIds, List<String>
             clientGroupIds) {
 
@@ -954,7 +954,7 @@ public class ChannelService {
         return null;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove
     public ChannelFeed[] getMembersFromContactGroupList(List<String> groupIdList, List<String>
             groupNames, String groupType) {
@@ -1095,13 +1095,13 @@ public class ChannelService {
         return channelDatabaseService.getParentGroupKey(parentClientGroupKey);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove
     public void getChannelByChannelKeyAsync(Integer groupId, AlChannelListener channelListener) {
         AlTask.execute(new AlGetPeopleTask(context, null, null, groupId, channelListener, null, null, this));
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove
     public void getChannelByClientKeyAsync(String clientChannelKey, AlChannelListener channelListener) {
         AlTask.execute(new AlGetPeopleTask(context, null, clientChannelKey, null, channelListener, null, null, this));

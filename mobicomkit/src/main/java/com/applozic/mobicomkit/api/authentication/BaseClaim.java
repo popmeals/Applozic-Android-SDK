@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-//ApplozicInternal: default
+//Cleanup: default
 /**
  * Class for storing the JWT Payload values.
  */

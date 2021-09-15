@@ -14,7 +14,7 @@ import com.applozic.mobicommons.task.AlTask;
  * Contains methods for working with the JWT authentication token.
  */
 public class AlAuthService {
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Checks the validity of the JWT token.
      */
@@ -22,7 +22,7 @@ public class AlAuthService {
         return (System.currentTimeMillis() - createdAtTime) / 60000 < validUptoMins;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Runs the {@link RefreshAuthTokenTask} task.
      */
@@ -30,7 +30,7 @@ public class AlAuthService {
         AlTask.execute(new RefreshAuthTokenTask(context, callback));
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Checks if token in valid or not. A token expires after is <code>validUptoTime</code> elapses.
      */
@@ -58,7 +58,7 @@ public class AlAuthService {
         return true;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Refreshes, decodes and saves token in local storage.
      */
@@ -88,7 +88,7 @@ public class AlAuthService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Get a fresh token from the server and replaces the current (invalid) one with it.
      */
@@ -121,7 +121,7 @@ public class AlAuthService {
         });
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the activity from the context.
      */

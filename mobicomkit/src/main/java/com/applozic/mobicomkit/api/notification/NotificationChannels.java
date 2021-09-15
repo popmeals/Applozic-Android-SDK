@@ -90,7 +90,7 @@ public class NotificationChannels {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getDefaultChannelId(boolean mute) {
         if (mute) {
             return MobiComKitConstants.AL_SILENT_NOTIFICATION;
@@ -102,7 +102,7 @@ public class NotificationChannels {
         return MobiComKitConstants.AL_APP_NOTIFICATION;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getCallChannelId() {
         return MobiComKitConstants.AL_CALL_NOTIFICATION;
     }

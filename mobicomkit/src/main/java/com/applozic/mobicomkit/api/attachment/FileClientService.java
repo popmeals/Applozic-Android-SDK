@@ -57,7 +57,7 @@ import java.util.ArrayList;
 public class FileClientService extends MobiComKitClientService {
 
     //Todo: Make the base folder configurable using either strings.xml or properties file
-    //ApplozicInternal: all private unless specified
+    //Cleanup: all private unless specified
     public static final String MOBI_COM_IMAGES_FOLDER = "/image";
     public static final String MOBI_COM_VIDEOS_FOLDER = "/video";
     public static final String MOBI_COM_CONTACT_FOLDER = "/contact";
@@ -68,8 +68,8 @@ public class FileClientService extends MobiComKitClientService {
     public static final String AL_UPLOAD_FILE_URL = "/rest/ws/upload/file";
     public static final String CUSTOM_STORAGE_SERVICE_END_POINT = "/rest/ws/upload/image";
     //    public static final String S3_SIGNED_URL_END_POINT = "/rest/ws/upload/file";
-    public static final String S3_SIGNED_URL_END_POINT = "/rest/ws/upload/image"; //ApplozicInternal: default
-    public static final String S3_SIGNED_URL_PARAM = "aclsPrivate"; //ApplozicInternal: default
+    public static final String S3_SIGNED_URL_END_POINT = "/rest/ws/upload/image"; //Cleanup: default
+    public static final String S3_SIGNED_URL_PARAM = "aclsPrivate"; //Cleanup: default
     public static final String THUMBNAIL_URL = "/files/";
     private static final int MARK = 1024;
     private static final String TAG = "FileClientService";
@@ -83,7 +83,7 @@ public class FileClientService extends MobiComKitClientService {
         this.mobiComKitClientService = new MobiComKitClientService(context);
     }
 
-    //ApplozicInternal: rename to getApplozicInternalFilePath
+    //Cleanup: rename to getApplozicInternalFilePath
     /**
      * Gets a <code>File</code> object with a generated local file path for a media/attachment file based on its name and content type.
      *
@@ -132,7 +132,7 @@ public class FileClientService extends MobiComKitClientService {
         return getFilePath(fileName, context, contentType, false);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the URL that will be used to upload the profile image for the logged in user.
      *
@@ -430,7 +430,7 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the file upload URL based on the URL provider. See {@link URLServiceProvider#getFileUploadUrl()}.
      */
@@ -439,7 +439,7 @@ public class FileClientService extends MobiComKitClientService {
         return fileUrl;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Downloads the display image for a {@link Contact} or {@link Channel} and returns the bitmap.
      *
@@ -502,7 +502,7 @@ public class FileClientService extends MobiComKitClientService {
 
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Returns a string path with a ".Thumbnail" directory appended to the passed filepath.
      */
@@ -525,7 +525,7 @@ public class FileClientService extends MobiComKitClientService {
      *
      * @return the generated thumbnail path. supposed to be the same as the path where video thumbnails are downloaded.
      */
-    public String getThumbnailPath(String filePath) { //ApplozicInternal: default
+    public String getThumbnailPath(String filePath) { //Cleanup: default
         String thumbnailParentDir = getThumbnailParentDir(filePath);
         File dir = new File(thumbnailParentDir);
         if (!dir.exists()) {
@@ -535,7 +535,7 @@ public class FileClientService extends MobiComKitClientService {
         return thumbnailParentDir + getVideoThumbnailFileNameForLocalGeneration(filePath);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Generates and saves a thumbnail image for the video with the passed <code>filepath</code>. Also returns the thumbnail bitmap.
      */
@@ -620,7 +620,7 @@ public class FileClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method has been deprecated and will be removed soon. Conversations are being deprecated.
      */

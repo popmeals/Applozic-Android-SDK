@@ -98,7 +98,7 @@ public class MobiComVCFParser {
      * @param encodedString
      * @return bitmap (from given string)
      */
-    //ApplozicInternal: private
+    //Cleanup: private
     public Bitmap stringToBitMap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);

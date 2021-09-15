@@ -69,7 +69,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * This is an internal method. Do not use.
      */
@@ -77,7 +77,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return getBaseUrl() + CREATE_ACCOUNT_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * This is an internal method. Do not use.
      */
@@ -85,7 +85,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return getBaseUrl() + CHECK_PRICING_PACKAGE;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * This is an internal method. Do not use.
      */
@@ -93,7 +93,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return getBaseUrl() + UPDATE_ACCOUNT_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * This is an internal method. Do not use.
      */

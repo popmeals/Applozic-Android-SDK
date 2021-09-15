@@ -10,7 +10,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-//ApplozicInternal: default
+//Cleanup: default
 /**
  * This class provides URLs for upload/download of media stored at Google Cloud Storage.
  */
@@ -21,13 +21,13 @@ public class GoogleCloudURLService implements URLService {
     private static final String GET_SIGNED_URL = "/files/url?key=";
     private static final String UPLOAD_URL = "/files/upload";
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public GoogleCloudURLService(Context context) {
         mobiComKitClientService = new MobiComKitClientService(context);
         httpRequestUtils = new HttpRequestUtils(context);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the HTTP connection object that can be used to download the attachment image for the given message.
      *
@@ -46,7 +46,7 @@ public class GoogleCloudURLService implements URLService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL to download the image/video attachment thumbnail.
      *
@@ -59,7 +59,7 @@ public class GoogleCloudURLService implements URLService {
         return httpRequestUtils.getResponse(mobiComKitClientService.getFileBaseUrl() + GET_SIGNED_URL + message.getFileMetas().getThumbnailBlobKey(), "application/json", "application/json",true);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL that can be used to upload media files to the Google Cloud Storage.
      * @return the string URL
@@ -69,7 +69,7 @@ public class GoogleCloudURLService implements URLService {
         return mobiComKitClientService.getFileBaseUrl() + UPLOAD_URL;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL that can be used to download media files from the Google Cloud Storage.
      * @return the string URL

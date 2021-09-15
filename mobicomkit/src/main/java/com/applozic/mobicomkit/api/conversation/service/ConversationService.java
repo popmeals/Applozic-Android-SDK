@@ -34,7 +34,7 @@ public class ConversationService {
         return conversationService;
     }
 
-    //ApplozicInternal: default or rename
+    //Cleanup: default or rename
     public synchronized void processConversationArray(Conversation[] conversations, Channel channel, Contact contact) {
 
         if (conversations != null && conversations.length > 0) {

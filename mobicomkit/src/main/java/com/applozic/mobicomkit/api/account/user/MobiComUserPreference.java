@@ -25,7 +25,7 @@ public class MobiComUserPreference {
 
     public static final String AL_USER_PREF_KEY = "al_user_pref_key";
 
-    public static MobiComUserPreference userpref; //ApplozicInternal: private
+    public static MobiComUserPreference userpref; //Cleanup: private
 
     private static String device_registration_id = "device_registration_id";
     private static String device_key_string = "device_key_string";

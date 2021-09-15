@@ -18,7 +18,7 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
  * This worker handles syncing messages and last seen on network change (if available).
  * It also handle updating time zone change data.
  */
-//ApplozicInternal: default if possible
+//Cleanup: default if possible
 public class ApplozicWorker extends Worker {
     private static final String TAG = "ApplozicWorker";
 

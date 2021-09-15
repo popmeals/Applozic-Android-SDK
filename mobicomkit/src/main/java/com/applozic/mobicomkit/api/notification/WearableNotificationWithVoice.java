@@ -44,17 +44,17 @@ public class WearableNotificationWithVoice {
         this.notificationId = notificationId;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void setNotificationHandler(Class<?> replyActivityClass) {
         this.notificationHandler = replyActivityClass;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void setCurrentContext(Context currentContext) {
         this.mContext = currentContext;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void setPendingIntent(PendingIntent pendingIntent) {
         this.pendingIntent = pendingIntent;
     }
@@ -65,7 +65,7 @@ public class WearableNotificationWithVoice {
      *
      * @throws RuntimeException
      */
-    //ApplozicInternal: defalut
+    //Cleanup: defalut
     public void sendNotification() throws Exception {
         if (pendingIntent == null && notificationHandler == null) {
             throw new RuntimeException("Either pendingIntent or handler class requires.");

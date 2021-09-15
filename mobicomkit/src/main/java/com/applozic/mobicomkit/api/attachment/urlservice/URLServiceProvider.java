@@ -22,7 +22,7 @@ public class URLServiceProvider {
     private URLService urlService;
     private MobiComKitClientService mobiComKitClientService;
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public URLServiceProvider(Context context) {
         this.context = ApplozicService.getContext(context);
         mobiComKitClientService = new MobiComKitClientService(context);

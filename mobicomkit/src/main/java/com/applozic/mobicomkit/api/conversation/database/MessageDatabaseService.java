@@ -45,7 +45,7 @@ import java.util.Map;
 public class MessageDatabaseService {
     private static final String TAG = "MessageDatabaseService";
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public static List<Message> recentlyAddedMessage = new ArrayList<Message>();
     private Context context = null;
     private MobiComDatabaseHelper dbHelper;
@@ -75,7 +75,7 @@ public class MessageDatabaseService {
         skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the message object from the query's {@link Cursor}.
      */
@@ -157,7 +157,7 @@ public class MessageDatabaseService {
         return message;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the message list from the query's {@link Cursor}.
      */
@@ -187,7 +187,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the message list from the query's (for most recent message for each channel/contact) {@link Cursor}.
      */
@@ -215,7 +215,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets the message list from the query's (for most recent notification message for each channel/contact) {@link Cursor}.
      */
@@ -374,7 +374,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */
@@ -397,7 +397,7 @@ public class MessageDatabaseService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Gets message by the contact number and message string associated with it.
      */
@@ -427,7 +427,7 @@ public class MessageDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Checks if the message with the given <code>keystring</code> is present in the database.
      *

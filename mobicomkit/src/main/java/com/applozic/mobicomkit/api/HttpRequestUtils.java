@@ -21,9 +21,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-//ApplozicInternal: make default (move to root)
+//Cleanup: make default (move to root)
 public class HttpRequestUtils {
-    //ApplozicInternal: private where applicable
+    //Cleanup: private where applicable
     private static final String TAG = "HttpRequestUtils";
     public static String APP_MODULE_NAME_KEY_HEADER = "App-Module-Name";
     private static final String OF_USER_ID_HEADER = "Of-User-Id";
@@ -199,7 +199,7 @@ public class HttpRequestUtils {
         return postJsonToServer(stringUrl, data, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String postJsonToServer(String stringUrl, String data, String userId) throws Exception {
         Utils.printLog(context, TAG, "Calling url (POST) with exception: " + stringUrl);
         Utils.printLog(context, TAG, "(POST) Json: " + data);
@@ -335,7 +335,7 @@ public class HttpRequestUtils {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getResponse(String urlString, String contentType, String accept, boolean isFileUpload, String userId) {
         Utils.printLog(context, TAG, "Calling url (GET): " + urlString);
 
@@ -451,7 +451,7 @@ public class HttpRequestUtils {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void addHeadersForAuthToken(HttpURLConnection connection, String userId) {
         try {
             if (MobiComKitClientService.getAppModuleName(context) != null) {

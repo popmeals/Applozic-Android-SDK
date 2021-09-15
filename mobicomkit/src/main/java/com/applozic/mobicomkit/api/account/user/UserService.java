@@ -48,9 +48,9 @@ public class UserService {
 
     private static final String TAG = "UserService";
     private static UserService userService;
-    Context context; //ApplozicInternal: private
-    UserClientService userClientService; //ApplozicInternal: private
-    BaseContactService baseContactService; //ApplozicInternal: private
+    Context context; //Cleanup: private
+    UserClientService userClientService; //Cleanup: private
+    BaseContactService baseContactService; //Cleanup: private
     private MobiComUserPreference userPreference;
 
     private UserService(Context context) {
@@ -134,7 +134,7 @@ public class UserService {
         }
     }
 
-    //ApplozicInternal: rename to something better
+    //Cleanup: rename to something better
     /**
      * Blocks/unblocks the user with the given userId for the current logged in user.
      *
@@ -173,7 +173,7 @@ public class UserService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void processUserDetails(String userId) {
         Set<String> userIds = new HashSet<String>();
         userIds.add(userId);
@@ -190,7 +190,7 @@ public class UserService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void processUser(UserDetail userDetail) {
         processUser(userDetail, Contact.ContactType.APPLOZIC);
     }
@@ -209,8 +209,7 @@ public class UserService {
         return getContactFromUserDetail(userDetail, Contact.ContactType.APPLOZIC);
     }
 
-    //ApplozicInternal: private
-
+    //Cleanup: private
     /**
      * Use {@link #getContactFromUserDetail(UserDetail)}.
      */
@@ -239,7 +238,7 @@ public class UserService {
         return contact;
     }
 
-    //ApplozicInternal: private or rename
+    //Cleanup: private or rename
     /**
      * This method inserts/updates the user(user detail) in the local database.
      *
@@ -272,7 +271,7 @@ public class UserService {
         baseContactService.upsert(contact);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void processMuteUserResponse(MuteUserResponse response) {
         Contact contact = new Contact();
         contact.setUserId(response.getUserId());
@@ -397,7 +396,7 @@ public class UserService {
         return Arrays.asList(mutedUserList);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */
@@ -417,7 +416,7 @@ public class UserService {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -458,7 +457,7 @@ public class UserService {
         return response.getStatus();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ApiResponse updateUserWithResponse(String displayName, String profileImageLink, String localURL, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
 
         ApiResponse response = userClientService.updateDisplayNameORImageLink(displayName, profileImageLink, status, contactNumber, emailId, metadata, userId);
@@ -513,7 +512,7 @@ public class UserService {
         return updateUserWithResponse(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is no longer used and will be removed soon.
      */
@@ -522,7 +521,7 @@ public class UserService {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getMetadata());
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is no longer used and will be removed soon.
      */
@@ -531,7 +530,7 @@ public class UserService {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void processUserDetailsResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             List<UserDetail> userDetails = (List<UserDetail>) GsonUtils.getObjectFromJson(response, new TypeToken<List<UserDetail>>() {
@@ -542,7 +541,7 @@ public class UserService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     //Cleanup: this method should be renamed sync user/contact details
     /**
      * Syncs user data from the server.
@@ -557,7 +556,7 @@ public class UserService {
         userClientService.postUserDetailsByUserIds(userIds);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is no longer used and will be removed soon.
      */
@@ -566,7 +565,7 @@ public class UserService {
         return userClientService.getUserReadServerCall();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is no longer used and will be removed soon.
      */

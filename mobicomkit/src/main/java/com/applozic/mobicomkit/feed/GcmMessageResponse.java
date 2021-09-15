@@ -1,13 +1,11 @@
 package com.applozic.mobicomkit.feed;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicomkit.api.conversation.Message;
 
 /**
  * Model class for storing data for a Google Cloud Messaging response.
  */
-@ApplozicInternal
 public class GcmMessageResponse extends JsonMarker {
 
     private String id;

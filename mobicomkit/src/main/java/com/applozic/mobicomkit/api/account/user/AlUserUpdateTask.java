@@ -9,10 +9,30 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * Task that wraps around {@link UserService#updateUserWithResponse(User)}.
+ * This asynchronous task can be used to update user details. The update will happen remotely as well as locally.
  *
- * <p>Update user data/details. Remotely as well as locally.
- * Created for async execution of the above mentioned method.
+ * <p>Created for async execution of {@link UserService#updateUserWithResponse(User)}.
+ *
+ * <code>
+ *     AlUserUpdateTask alUserUpdateTask = new AlUserUpdateTask(context, user, new AlCallback() {
+ *             @Override
+ *             public void onSuccess(Object response) {
+ *                 //((ApiResponse) response).getResponse();
+ *             }
+ *
+ *             @Override
+ *             public void onError(Object error) {
+ *                 //if (error instanceof List) {
+ *                     //((List<ErrorResponseFeed>) error).get(0);
+ *                 //}
+ *             }
+ *         });
+ *         AlTask.execute(alUserUpdateTask);
+ *
+ *         //for versions prior to v5.95 use:
+ *         //alUserUpdateTask.execute();
+ * </code>
+ *
  * Use {@link AlCallback} to get the results.</p>
  */
 public class AlUserUpdateTask extends AlAsyncTask<Void, ApiResponse> {
@@ -20,6 +40,11 @@ public class AlUserUpdateTask extends AlAsyncTask<Void, ApiResponse> {
     private User user;
     private AlCallback callback;
 
+    /**
+     * @param context the context
+     * @param user the user object with the details to update. see {@link UserService#updateUserWithResponse(User)}
+     * @param callback the callback
+     */
     public AlUserUpdateTask(Context context, User user, AlCallback callback) {
         this.context = new WeakReference<>(context);
         this.user = user;

@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The ClaimImpl class implements the Claim interface.
+ * @ApplozicInternal The ClaimImpl class implements the Claim interface.
  */
 class ClaimImpl extends BaseClaim {
 

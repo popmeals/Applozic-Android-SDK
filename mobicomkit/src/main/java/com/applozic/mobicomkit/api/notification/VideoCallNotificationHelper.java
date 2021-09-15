@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class VideoCallNotificationHelper {
     //ApplozicInternal: default and private where required
     public static final String CALL_STARTED = "CALL_STARTED";
@@ -47,14 +45,12 @@ public class VideoCallNotificationHelper {
     private MobiComConversationService conversationService;
     private AppContactService baseContactService;
 
-    @ApplozicInternal
     public VideoCallNotificationHelper(Context context) {
         this.context = context;
         this.isAudioOnly = false;
         init();
     }
 
-    @ApplozicInternal
     public VideoCallNotificationHelper(Context context, boolean isAudioOnly) {
         this.context = context;
         this.isAudioOnly = isAudioOnly;

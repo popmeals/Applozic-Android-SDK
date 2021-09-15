@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.notification.VideoCallNotificationHelper;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicommons.json.JsonMarker;
@@ -158,7 +157,6 @@ public class Message extends JsonMarker {
         this.read = read;
     }
 
-    @ApplozicInternal
     public boolean isSelfDestruct() {
         return getTimeToLive() != null;
     }
@@ -241,12 +239,10 @@ public class Message extends JsonMarker {
         this.messageId = messageId;
     }
 
-    @ApplozicInternal
     public boolean isDummyEmptyMessage() {
         return getCreatedAtTime() != null && getCreatedAtTime() == 0 && TextUtils.isEmpty(getMessage());
     }
 
-    @ApplozicInternal
     public boolean isLocalMessage() {
         return TextUtils.isEmpty(getKeyString()) && isSentToServer();
     }
@@ -331,7 +327,6 @@ public class Message extends JsonMarker {
         this.type = type;
     }
 
-    @ApplozicInternal
     public void processContactIds(Context context) {
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
         if (TextUtils.isEmpty(getContactIds())) {
@@ -391,12 +386,10 @@ public class Message extends JsonMarker {
                 MessageType.OUTBOX_SENT_FROM_DEVICE.getValue().equals(type) || MessageType.CALL_OUTGOING.getValue().equals(type);
     }
 
-    @ApplozicInternal
     public boolean isSentViaApp() {
         return MessageType.MT_OUTBOX.getValue().equals(this.type);
     }
 
-    @ApplozicInternal
     public boolean isSentViaCarrier() {
         return MessageType.OUTBOX.getValue().equals(type);
     }
@@ -505,7 +498,6 @@ public class Message extends JsonMarker {
         this.topicId = topicId;
     }
 
-    @ApplozicInternal
     public String getCurrentId() {
         return getGroupId() != null ? String.valueOf(getGroupId()) : getContactIds();
     }
@@ -703,7 +695,6 @@ public class Message extends JsonMarker {
         return getMetadata() != null ? getMetadata().get(key) : null;
     }
 
-    @ApplozicInternal
     public String getAssigneId() {
         if (isActionMessage()) {
             return getMetadata().get(BOT_ASSIGN);
@@ -711,13 +702,11 @@ public class Message extends JsonMarker {
         return null;
     }
 
-    @ApplozicInternal
     public boolean isGroupDeleteAction() {
         return getMetadata() != null && getMetadata().containsKey(ChannelMetadata.AL_CHANNEL_ACTION)
                 && Integer.parseInt(getMetadata().get(ChannelMetadata.AL_CHANNEL_ACTION)) == GroupAction.DELETE_GROUP.getValue();
     }
 
-    @ApplozicInternal
     public boolean isUpdateMessage() {
         return !Message.ContentType.HIDDEN.getValue().equals(contentType)
                 && (!Message.MetaDataType.ARCHIVE.getValue().equals(getMetaDataValueForKey(Message.MetaDataType.KEY.getValue())) || !isHidden())
@@ -752,18 +741,15 @@ public class Message extends JsonMarker {
                 || VideoCallNotificationHelper.CALL_MISSED.equals(msgType));
     }
 
-    @ApplozicInternal
     public boolean isConsideredForCount() {
         return (!Message.ContentType.HIDDEN.getValue().equals(getContentType()) &&
                 !ContentType.VIDEO_CALL_NOTIFICATION_MSG.getValue().equals(getContentType()) && !isReadStatus() && !hasHideKey());
     }
 
-    @ApplozicInternal
     public boolean hasHideKey() {
         return GroupMessageMetaData.TRUE.getValue().equals(getMetaDataValueForKey(GroupMessageMetaData.HIDE_KEY.getValue())) || Message.ContentType.HIDDEN.getValue().equals(getContentType()) || hidden;
     }
 
-    @ApplozicInternal
     public boolean isGroupMetaDataUpdated() {
         return ContentType.CHANNEL_CUSTOM_MESSAGE.getValue().equals(this.getContentType()) && this.getMetadata() != null && this.getMetadata().containsKey("action") && GroupAction.GROUP_META_DATA_UPDATED.getValue().toString().equals(this.getMetadata().get("action"));
     }
@@ -784,17 +770,14 @@ public class Message extends JsonMarker {
         this.replyMessage = replyMessage;
     }
 
-    @ApplozicInternal
     public boolean isActionMessage() {
         return getMetadata() != null && (getMetadata().containsKey(BOT_ASSIGN) || getMetadata().containsKey(CONVERSATION_STATUS) || getMetadata().containsKey(FEEDBACK_METADATA_KEY));
     }
 
-    @ApplozicInternal
     public String getConversationStatus() {
         return (getMetadata() != null && getMetadata().containsKey(CONVERSATION_STATUS)) ? getMetadata().get(CONVERSATION_STATUS) : null;
     }
 
-    @ApplozicInternal
     public String getConversationAssignee() {
         return (getMetadata() != null && getMetadata().containsKey(BOT_ASSIGN)) ? getMetadata().get(BOT_ASSIGN) : null;
     }
@@ -821,7 +804,6 @@ public class Message extends JsonMarker {
         metadata.put(AL_DELETE_MESSAGE_FOR_ALL_KEY, GroupMessageMetaData.TRUE.getValue());
     }
 
-    @ApplozicInternal
     public boolean isIgnoreMessageAdding(Context context) {
         if (ApplozicClient.getInstance(context).isSubGroupEnabled() && MobiComUserPreference.getInstance(context).getParentGroupKey() != null || !TextUtils.isEmpty(MobiComUserPreference.getInstance(context).getCategoryName())) {
             Channel channel = ChannelService.getInstance(context).getChannelByChannelKey(getGroupId());
@@ -894,7 +876,6 @@ public class Message extends JsonMarker {
         return new ArrayList<>();
     }
 
-    @ApplozicInternal
     public boolean isNormalAttachment() {
         if (getFileMetas() != null) {
             return !(getFileMetas().getContentType().contains("image") || getFileMetas().getContentType().contains("video") || isContactMessage());

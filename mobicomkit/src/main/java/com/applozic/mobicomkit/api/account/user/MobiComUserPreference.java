@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicommons.ApplozicService;
@@ -14,13 +13,20 @@ import com.applozic.mobicommons.data.AlPrefSettings;
 import java.io.File;
 import java.util.Set;
 
-@ApplozicInternal //move the code used here to Applozic class eg: Applozic.getCurrentUser();
+/**
+ * The <code>MobiComUserPreference</code> class is a wrapper around {@link SharedPreferences} used to store user and session level local data.
+ *
+ * @ApplozicInternal This class is not a part of Applozic's public API. Direct access to the methods and fields of this class will not be required.
+ */
+//move the code used here to Applozic class eg: Applozic.getCurrentUser();
 public class MobiComUserPreference {
 
     private static final String USER_ID = "userId";
+
     public static final String AL_USER_PREF_KEY = "al_user_pref_key";
-    public static MobiComUserPreference userpref;
-    //Constants for preferneces ..
+
+    public static MobiComUserPreference userpref; //ApplozicInternal: private
+
     private static String device_registration_id = "device_registration_id";
     private static String device_key_string = "device_key_string";
     private static String last_outbox_sync_time = "last_outbox_sync_time";
@@ -133,7 +139,7 @@ public class MobiComUserPreference {
         }
     }
 
-
+    @Deprecated
     public boolean isRegistered() {
         return !TextUtils.isEmpty(getDeviceKeyString());
     }
@@ -164,18 +170,34 @@ public class MobiComUserPreference {
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public long getLastOutboxSyncTime() {
         return sharedPreferences.getLong(last_outbox_sync_time, 0L);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setLastOutboxSyncTime(long lastOutboxSyncTime) {
         sharedPreferences.edit().putLong(last_outbox_sync_time, lastOutboxSyncTime).commit();
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isReportEnable() {
         return sharedPreferences.getBoolean(delivery_report_pref_key, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setReportEnable(boolean reportEnable) {
         sharedPreferences.edit().putBoolean(delivery_report_pref_key, reportEnable).commit();
     }
@@ -203,18 +225,34 @@ public class MobiComUserPreference {
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public Long getLastMessageStatSyncTime() {
         return sharedPreferences.getLong(last_message_stat_sync_time, 0);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setLastMessageStatSyncTime(long lastMessageStatSyncTime) {
         sharedPreferences.edit().putLong(last_message_stat_sync_time, lastMessageStatSyncTime).commit();
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isSentSmsSyncFlag() {
         return sharedPreferences.getBoolean(sent_sms_sync_pref_key, true);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setSentSmsSyncFlag(boolean sentSmsSyncFlag) {
         sharedPreferences.edit().putBoolean(sent_sms_sync_pref_key, sentSmsSyncFlag).commit();
     }
@@ -272,6 +310,10 @@ public class MobiComUserPreference {
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isStopServiceFlag() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(stop_service, false);
@@ -279,12 +321,20 @@ public class MobiComUserPreference {
         return false;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setStopServiceFlag(Boolean stopServiceFlag) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(stop_service, stopServiceFlag).commit();
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isPatchAvailable() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(patch_available, false);
@@ -292,12 +342,20 @@ public class MobiComUserPreference {
         return false;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setPatchAvailable(Boolean patchAvailable) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(patch_available, patchAvailable).commit();
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isWebHookEnable() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(webhook_enable_key, false);
@@ -305,32 +363,43 @@ public class MobiComUserPreference {
         return false;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setWebHookEnable(boolean enable) {
         sharedPreferences.edit().putBoolean(webhook_enable_key, enable).commit();
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public int getGroupSmsDelayInSec() {
         return sharedPreferences.getInt(group_sms_freq_key, 0);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setDelayGroupSmsDelayTime(int delay) {
         sharedPreferences.edit().
                 putInt(group_sms_freq_key, delay).commit();
     }
 
-
-//    public boolean getNewPatchAvailable() {
-//        return newPatchAvailable;
-//    }
-//
-//    public boolean getUpdateRegFlag() {
-//        return updateRegFlag;
-//    }
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isUpdateRegFlag() {
         return sharedPreferences.getBoolean(update_push_registration, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setUpdateRegFlag(boolean updateRegFlag) {
         sharedPreferences.edit().putBoolean(update_push_registration, updateRegFlag).commit();
     }
@@ -343,18 +412,34 @@ public class MobiComUserPreference {
         this.countryCode = countryCode;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isVerifyContactNumber() {
         return sharedPreferences.getBoolean(verify_contact_number, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setVerifyContactNumber(boolean verifyContactNumber) {
         sharedPreferences.edit().putBoolean(verify_contact_number, verifyContactNumber).commit();
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean getReceivedSmsSyncFlag() {
         return sharedPreferences.getBoolean(received_sms_sync_pref_key, true);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setReceivedSmsSyncFlag(boolean receivedSmsSyncFlag) {
         sharedPreferences.edit().putBoolean(received_sms_sync_pref_key, receivedSmsSyncFlag).commit();
     }
@@ -411,10 +496,18 @@ public class MobiComUserPreference {
         return false;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isMobiTexterContactSyncCompleted() {
         return sharedPreferences.getBoolean(mobitexter_contact_sync_key, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setMobiTexterContactSyncCompleted(boolean status) {
         sharedPreferences.edit().
                 putBoolean(mobitexter_contact_sync_key, status).commit();
@@ -565,6 +658,10 @@ public class MobiComUserPreference {
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public String getPassword() {
         if (sharedPreferences != null) {
             String decryptedPassword = AlPrefSettings.getInstance(context).getPassword();
@@ -643,16 +740,10 @@ public class MobiComUserPreference {
     }
 
     public boolean clearAll() {
-
         if (sharedPreferences != null) {
             return sharedPreferences.edit().clear().commit();
         }
         return false;
-
-        //Intent intent = new Intent(this, LoginActivity.class);
-        //startActivity(intent);
-
-
     }
 
     public boolean isImageCompressionEnabled() {
@@ -714,26 +805,50 @@ public class MobiComUserPreference {
         }
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean getAutoDownloadOnWifi() {
         return sharedPreferences.getBoolean(enable_auto_download_on_wifi, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setAutoDownloadOnWifi(boolean enable) {
         sharedPreferences.edit().putBoolean(enable_auto_download_on_wifi, enable).commit();
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean getAutoDownloadOnCellular() {
         return sharedPreferences.getBoolean(enable_auto_download_on_cellular, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setAutoDownloadOnCellular(boolean enable) {
         sharedPreferences.edit().putBoolean(enable_auto_download_on_cellular, enable).commit();
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public String getVideoCallToken() {
         return sharedPreferences.getString(video_call_token, null);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setVideoCallToken(String token) {
         sharedPreferences.edit().putString(video_call_token, token).commit();
 
@@ -752,11 +867,18 @@ public class MobiComUserPreference {
         }
     }
 
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean getApplicationInfoCall() {
         return sharedPreferences.getBoolean(application_info_call_done, false);
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setApplicationInfoCallDone(boolean customerResponse) {
         sharedPreferences.edit().putBoolean(application_info_call_done, customerResponse).commit();
     }
@@ -818,6 +940,10 @@ public class MobiComUserPreference {
         return 0;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public boolean isSyncRequired() {
         if (sharedPreferences != null) {
             return sharedPreferences.getBoolean(sync_contacts, false);
@@ -825,14 +951,20 @@ public class MobiComUserPreference {
         return false;
     }
 
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setSyncContacts(boolean syncConatcts) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putBoolean(sync_contacts, syncConatcts).commit();
         }
     }
 
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public long getDeviceContactSyncTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getLong(device_contact_sync_time, 0);
@@ -840,14 +972,20 @@ public class MobiComUserPreference {
         return 0;
     }
 
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setDeviceContactSyncTime(long contactSyncTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putLong(device_contact_sync_time, contactSyncTime).commit();
         }
     }
 
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public long getContactSyncTime() {
         if (sharedPreferences != null) {
             return sharedPreferences.getLong(contact_sync_time, 0);
@@ -855,7 +993,10 @@ public class MobiComUserPreference {
         return 0;
     }
 
-
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setContactSyncTime(long contactSyncTime) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putLong(contact_sync_time, contactSyncTime).commit();
@@ -897,6 +1038,10 @@ public class MobiComUserPreference {
         return null;
     }
 
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setCategoryName(String category) {
         if (sharedPreferences != null) {
             sharedPreferences.edit().putString(CATEGORY_NAME_KEY, category).commit();

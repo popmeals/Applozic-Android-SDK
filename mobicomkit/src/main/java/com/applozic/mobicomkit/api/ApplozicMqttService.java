@@ -5,7 +5,6 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -47,7 +46,6 @@ import java.util.Date;
  * - Whenever MQTT connection is lost, retries happen as per the same policy as in the previous point, and
  * the same retry index is used.</p>
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ApplozicMqttService extends MobiComKitClientService implements MqttCallback {
     private static final String STATUS = "status-v2";
     private static final String TAG = "ApplozicMqttService";
@@ -66,7 +64,6 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         memoryPersistence = new MemoryPersistence();
     }
 
-    @ApplozicInternal
     public static ApplozicMqttService getInstance(Context context) {
 
         if (applozicMqttService == null) {
@@ -784,7 +781,6 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) { }
 
-    @ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
     public static enum NOTIFICATION_TYPE {
         MESSAGE_RECEIVED("APPLOZIC_01"), MESSAGE_SENT("APPLOZIC_02"),
         MESSAGE_SENT_UPDATE("APPLOZIC_03"), MESSAGE_DELIVERED("APPLOZIC_04"),

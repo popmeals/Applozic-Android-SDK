@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.people;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.google.gson.Gson;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
@@ -11,7 +10,6 @@ import com.applozic.mobicomkit.api.MobiComKitClientService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-@ApplozicInternal
 public class MTUserClientService extends MobiComKitClientService {
 
     public static final String CHECK_FOR_MT_USER = "/rest/ws/contact/v2/ismtexter";

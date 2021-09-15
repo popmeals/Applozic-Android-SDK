@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
@@ -22,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default (move to root)
+//ApplozicInternal: make default (move to root)
 public class HttpRequestUtils {
     //ApplozicInternal: private where applicable
     private static final String TAG = "HttpRequestUtils";
@@ -36,7 +35,6 @@ public class HttpRequestUtils {
     public static boolean isRefreshTokenInProgress = false;
     private Context context;
 
-    @ApplozicInternal
     public HttpRequestUtils(Context context) {
         this.context = ApplozicService.getContext(context);
     }
@@ -415,6 +413,9 @@ public class HttpRequestUtils {
         return null;
     }
 
+    /**
+     * @ApplozicInternal This is an internal method. Do not use.
+     */
     public void addGlobalHeaders(HttpURLConnection connection, String userId) {
         try {
             if (MobiComKitClientService.getAppModuleName(context) != null) {

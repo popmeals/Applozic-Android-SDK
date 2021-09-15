@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 //ApplozicInternal: default
+/**
+ * @ApplozicInternal The <code>JWT</code> class stores data for the JWT authentication token.
+ */
 public class JWT {
 
     private Map<String, String> header;
@@ -40,6 +43,7 @@ public class JWT {
         decode(token);
     }
 
+    @Deprecated
     public boolean isExpired(long leeway) {
         if (leeway < 0) {
             throw new IllegalArgumentException("The leeway must be a positive value.");

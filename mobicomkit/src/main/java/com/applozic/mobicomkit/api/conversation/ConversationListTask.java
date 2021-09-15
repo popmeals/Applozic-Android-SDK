@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.conversation;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
 import com.applozic.mobicomkit.channel.service.ChannelService;
@@ -18,7 +17,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ConversationListTask extends AlAsyncTask<Void, List<AlConversation>> {
 
     private WeakReference<Context> context;

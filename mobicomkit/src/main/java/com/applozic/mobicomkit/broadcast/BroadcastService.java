@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -30,7 +29,6 @@ import java.util.Map;
  * <p>NOTE: If we want to send the broadcast to apps, don't forget to add the Category intent.addCategory(Intent.CATEGORY_DEFAULT);
  * P.S: When creating a new broadcast do not forget to add it's INTENT_ACTIONS to {@link BroadcastService#getIntentFilter()}.</p>
  */
-@ApplozicInternal
 public class BroadcastService {
 
     private static final String TAG = "BroadcastService";

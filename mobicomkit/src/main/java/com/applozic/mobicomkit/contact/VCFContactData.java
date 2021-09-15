@@ -2,9 +2,6 @@ package com.applozic.mobicomkit.contact;
 
 import android.graphics.Bitmap;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
-@ApplozicInternal
 public class VCFContactData {
 
     private String name;

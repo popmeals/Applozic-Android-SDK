@@ -2,11 +2,9 @@ package com.applozic.mobicomkit.feed;
 
 import android.os.Parcel;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.GsonUtils;
 import com.applozic.mobicommons.json.JsonParcelableMarker;
 
-@ApplozicInternal
 public class TopicDetail extends JsonParcelableMarker {
 
 

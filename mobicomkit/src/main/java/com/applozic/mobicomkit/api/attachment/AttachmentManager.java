@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import androidx.collection.LruCache;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.listners.MediaDownloadProgressHandler;
@@ -46,29 +45,23 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * <p>
- * This class creates pools of background threads for downloading
- * Picasa images from the web, based on URLs retrieved from Picasa's featured images RSS feed.
- * The class is implemented as a singleton; the only way to get an PhotoManager instance is to
- * call {@link #getInstance}.
- * </p>
- * <p>
- * The class sets the pool size and cache size based on the particular operation it's performing.
+ * <p>This class creates pools of background threads for downloading images from the web, based on URLs provided.
+ * The class is implemented as a singleton; the only way to get an AttachmentManager instance is to call {@link #getInstance}.</p>
+ *
+ * <p>The class sets the pool size and cache size based on the particular operation it's performing.
  * The algorithm doesn't apply to all situations, so if you re-use the code to implement a pool
  * of threads for your own app, you will have to come up with your choices for pool size, cache
  * size, and so forth. In many cases, you'll have to set some numbers arbitrarily and then
- * measure the impact on performance.
- * </p>
- * <p>
- * This class actually uses two threadpools in order to limit the number of
+ * measure the impact on performance.</p>
+ *
+ * <p>This class actually uses two thread-pools in order to limit the number of
  * simultaneous image decoding threads to the number of available processor
- * cores.
- * </p>
- * Finally, this class defines a handler that communicates back to the UI
- * thread to change the bitmap to reflect the state.
+ * cores.</p>
+ *
+ * <p>Finally, this class defines a handler that communicates back to the UI
+ * thread to change the bitmap to reflect the state.</p>
  */
 @SuppressWarnings("unused")
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class AttachmentManager {
 
     /*
@@ -377,9 +370,9 @@ public class AttachmentManager {
     }
 
     /**
-     * Returns the PhotoManager object
+     * Returns the AttachmentManager object.
      *
-     * @return The global PhotoManager object
+     * @return the global AttachmentManager object
      */
     public static AttachmentManager getInstance() {
 
@@ -395,7 +388,7 @@ public class AttachmentManager {
     }
 
     /**
-     * Cancels all Threads in the ThreadPool
+     * Cancels all threads in the <i>ThreadPool</i>.
      */
     public static void cancelAll() {
 
@@ -431,9 +424,9 @@ public class AttachmentManager {
     }
 
     /**
-     * Stops a download Thread and removes it from the threadpool
+     * Stops a download Thread and removes it from the thread-pool.
      *
-     * @param downloaderTask The download task associated with the Thread
+     * @param downloaderTask the download task associated with the thread
      */
     static public void removeDownload(AttachmentTask downloaderTask, boolean documentView) {
 
@@ -469,11 +462,11 @@ public class AttachmentManager {
     }
 
     /**
-     * Starts an image download and decode
+     * Starts an image download and decodes.
      *
-     * @param imageView The ImageView that will get the resulting Bitmap
-     * @param cacheFlag Determines if caching should be used
-     * @return The task instance that will handle the work
+     * @param imageView the ImageView that will get the resulting bitmap
+     * @param cacheFlag determines if caching should be used
+     * @return the task instance that will handle the work
      */
     static public AttachmentTask startDownload(
             AttachmentView imageView,
@@ -575,7 +568,6 @@ public class AttachmentManager {
         return downloadTask;
     }
 
-
     static public AttachmentTask startDownload(AttachmentViewProperties attachmentViewProperties,
                                                boolean cacheFlag) {
 
@@ -636,10 +628,10 @@ public class AttachmentManager {
     }
 
     /**
-     * Handles state messages for a particular task object
+     * Handles state messages for a particular task object.
      *
-     * @param photoTask A task object
-     * @param state     The state of the task
+     * @param photoTask a task object
+     * @param state     the state of the task
      */
     @SuppressLint("HandlerLeak")
     public void handleState(AttachmentTask photoTask, int state) {
@@ -704,10 +696,9 @@ public class AttachmentManager {
     }
 
     /**
-     * Recycles tasks by calling their internal recycle() method and then putting them back into
-     * the task queue.
+     * Recycles tasks by calling their internal recycle() method and then putting them back into the task queue.
      *
-     * @param downloadTask The task to recycle
+     * @param downloadTask the task to recycle
      */
     void recycleTask(AttachmentTask downloadTask) {
 

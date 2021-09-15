@@ -7,7 +7,6 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class MobiComPushReceiver {
 
     //ApplozicInternal: private all

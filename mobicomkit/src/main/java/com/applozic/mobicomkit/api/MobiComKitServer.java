@@ -2,9 +2,6 @@ package com.applozic.mobicomkit.api;
 
 import android.content.Context;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
-@ApplozicInternal
 public class MobiComKitServer {
 
     public static final boolean PROD = true;

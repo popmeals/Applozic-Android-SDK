@@ -7,7 +7,6 @@ import android.text.TextUtils;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
@@ -109,7 +108,6 @@ public class Applozic {
         AlPrefSettings.getInstance(context).setGeoApiKey(geoApiKey);
     }
 
-    @ApplozicInternal
     public String getGeoApiKey() {
         String geoApiKey = AlPrefSettings.getInstance(context).getGeoApiKey();
         if (!TextUtils.isEmpty(geoApiKey)) {
@@ -153,12 +151,10 @@ public class Applozic {
     }
 
     @SuppressLint("NewApi")
-    @ApplozicInternal
     public int getNotificationChannelVersion() {
         return sharedPreferences.getInt(NOTIFICATION_CHANNEL_VERSION_STATE, NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
     }
 
-    @ApplozicInternal
     public void setNotificationChannelVersion(int version) {
         sharedPreferences.edit().putInt(NOTIFICATION_CHANNEL_VERSION_STATE, version).commit();
     }
@@ -187,7 +183,6 @@ public class Applozic {
         return this;
     }
 
-    @ApplozicInternal
     public String getCustomNotificationSound() {
         return sharedPreferences.getString(CUSTOM_NOTIFICATION_SOUND, null);
     }
@@ -208,7 +203,7 @@ public class Applozic {
     }
 
     /**
-     * @deprecated User {@link Applozic#isConnected(Context)}.
+     * @deprecated Use {@link Applozic#isConnected(Context)} instead.
      */
     @Deprecated
     public static boolean isLoggedIn(Context context) {
@@ -339,16 +334,19 @@ public class Applozic {
     }
 
     /**
-     * Use this method for Applozic user login/registration. It connects and authenticates a user to the Applozic servers
-     * and initializes user data for the SDK.
+     * Use this method for authenticating (or registering) a {@link User} from the backend. Authentication is required before using
+     * almost all the Applozic SDK methods.
+     * On successful authentication of a user, a token is received (from the Applozic servers) and saved. This is then used to
+     * authenticate/authorize all future API calls.
      *
-     * <p>This method checks if a user is already logged/connected and doesn't connect if it finds one.
-     * If the user with the given user id is not found in the servers, a new one will be registered.
-     * See {@link com.applozic.mobicomkit.api.account.register.RegisterUserClientService#createAccount(User)}.</p>
+     * <p>Note: This method checks if a user is already logged in and doesn't connect otherwise.
+     * If the user (identified by {@link User#getUserId()}) is not found in the servers, it will be registered.
+     *
+     * See {@link com.applozic.mobicomkit.api.account.register.RegisterUserClientService#createAccount(User)} for details.</p>
      *
      * @param context the context
-     * @param user the user object
-     * @param loginHandler the success/failure callbacks
+     * @param user the user object to connect
+     * @param loginHandler for the success/failure callbacks
      */
     public static void connectUser(Context context, User user, AlLoginHandler loginHandler) {
         if (isConnected(context)) {
@@ -387,11 +385,14 @@ public class Applozic {
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is not longer used and will be removed soon.
+     */
+    @Deprecated
     public static boolean isRegistered(Context context) {
         return MobiComUserPreference.getInstance(context).isRegistered();
     }
 
-    @ApplozicInternal
     public static boolean isApplozicNotification(Context context, Map<String, String> data) {
         if (MobiComPushReceiver.isMobiComPushNotification(data)) {
             MobiComPushReceiver.processMessageAsync(context, data);
@@ -426,12 +427,18 @@ public class Applozic {
         AlTask.execute(new UserLogoutTask(logoutHandler, context));
     }
 
-    //ApplozicInternal: private
+    /**
+     * @deprecated This method has been deprecated. You can directly use the {@link PushNotificationTask}.
+     */
+    @Deprecated
     public static void registerForPushNotification(Context context, String pushToken, AlPushNotificationHandler handler) {
         AlTask.execute(new PushNotificationTask(context, pushToken, handler));
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method has been deprecated. You can directly use the {@link PushNotificationTask}.
+     */
     public static void registerForPushNotification(Context context, AlPushNotificationHandler handler) {
         registerForPushNotification(context, Applozic.getInstance(context).getDeviceRegistrationId(), handler);
     }

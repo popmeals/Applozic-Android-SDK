@@ -2,13 +2,11 @@ package com.applozic.mobicomkit.api.people;
 
 import android.content.Context;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 
 import com.applozic.mobicommons.json.GsonUtils;
 
-@ApplozicInternal
 public class PeopleClientService extends MobiComKitClientService {
     public static final String GOOGLE_CONTACT_URL = "/rest/ws/user/session/contact/google/list";
     public static final String PLATFORM_CONTACT_URL = "/rest/ws/user/session/contact/google/list";

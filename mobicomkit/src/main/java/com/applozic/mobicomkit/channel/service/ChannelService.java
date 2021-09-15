@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
@@ -94,7 +93,6 @@ public class ChannelService {
         this.baseContactService = appContactService;
     }
 
-    @ApplozicInternal
     public Channel getChannelInfoFromLocalDb(Integer key) {
         return channelDatabaseService.getChannelByChannelKey(key);
     }
@@ -131,7 +129,7 @@ public class ChannelService {
         channelService = null;
     }
 
-    @ApplozicInternal //Cleanup: can be removed
+    //Cleanup: can be removed
     public String getLoggedInUserId() {
         return loggedInUserId;
     }
@@ -164,7 +162,6 @@ public class ChannelService {
         return channel;
     }
 
-    @ApplozicInternal
     public void createMultipleChannels(List<ChannelInfo> channelInfo) {
         List<ChannelFeed> channelFeeds = channelClientService.createMultipleChannels(channelInfo);
         if (channelFeeds != null) {
@@ -172,7 +169,7 @@ public class ChannelService {
         }
     }
 
-    @ApplozicInternal //ApplozicInternal: or rename
+    //ApplozicInternal: or rename
     public void processChannelFeedList(ChannelFeed[] channelFeeds, boolean isUserDetails) {
         if (channelFeeds != null && channelFeeds.length > 0) {
             for (ChannelFeed channelFeed : channelFeeds) {
@@ -234,7 +231,7 @@ public class ChannelService {
         }
     }
 
-    @ApplozicInternal //Cleanup: can be removed
+    //Cleanup: can be removed
     public synchronized Channel getChannelByChannelKey(Integer channelKey) {
         if (channelKey == null) {
             return null;
@@ -242,7 +239,7 @@ public class ChannelService {
         return channelDatabaseService.getChannelByChannelKey(channelKey);
     }
 
-    @ApplozicInternal //Cleanup: can be removed
+    //Cleanup: can be removed
     public List<ChannelUserMapper> getListOfUsersFromChannelUserMapper(Integer channelKey) {
         return channelDatabaseService.getChannelUserList(channelKey);
     }
@@ -265,7 +262,6 @@ public class ChannelService {
         return channel;
     }
 
-    @ApplozicInternal
     public void updateChannel(Channel channel) {
         if (channelDatabaseService.getChannelByChannelKey(channel.getKey()) == null) {
             channelDatabaseService.addChannel(channel);
@@ -274,12 +270,11 @@ public class ChannelService {
         }
     }
 
-    @ApplozicInternal //Cleanup: can be removed, code duplication for public api
+    //Cleanup: can be removed, code duplication for public api
     public List<Channel> getChannelList() {
         return channelDatabaseService.getAllChannels();
     }
 
-    @ApplozicInternal
     public synchronized void syncChannels(boolean isMetadataUpdate) {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         SyncChannelFeed syncChannelFeed = channelClientService.getChannelFeed(userpref
@@ -296,7 +291,6 @@ public class ChannelService {
 
     }
 
-    @ApplozicInternal
     public synchronized void syncChannels() {
         syncChannels(false);
     }
@@ -307,7 +301,6 @@ public class ChannelService {
      * Use {@link ChannelService#createChannelWithResponse(ChannelInfo)} instead.
      */
     @Deprecated
-    @ApplozicInternal
     public synchronized AlResponse createChannel(final ChannelInfo channelInfo) {
 
         if (channelInfo == null) {
@@ -346,7 +339,6 @@ public class ChannelService {
         return alResponse;
     }
 
-    @ApplozicInternal
     public Channel getChannel(ChannelFeed channelFeed) {
         Channel channel = new Channel(channelFeed.getId(), channelFeed.getName(), channelFeed
                 .getAdminName(), channelFeed.getType(), channelFeed.getUnreadCount(), channelFeed
@@ -410,7 +402,6 @@ public class ChannelService {
     }
 
     @Deprecated
-    @ApplozicInternal
     public String addMemberToChannelProcess(Integer channelKey, String userId) {
         if (channelKey == null && TextUtils.isEmpty(userId)) {
             return "";
@@ -427,7 +418,6 @@ public class ChannelService {
     }
 
     @Deprecated
-    @ApplozicInternal
     public String addMemberToChannelProcess(String clientGroupId, String userId) {
         if (TextUtils.isEmpty(clientGroupId) && TextUtils.isEmpty(userId)) {
             return "";
@@ -526,7 +516,6 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
-    @ApplozicInternal
     public String leaveMemberFromChannelProcess(String clientGroupId, String userId) {
         if (TextUtils.isEmpty(clientGroupId)) {
             return "";
@@ -541,7 +530,6 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
-    @ApplozicInternal
     public String leaveMemberFromChannelProcess(Integer channelKey, String userId) {
         if (channelKey == null) {
             return "";
@@ -578,13 +566,11 @@ public class ChannelService {
         return apiResponse.getStatus();
     }
 
-    @ApplozicInternal
     public synchronized String createConversation(Integer groupId, String userId, String agentId,
                                                   String applicationId) {
         return channelClientService.createConversation(groupId, userId, agentId, applicationId);
     }
 
-    @ApplozicInternal
     public synchronized void processChannelList(List<ChannelFeed> channelFeedList) {
         if (channelFeedList != null && channelFeedList.size() > 0) {
             for (ChannelFeed channelFeed : channelFeedList) {
@@ -593,7 +579,6 @@ public class ChannelService {
         }
     }
 
-    @ApplozicInternal
     public ChannelUserMapper getChannelUserMapper(Integer channelKey) {
         return channelDatabaseService.getChannelUserByChannelKey(channelKey);
     }
@@ -626,41 +611,38 @@ public class ChannelService {
         return false;
     }
 
-    @ApplozicInternal //Cleanup: remove, code duplication
+    //Cleanup: remove, code duplication
     public void updateRoleInChannelUserMapper(Integer channelKey, String userId, Integer role) {
         channelDatabaseService.updateRoleInChannelUserMapper(channelKey, userId, role);
     }
 
-    @ApplozicInternal //Cleanup: remove, code duplication
+    //Cleanup: remove, code duplication
     public ChannelUserMapper getChannelUserMapperByUserId(Integer channelKey, String userId) {
         return channelDatabaseService.getChannelUserByChannelKeyAndUserId(channelKey, userId);
     }
 
-    @ApplozicInternal //Cleanup: remove, code duplication
+    //Cleanup: remove, code duplication
     public synchronized boolean processIsUserPresentInChannel(Integer channelKey) {
         return channelDatabaseService.isChannelUserPresent(channelKey, MobiComUserPreference
                 .getInstance(context).getUserId());
     }
 
-    @ApplozicInternal //Cleanup: remove, code duplication
+    //Cleanup: remove, code duplication
     public synchronized boolean isUserAlreadyPresentInChannel(Integer channelKey, String userId) {
         return channelDatabaseService.isChannelUserPresent(channelKey, userId);
     }
 
-    @ApplozicInternal
     public synchronized boolean processIsUserPresentInChannel(String clientGroupId) {
         Channel channel = channelDatabaseService.getChannelByClientGroupId(clientGroupId);
         return channelDatabaseService.isChannelUserPresent(channel.getKey(),
                 MobiComUserPreference.getInstance(context).getUserId());
     }
 
-    @ApplozicInternal
     public synchronized boolean isUserAlreadyPresentInChannel(String clientGroupId, String userId) {
         Channel channel = channelDatabaseService.getChannelByClientGroupId(clientGroupId);
         return channelDatabaseService.isChannelUserPresent(channel.getKey(), userId);
     }
 
-    @ApplozicInternal
     public synchronized String processChannelDeleteConversation(Channel channel, Context context) {
         String response = new MobiComConversationService(context).deleteSync(null, channel, null);
         if (!TextUtils.isEmpty(response) && "success".equals(response)) {
@@ -671,7 +653,6 @@ public class ChannelService {
 
     }
 
-    @ApplozicInternal
     public void updateChannelLocalImageURI(Integer channelKey, String localImageURI) {
         channelDatabaseService.updateChannelLocalImageURI(channelKey, localImageURI);
     }
@@ -709,7 +690,7 @@ public class ChannelService {
      * @param groupId the group id
      * @param notificationAfterTime the time in milliseconds
      */
-    @ApplozicInternal //Cleanup: this is not required. directly use channel database method
+    //Cleanup: this is not required. directly use channel database method
     public void updateNotificationAfterTime(Integer groupId, Long notificationAfterTime) {
         if (notificationAfterTime != null && groupId != null) {
             channelDatabaseService.updateNotificationAfterTime(groupId,
@@ -780,13 +761,11 @@ public class ChannelService {
         return apiResponse;
     }
 
-    @ApplozicInternal
     public String getGroupOfTwoReceiverUserId(Integer channelKey) {
         return channelDatabaseService.getGroupOfTwoReceiverId(channelKey);
     }
 
     @Deprecated
-    @ApplozicInternal
     public Channel createGroupOfTwo(ChannelInfo channelInfo) {
         if (channelInfo == null) {
             return null;
@@ -879,17 +858,16 @@ public class ChannelService {
         return alResponse;
     }
 
-    @ApplozicInternal //Cleanup: remove
+    //Cleanup: remove
     public List<ChannelFeed> getGroupInfoFromGroupIds(List<String> groupIds) {
         return getGroupInfoFromGroupIds(groupIds, null);
     }
 
-    @ApplozicInternal //Cleanup: remove
+    //Cleanup: remove
     public List<ChannelFeed> getGroupInfoFromClientGroupIds(List<String> clientGroupIds) {
         return getGroupInfoFromGroupIds(null, clientGroupIds);
     }
 
-    @ApplozicInternal
     public List<String> getChildGroupKeys(Integer parentGroupKey) {
         return channelDatabaseService.getChildGroupIds(parentGroupKey);
     }
@@ -1017,7 +995,6 @@ public class ChannelService {
         return null;
     }
 
-    @ApplozicInternal
     public void processChannelFeedForSync(ChannelFeed channelFeed) {
         if (channelFeed != null) {
             Set<String> memberUserIds = channelFeed.getMembersName();
@@ -1062,7 +1039,6 @@ public class ChannelService {
         }
     }
 
-    @ApplozicInternal
     public String deleteChannel(Integer channelKey) {
         return deleteChannel(channelKey, false, false);
     }
@@ -1115,7 +1091,6 @@ public class ChannelService {
         }
     }
 
-    @ApplozicInternal
     public Integer getParentGroupKeyByClientGroupKey(String parentClientGroupKey) {
         return channelDatabaseService.getParentGroupKey(parentClientGroupKey);
     }

@@ -1,8 +1,6 @@
 package com.applozic.mobicomkit.feed;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
-
-@ApplozicInternal //Cleanup: can be removed, use ApiResponse instead
+//Cleanup: can be removed, use ApiResponse instead
 public class AlResponse {
 
     public static final String SUCCESS = "success";

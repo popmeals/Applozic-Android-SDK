@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.notification.MuteUserResponse;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
@@ -35,9 +34,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Contains methods that can be used to work with users/contacts.
+ * The <code>UserService</code> class provides methods that can be used to work with users/contacts.
  *
- * <p>Methods here basically combine the server calls and local syncing for users or contacts.</p>
+ * <p>In general, methods of this work in two steps:
+ * <ol>
+ *     <li>They get the required user/contact data from the server, mostly by using {@link UserClientService}.</li>
+ *     <li>They update/sync that data locally({@link AppContactService}) along with returning it.</li>
+ * </ol></p>
+ *
+ * <p>All methods of this class run blocking. You will need to run them asynchronously.</p>
  */
 public class UserService {
 
@@ -55,6 +60,14 @@ public class UserService {
         baseContactService = new AppContactService(context);
     }
 
+    /**
+     * Gets an instance of this class.
+     *
+     * <p>A non-thread-safe singleton pattern in used to get the instance.</p>
+     *
+     * @param context the context
+     * @return instance of this class
+     */
     public static UserService getInstance(Context context) {
         if (userService == null) {
             userService = new UserService(ApplozicService.getContext(context));
@@ -72,7 +85,9 @@ public class UserService {
         this.userClientService = userClientService;
     }
 
-    @ApplozicInternal
+    /**
+     * @ApplozicInternal This method handle block user syncing. Calling this method is done internally by the SDK.
+     */
     public synchronized void processSyncUserBlock() {
         try {
             SyncBlockUserApiResponse apiResponse = userClientService.getSyncUserBlockList(userPreference.getUserBlockSyncTime());
@@ -123,6 +138,10 @@ public class UserService {
     /**
      * Blocks/unblocks the user with the given userId for the current logged in user.
      *
+     * <p>In-case of success, the local data is also updated.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
+     *
      * @param userId the userId of the user to block
      * @param block true to block/false to unblock
      * @return response from the backend
@@ -142,6 +161,8 @@ public class UserService {
      *
      * <p>User details are save in the form of {@link Contact} objects internally.</p>
      *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
+     *
      * @param userDetails the set of user details to save
      */
     public synchronized void processUserDetail(Set<UserDetail> userDetails) {
@@ -159,7 +180,6 @@ public class UserService {
         processUserDetails(userIds);
     }
 
-    @ApplozicInternal
     public synchronized void processUserDetails(Set<String> userIds) {
         String response = userClientService.getUserDetails(userIds);
         if (!TextUtils.isEmpty(response)) {
@@ -176,9 +196,11 @@ public class UserService {
     }
 
     /**
-     * Converts a {@link UserDetail} object to a {@link Contact} object.
+     * This method converts a {@link UserDetail} object to a {@link Contact} object.
      *
-     * <p>Note: This methods also save the Contact object to the local database.</p>
+     * <p>I will also save/update the Contact object in the local database.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      *
      * @param userDetail the user details object
      * @return the contact object
@@ -188,6 +210,10 @@ public class UserService {
     }
 
     //ApplozicInternal: private
+
+    /**
+     * @ApplozicInternal Use {@link #getContactFromUserDetail(UserDetail)}.
+     */
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -214,6 +240,14 @@ public class UserService {
     }
 
     //ApplozicInternal: private or rename
+    /**
+     * This method inserts/updates the user(user detail) in the local database.
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
+     *
+     * @param userDetail the user detail to save
+     * @param contactType the contact type of the user
+     */
     public synchronized void processUser(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();
         contact.setUserId(userDetail.getUserId());
@@ -255,10 +289,11 @@ public class UserService {
     }
 
     /**
-     * Retrieves and syncs a list of online users from the server.
+     * Retrieves a list of the current online users from the server. They are also saved locally.
      *
-     * <p>This methods updates the local user/contact data for these retrieved users
-     * by calling {@link UserService#processUserDetail(Set)}.</p>
+     * <p>This methods updates the local database for these retrieved users by calling {@link UserService#processUserDetail(Set)}.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      *
      * @param numberOfUser the number of users to return
      * @return array of userIds of the online users
@@ -290,10 +325,14 @@ public class UserService {
 
     //Cleanup: rename (syncRegisteredUsers)
     /**
-     * Retrieves and syncs a list of registered users from the server.
+     * Retrieves a list of registered users from the server. They are also saved locally.
      *
      * <p>This methods updates the local user/contact data for these retrieved users
      * by calling {@link UserService#processUserDetail(Set)}.</p>
+     *
+     * <p>You can use the asynchronous {@link RegisteredUsersAsyncTask} instead of directly using this method.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      *
      * @param startTime the start time in milliseconds. eg: a start time of X will return all the
      *                  registered users created after X
@@ -318,6 +357,8 @@ public class UserService {
      *
      * <p>The current user will be taken from the user shared preferences.</p>
      *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
+     *
      * @param userId the user id of the user to mute
      * @param notificationAfterTime the time (in milliseconds) to mute the user for
      * @return the api response
@@ -338,8 +379,9 @@ public class UserService {
     /**
      * Gets the list of users muted by the current user. Also syncs them locally.
      *
-     * <p>The muted user ids can be accessed from the array list items
-     * by using {@link MuteUserResponse#getUserId()}.</p>
+     * <p>The muted user ids can be accessed from the array list items by using {@link MuteUserResponse#getUserId()}.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      *
      * @return an array list of {@link MuteUserResponse}
      */
@@ -356,14 +398,20 @@ public class UserService {
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is not longer used and will be removed soon.
+     */
+    @Deprecated
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status) {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
     }
 
     /**
-     * Updates details of the current user.
+     * Updates details of the current (logged) user.
      *
      * <p>This method updates more than just the display name or image link. See the parameters.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      */
     public String updateDisplayNameORImageLink(String displayName, String profileImageLink, String localURL, String status, String contactNumber, Map<String, String> metadata) {
         return updateDisplayNameORImageLink(displayName, profileImageLink, localURL, status, null, null, null, null);
@@ -456,6 +504,8 @@ public class UserService {
      * <p>User details are updated in the backend as well as locally.
      * Locally the Contact objects are updated in the database.</p>
      *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
+     *
      * @param user the user data to update. don't forget the userId.
      * @return The user update api response
      */
@@ -464,11 +514,19 @@ public class UserService {
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public String updateLoggedInUser(User user) {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getMetadata());
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public String updateUser(User user) {
         return updateDisplayNameORImageLink(user.getDisplayName(), user.getImageLink(), user.getLocalImageUri(), user.getStatus(), user.getContactNumber(), user.getEmail(), user.getMetadata(), user.getUserId());
     }
@@ -489,6 +547,8 @@ public class UserService {
     /**
      * Syncs user data from the server.
      *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
+     *
      * @see UserClientService#postUserDetailsByUserIds(Set)
      *
      * @param userIds the userIds of users to sync the data of
@@ -498,11 +558,19 @@ public class UserService {
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public ApiResponse processUserReadConversation() {
         return userClientService.getUserReadServerCall();
     }
 
     //ApplozicInternal: private
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
     public String processUpdateUserPassword(String oldPassword, String newPassword) {
         String response = userClientService.updateUserPassword(oldPassword, newPassword);
         if (!TextUtils.isEmpty(response) && MobiComKitConstants.SUCCESS.equals(response)) {
@@ -515,6 +583,8 @@ public class UserService {
      * Will return and sync a list of contacts matching the search term, from the server.
      *
      * <p>Note: The local contacts are also updated locally.</p>
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      *
      * @param searchString the search term
      * @return a list of users (as Contact objects)
@@ -548,13 +618,14 @@ public class UserService {
     }
 
     //Cleanup: not needed
-    @ApplozicInternal
     public void updateUser(User user, AlCallback callback) {
         AlTask.execute(new AlUserUpdateTask(context, user, callback));
     }
 
     /**
      * Updates the display name for the given userId (remote and local).
+     *
+     * <p>Note: This method has database and network operation. Run it asynchronously.</p>
      *
      * @param userId the user id of the user
      * @param userDisplayName the new display name

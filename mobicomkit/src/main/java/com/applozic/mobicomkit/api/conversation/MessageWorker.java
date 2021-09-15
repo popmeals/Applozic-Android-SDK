@@ -14,7 +14,6 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.conversation.schedule.ScheduleMessageService;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -27,7 +26,6 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Worker to send a message to the server (also creates in db) and also sync pending messages.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class MessageWorker extends Worker {
     private static final String TAG = "MessageWorker";
 

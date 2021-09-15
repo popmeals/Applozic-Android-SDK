@@ -7,7 +7,6 @@ import android.net.Uri;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserService;
@@ -259,7 +258,6 @@ public class MobiComMessageService {
      * 5) Delivered message status
      * 6) Contact details
      */
-    @ApplozicInternal
     public synchronized void syncMessages() {
         final MobiComUserPreference userpref = MobiComUserPreference.getInstance(context);
         boolean syncChannel = false;
@@ -336,7 +334,6 @@ public class MobiComMessageService {
     }
 
     //ApplozicInternal: remove this method, unnecessary
-    @ApplozicInternal
     public MessageInfoResponse getMessageInfoResponse(String messageKey) {
         MessageInfoResponse messageInfoResponse = messageClientService.getMessageInfoList(messageKey);
         return messageInfoResponse;
@@ -432,7 +429,6 @@ public class MobiComMessageService {
     }
 
     //Cleanup: remove
-    @ApplozicInternal
     public void createEmptyMessage(Contact contact) {
         Message sms = new Message();
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);

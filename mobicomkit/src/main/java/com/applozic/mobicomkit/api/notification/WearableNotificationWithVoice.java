@@ -15,12 +15,10 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class WearableNotificationWithVoice {
 
-    public @ApplozicInternal static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
+    public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
     Class<?> notificationHandler;
     Context mContext;
     int actionIconResId;

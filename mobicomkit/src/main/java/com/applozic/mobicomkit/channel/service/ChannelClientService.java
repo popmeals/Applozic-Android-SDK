@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.MultipleChannelFeedApiResponse;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.notification.MuteNotificationRequest;
@@ -285,7 +284,6 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelFeed;
     }
 
-    @ApplozicInternal
     public ChannelFeedApiResponse createChannelWithReponse(ChannelInfo channelInfo) throws Exception {
         String jsonFromObject = GsonUtils.getJsonFromObject(channelInfo, channelInfo.getClass());
         String createChannelResponse = httpRequestUtils.postData(getCreateChannelUrl(),
@@ -321,13 +319,11 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelFeeds;
     }
 
-    @ApplozicInternal
     public ApiResponse removeMembersFromMultipleChannelsByChannelKeys(Set<Integer> channelKeys,
                                                                       Set<String> userIds) {
         return removeMembersFromMultipleChannels(null, channelKeys, userIds);
     }
 
-    @ApplozicInternal
     public ApiResponse removeMembersFromMultipleChannelsByClientGroupIds(Set<String>
                                                                                  clientGroupIds,
                                                                          Set<String> userIds) {
@@ -560,12 +556,10 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    @ApplozicInternal
     public ApiResponse leaveMemberFromChannel(Integer channelKey) {
         return leaveMemberFromChannel(null, channelKey);
     }
 
-    @ApplozicInternal
     public ApiResponse leaveMemberFromChannel(String clientGroupId) {
         return leaveMemberFromChannel(clientGroupId, null);
     }
@@ -840,7 +834,6 @@ public class ChannelClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: fix typo
-    @ApplozicInternal
     public ChannelFeedListResponse getMemebersFromContactGroupIds(List<String> groupIds,
                                                                   List<String> groupNames, String
                                                                           groupType) {
@@ -888,7 +881,6 @@ public class ChannelClientService extends MobiComKitClientService {
     }
 
     //ApplozicInternal: remove
-    @ApplozicInternal
     public String createConversation(Integer groupId, String userId, String agentId, String
             applicationId) {
 

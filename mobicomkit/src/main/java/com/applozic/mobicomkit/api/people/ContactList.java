@@ -5,7 +5,6 @@ package com.applozic.mobicomkit.api.people;
  * and open the template in the editor.
  */
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,7 +12,6 @@ import com.applozic.mobicommons.people.contact.Contact;
 
 import java.util.List;
 
-@ApplozicInternal
 public class ContactList {
 
     @Expose

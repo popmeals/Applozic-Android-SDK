@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.List;
 
 //ApplozicInternal: default
+/**
+ * @ApplozicInternal Class for storing the JWT Payload values.
+ */
 public class BaseClaim implements Claim {
     @Nullable
     @Override

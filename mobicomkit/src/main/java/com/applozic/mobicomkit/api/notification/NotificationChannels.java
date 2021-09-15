@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -23,7 +22,6 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
  * Please remember to increment the NOTIFICATION_CHANNEL_VERSION if any change is made in this class.
  * It is mandatory to increment the version or the update in the Notification channels will fail.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class NotificationChannels {
 
     //increment this version if changes in notification channel is made
@@ -34,7 +32,6 @@ public class NotificationChannels {
     private String soundFilePath;
     private String TAG = getClass().getSimpleName();
 
-    @ApplozicInternal
     public NotificationChannels(Context context, String soundFilePath) {
         this.context = context;
         this.soundFilePath = soundFilePath;

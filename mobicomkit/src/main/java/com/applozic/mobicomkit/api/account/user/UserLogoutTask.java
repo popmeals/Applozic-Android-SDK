@@ -9,7 +9,22 @@ import java.lang.ref.WeakReference;
 
 /**
  * An asynchronous logout task for the current user.
- * <p>It simply provides an async wrapper for {@link UserClientService#logout()}.</p>
+ * <p>Refer to {@link UserClientService#logout()} for details.</p>
+ *
+ * <code>
+ *     UserLogoutTask userLogoutTask = new UserLogoutTask(new AlLogoutHandler() {
+ *             @Override
+ *             public void onSuccess(Context context) { }
+ *
+ *             @Override
+ *             public void onFailure(Exception exception) { }
+ *         }, context.get());
+ *
+ *         AlTask.execute(userLogoutTask);
+ *
+ *         //for versions prior to v5.95 use:
+ *         //userLogoutTask.execute();
+ * </code>
  */
 public class UserLogoutTask extends AlAsyncTask<Void, Boolean> {
 
@@ -19,12 +34,19 @@ public class UserLogoutTask extends AlAsyncTask<Void, Boolean> {
     private Exception mException;
     private AlLogoutHandler logoutHandler;
 
+    /**
+     * @deprecated Use {@link UserLogoutTask#UserLogoutTask(AlLogoutHandler, Context)} instead.
+     */
     public UserLogoutTask(TaskListener listener, Context context) {
         this.taskListener = listener;
         this.context = new WeakReference<Context>(context);
         userClientService = new UserClientService(context);
     }
 
+    /**
+     * @param listener success/failure callback
+     * @param context the context
+     */
     public UserLogoutTask(AlLogoutHandler listener, Context context) {
         this.logoutHandler = listener;
         this.context = new WeakReference<Context>(context);

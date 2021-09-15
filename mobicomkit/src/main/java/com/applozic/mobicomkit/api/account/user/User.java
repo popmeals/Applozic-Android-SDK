@@ -1,7 +1,9 @@
 package com.applozic.mobicomkit.api.account.user;
 
+import android.content.Context;
 import android.text.TextUtils;
 
+import com.applozic.mobicomkit.listners.AlLoginHandler;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.io.UnsupportedEncodingException;
@@ -12,16 +14,28 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Model class for a Applozic user.
+ * The User class will be used to store data for the current Applozic user(i.e. the user using the application).
  *
- * <p>A User is the entity using Applozic as the "sender". The User will be the one who is authenticated
- * and usually the one logged in. The entity on the receiving end is a Contact.
+ * <p>A User is the entity logged onto Applozic. The User sends and receives messages to and from other Contacts and participates
+ * in group chats.
+ * Before a User can do all this, it must be authenticated {@link com.applozic.mobicomkit.Applozic#connectUser(Context, User, AlLoginHandler)}.
  *
- * However, for non-client jargon, a "user" can be ANY entity using Applozic.
- * Contacts exist mainly for the client SDKs.
+ * <p>In context to a <i>User</i> that is sending messages etc, other(receiver) Users are {@link com.applozic.mobicommons.people.contact.Contact}s.
+ * However, for non-client jargon, a <i>User</i> can be <b>ANY</b> entity using Applozic.
+ * Contacts exist mainly for the client SDKs.</p>
  *
- * This class will be used to store data for the current user or the user using the application.
- * For other users see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
+ * <p>A user is identified by it's {@link User#userId}. To create a user do this:</p>
+ * <code>
+ *     User user = new User();
+ *     user.setUserId(“userId”); //mandatory
+ *     user.setDisplayName(“displayName”);
+ *     user.setEmail(“email”);
+ *     user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //use this by default
+ *     user.setPassword("password");
+ *     user.setImageLink("url/to/profile/image");
+ * </code>
+ *
+ * See the respective <b>getters</b> of the various fields for details.
  */
 public class User extends JsonMarker {
 
@@ -67,6 +81,9 @@ public class User extends JsonMarker {
         this.features = features;
     }
 
+    /**
+     * Gets the status string (similar to the old <i>Whatsapp</i> statuses) for the user.
+     */
     public String getStatus() {
         return status;
     }
@@ -75,6 +92,9 @@ public class User extends JsonMarker {
         this.status = status;
     }
 
+    /**
+     * Gets the local path to the user's profile picture.
+     */
     public String getLocalImageUri() {
         return localImageUri;
     }
@@ -83,6 +103,10 @@ public class User extends JsonMarker {
         this.localImageUri = localImageUri;
     }
 
+    /**
+     * Gets the user-id of the user. This is the primary identification for a user and is unique across
+     * an Applozic application.
+     */
     public String getUserId() {
         return userId;
     }
@@ -91,6 +115,9 @@ public class User extends JsonMarker {
         this.userId = userId;
     }
 
+    /**
+     * Gets the email string for the user.
+     */
     public String getEmail() {
         return email;
     }
@@ -99,6 +126,9 @@ public class User extends JsonMarker {
         this.email = emailId;
     }
 
+    /**
+     * Gets the password for the user.
+     */
     public String getPassword() {
         return password;
     }
@@ -107,6 +137,9 @@ public class User extends JsonMarker {
         this.password = password;
     }
 
+    /**
+     * Gets the display name string for the user.
+     */
     public String getDisplayName() {
         return displayName;
     }
@@ -115,6 +148,9 @@ public class User extends JsonMarker {
         this.displayName = displayName;
     }
 
+    /**
+     * Gets the registration-id for the user. This id is used to identify a session and for push notifications(real-time updates).
+     */
     public String getRegistrationId() {
         return registrationId;
     }
@@ -123,6 +159,9 @@ public class User extends JsonMarker {
         this.registrationId = registrationId;
     }
 
+    /**
+     * Gets the contact/phone number string for the user.
+     */
     public String getContactNumber() {
         return contactNumber;
     }
@@ -131,6 +170,12 @@ public class User extends JsonMarker {
         this.contactNumber = contactNumber;
     }
 
+    /**
+     * Gets the application-id of the Application application in which this user exists.
+     *
+     * <p>The application-id or application-key is used to identify an Applozic application.
+     * It can be considered as a container for all your messages, users and all other data.</p>
+     */
     public String getApplicationId() {
         return applicationId;
     }
@@ -195,6 +240,9 @@ public class User extends JsonMarker {
         this.deviceType = deviceType;
     }
 
+    /**
+     * See {@link User.AuthenticationType}.
+     */
     public Short getAuthenticationTypeId() {
         return authenticationTypeId;
     }
@@ -211,6 +259,9 @@ public class User extends JsonMarker {
         this.appModuleName = appModuleName;
     }
 
+    /**
+     * Remote URL to the display/profile image of the user.
+     */
     public String getImageLink() {
         return imageLink;
     }
@@ -344,6 +395,12 @@ public class User extends JsonMarker {
         return encodedId;
     }
 
+    /**
+     * <p>User.AuthenticationType.APPLOZIC.getValue() tells the Applozic backend to handle the authentication itself. This is the default. Use this if you do not know what you should be using.</p>
+     *
+     * <p>User.AuthenticationType.CLIENT.getValue() tells the Applozic backend that you will handle authentication yourself and provide the access-token. In this case, pass the access token in the user’s `password` field.</p>
+     * <p>Refer to this(https://docs.applozic.com/docs/access-token-url) link to know more about how to implement your own authentication.</p>
+     */
     public enum AuthenticationType {
 
         CLIENT(Short.valueOf("0")), APPLOZIC(Short.valueOf("1")), FACEBOOK(Short.valueOf("2"));

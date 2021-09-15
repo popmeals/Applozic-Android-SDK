@@ -107,7 +107,7 @@ public class RegistrationResponse extends JsonMarker {
     }
 
     /**
-     * @ApplozicInternal Used internally.
+     * Used internally.
      */
     public String getNotificationResponse() {
         return notificationResponse;
@@ -118,7 +118,7 @@ public class RegistrationResponse extends JsonMarker {
     }
 
     /**
-     * @ApplozicInternal Used internally.
+     * Used internally.
      * Gets the URL for the MQTT broker, used for the web-socket connection.
      */
     public String getBrokerUrl() {
@@ -300,7 +300,7 @@ public class RegistrationResponse extends JsonMarker {
     }
 
     /**
-     * @ApplozicInternal These constants are used internally.
+     * These constants are used internally.
      *
      * Registration success response constants (that will be received from server).
      */

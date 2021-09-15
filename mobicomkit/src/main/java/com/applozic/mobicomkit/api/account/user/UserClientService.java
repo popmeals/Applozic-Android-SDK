@@ -166,7 +166,7 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * Performs logout for the current user.
      *
-     * @ApplozicInternal Use {@link UserLogoutTask} or {@link Applozic#logoutUser(Context, AlLogoutHandler)}. They wrap around this method asynchronously.
+     * Use {@link UserLogoutTask} or {@link Applozic#logoutUser(Context, AlLogoutHandler)}. They wrap around this method asynchronously.
      *
      * <p>A logout server call will be sent. Along with that:
      * - {@link MobiComUserPreference} shared preference will be cleared.
@@ -186,7 +186,7 @@ public class UserClientService extends MobiComKitClientService {
 
     //ApplozicInternal: default
     /**
-     * @ApplozicInternal This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
+     * This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
      */
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
@@ -370,7 +370,7 @@ public class UserClientService extends MobiComKitClientService {
     //ApplozicInternal: default
 
     /**
-     * @ApplozicInternal This is an internal method. Syncing is handled by the SDK internally.
+     * This is an internal method. Syncing is handled by the SDK internally.
      *
      * <p>Returns the users that were blocked since the last sync time.</p>
      */
@@ -541,7 +541,7 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * Updates details of the current user.
      *
-     * @ApplozicInternal Use {@link UserService#updateDisplayNameORImageLink(String, String, String, String, String, String, Map, String)} instead.
+     * Use {@link UserService#updateDisplayNameORImageLink(String, String, String, String, String, String, Map, String)} instead.
      *
      * <p>Note: This is a network method. Run it asynchronously.</p>
      *

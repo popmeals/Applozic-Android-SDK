@@ -414,7 +414,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public void addGlobalHeaders(HttpURLConnection connection, String userId) {
         try {

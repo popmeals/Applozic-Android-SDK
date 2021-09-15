@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * The <code>MobiComUserPreference</code> class is a wrapper around {@link SharedPreferences} used to store user and session level local data.
  *
- * @ApplozicInternal This class is not a part of Applozic's public API. Direct access to the methods and fields of this class will not be required.
+ * This class is not a part of Applozic's public API. Direct access to the methods and fields of this class will not be required.
  */
 //move the code used here to Applozic class eg: Applozic.getCurrentUser();
 public class MobiComUserPreference {

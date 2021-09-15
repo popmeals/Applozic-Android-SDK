@@ -7,7 +7,7 @@ import java.util.List;
 
 //ApplozicInternal: protected
 /**
- * @ApplozicInternal Class for storing the JWT Payload values.
+ * Class for storing the JWT Payload values.
  *
  * The Claim class holds the value in a generic way so that it can be recovered in many representations.
  */

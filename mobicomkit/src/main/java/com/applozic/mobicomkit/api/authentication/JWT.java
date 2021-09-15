@@ -29,7 +29,7 @@ import java.util.Map;
 
 //ApplozicInternal: default
 /**
- * @ApplozicInternal The <code>JWT</code> class stores data for the JWT authentication token.
+ * The <code>JWT</code> class stores data for the JWT authentication token.
  */
 public class JWT {
 

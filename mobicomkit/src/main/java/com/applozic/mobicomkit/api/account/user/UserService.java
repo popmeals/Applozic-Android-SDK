@@ -86,7 +86,7 @@ public class UserService {
     }
 
     /**
-     * @ApplozicInternal This method handle block user syncing. Calling this method is done internally by the SDK.
+     * This method handle block user syncing. Calling this method is done internally by the SDK.
      */
     public synchronized void processSyncUserBlock() {
         try {
@@ -212,7 +212,7 @@ public class UserService {
     //ApplozicInternal: private
 
     /**
-     * @ApplozicInternal Use {@link #getContactFromUserDetail(UserDetail)}.
+     * Use {@link #getContactFromUserDetail(UserDetail)}.
      */
     public synchronized Contact getContactFromUserDetail(UserDetail userDetail, Contact.ContactType contactType) {
         Contact contact = new Contact();

@@ -8,7 +8,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
 /**
  * Stores the dimension (height, width) values for media images in reference to a message (attachment).
  *
- * @ApplozicInternal This class is used internally by the {@link AttachmentManager}, {@link AttachmentView} and the UI kit.
+ * This class is used internally by the {@link AttachmentManager}, {@link AttachmentView} and the UI kit.
  */
 public class AttachmentViewProperties {
 

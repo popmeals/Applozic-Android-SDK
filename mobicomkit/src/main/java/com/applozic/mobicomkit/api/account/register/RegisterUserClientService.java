@@ -71,7 +71,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
 
     //ApplozicInternal: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getCreateAccountUrl() {
         return getBaseUrl() + CREATE_ACCOUNT_URL;
@@ -79,7 +79,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
 
     //ApplozicInternal: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getPricingPackageUrl() {
         return getBaseUrl() + CHECK_PRICING_PACKAGE;
@@ -87,7 +87,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
 
     //ApplozicInternal: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getUpdateAccountUrl() {
         return getBaseUrl() + UPDATE_ACCOUNT_URL;
@@ -95,14 +95,14 @@ public class RegisterUserClientService extends MobiComKitClientService {
 
     //ApplozicInternal: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getRefreshTokenUrl() {
         return getBaseUrl() + REFRESH_TOKEN_URL;
     }
 
     /**
-     * @ApplozicInternal Do not use this method directly. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
+     * Do not use this method directly. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
      *
      * This method registers(or authenticates/logs in) a {@link User} in
      * the Applozic servers. It also initializes the SDK for that user.

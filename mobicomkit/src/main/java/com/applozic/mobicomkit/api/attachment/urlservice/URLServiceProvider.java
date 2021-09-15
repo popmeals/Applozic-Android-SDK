@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
 /**
  * Class that provides the appropriate URL service class({@link URLService}).
  *
- * @ApplozicInternal Direct access to methods of this class will not be required.
+ * Direct access to methods of this class will not be required.
  */
 public class URLServiceProvider {
 
@@ -61,7 +61,7 @@ public class URLServiceProvider {
     }
 
     /**
-     * @ApplozicInternal The thumbnail URL is either taken from {@link FileMeta#getThumbnailUrl()} or generated using {@link FileMeta#getThumbnailBlobKey()}.
+     * The thumbnail URL is either taken from {@link FileMeta#getThumbnailUrl()} or generated using {@link FileMeta#getThumbnailBlobKey()}.
      *
      * <p>This {@link FileMeta} object is retrieved for the using {@link Message#getFileMetas()}.</p>
      */

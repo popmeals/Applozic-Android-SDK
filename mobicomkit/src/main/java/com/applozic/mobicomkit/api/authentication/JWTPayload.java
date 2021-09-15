@@ -7,7 +7,7 @@ import java.util.Map;
 
 //ApplozicInternal: default
 /**
- * @ApplozicInternal This class stores the JWT payload.
+ * This class stores the JWT payload.
  */
 public class JWTPayload {
     final String iss;

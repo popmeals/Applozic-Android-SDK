@@ -22,7 +22,7 @@ import java.net.URLConnection;
 //ApplozicInternal: default
 
 /**
- * @ApplozicInternal This is an internal class.
+ * This is an internal class.
  */
 public class ApplozicMultipartUtility {
     private static final String LINE_FEED = "\r\n";

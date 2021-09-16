@@ -117,12 +117,13 @@ public class Applozic {
     }
 
     /**
-     * This method will give you the application key/id with which the given SDK has been initialized.
+     * Returns the application key with which the given SDK has been initialized.
      *
-     * <p>This application key/id is retrieved from one of three places:
-     * - From the server call (usually the registration server call)
-     * - From the AndroidManifest.xml metadata value
-     * - From the shared preferences (key is written here during SDK initialization)</p>
+     * <p>For this method to return a valid value, the SDK must be initialized using {@link Applozic#init(Context, String)}.</p>
+     *
+     * <p>What is an application?</p>
+     * <p>Whenever you sign up to <i>Applozic</i>, an <i>application</i> is created for you and a application key for that application
+     * is provided. This application can be explained as a "container" in which all you chat functionality and data live.</p>
      *
      * @return the application key
      */

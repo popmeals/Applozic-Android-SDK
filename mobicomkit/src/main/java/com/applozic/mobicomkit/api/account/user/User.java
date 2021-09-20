@@ -20,18 +20,23 @@ import java.util.regex.Pattern;
  * <p>A <code>User</code> sends and receives messages from other users in 1-to-1 and group chats.
  * However, before that, it must be authenticated using {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</p>
  *
- * <p>A <i>user</i> is identified by it's {@link User#userId} which is <i>unique</i> for an application (See {@link Applozic#getApplicationKey()}).</p>
+ * <p>A <i>user</i> is identified by it's {@link User#userId} which is <i>unique</i> for an application.</p>
+ *
+ * <p>What is an application? See {@link Applozic#getApplicationKey()}.</p>
  *
  * <p>You can create a user like this:</p>
  * <code>
  *     User user = new User();
- *     user.setUserId(“userId”); //mandatory
- *     user.setDisplayName(“displayName”); //optional
- *     user.setEmail(“email”); //optional
- *     user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue()); //use this by default
- *     user.setPassword("password"); //optional
- *     user.setImageLink("url/to/profile/image"); //optional
+ *     user.setUserId(“userId”);
+ *     user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());
+ *     user.setDisplayName(“displayName”);
+ *     user.setEmail(“email”);
+ *     user.setPassword("password");
+ *     user.setImageLink("url/to/profile/image");
  * </code>
+ *
+ * <p>Note: When creating a new user, {@link #setUserId(String)} is mandatory and you need to pass {@link AuthenticationType#APPLOZIC} to {@link #setAuthenticationTypeId(Short)} by default.
+ * All other fields are optional.</p>
  *
  * <p>Also see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
  */
@@ -39,6 +44,9 @@ public class User extends JsonMarker {
 
     private static final String DEFAULT_USER_ID_REGEX = "^[a-zA-Z0-9_+#@.?|=;-]+$";
     private String userIdRegex;
+    /**
+     * @see #setUserId(String)
+     */
     private String userId;
     private String email;
     private String password;
@@ -123,7 +131,10 @@ public class User extends JsonMarker {
     }
 
     /**
-     * User-id is the primary identification for a user and is unique across an application ({@link Applozic#getApplicationKey()}).
+     * User-id is the primary identification for a user and is unique across an application.
+     *
+     * <p>When you create a new user, you need to give it a <i>user-id</i>. This is mandatory.
+     * And for all future references to that user, this <i>user-id</i> will be needed by both you and the SDK.</p>
      */
     public void setUserId(String userId) {
         this.userId = userId;

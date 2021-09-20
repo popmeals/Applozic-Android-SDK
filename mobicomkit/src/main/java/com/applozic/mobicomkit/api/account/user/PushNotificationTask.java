@@ -10,13 +10,22 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * An asynchronous task that updates the server with a "device-id" (or "registration-id") that will be used
- * to identify the device for FCM push notifications.
+ * An asynchronous task that updates the server with a <p>"registration-id"</p> that will be used to identify the device for <i>Firebase Cloud Messaging</i> push-notifications.
  *
- <p>Created for async execution of the {@link RegisterUserClientService#updatePushNotificationId(String)}.
+ * <p>FCM push-notifications are used for providing real-time updates for messages and other events your device.</p>
  *
+ * <p>Created for async execution of the {@link RegisterUserClientService#updatePushNotificationId(String)}.
+ *
+ * <p>To setup push-notifications/real-time updates:</p>
+ * <ol>
+ *     <li>Add <i>Firebase (Firebase Cloud Messaging)</i> to your app if you don't already use it.</li>
+ *     <li>Override <code>FirebaseMessageService.onNewToken(String registrationToken)</code> to get the <i>registration-id</i>.</li>
+ *     <li>Execute this task inside your <code>onNewToken</code> implementation with that <i>registration-id</i>.</li>
+ * </ol>
+ *
+ * <p>To execute this task:</p>
  * <code>
- *     PushNotificationTask pushNotificationTask = new PushNotificationTask(context, "pushNotificationId", new AlPushNotificationHandler() {
+ *     PushNotificationTask pushNotificationTask = new PushNotificationTask(context, "registrationId", new AlPushNotificationHandler() {
  *                 @Override
  *                 public void onSuccess(RegistrationResponse registrationResponse) {
  *                     //registrationResponse.getMessage();

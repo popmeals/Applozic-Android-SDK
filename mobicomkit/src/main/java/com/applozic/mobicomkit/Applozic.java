@@ -122,8 +122,8 @@ public class Applozic {
      * <p>For this method to return a valid value, the SDK must be initialized using {@link Applozic#init(Context, String)}.</p>
      *
      * <p>What is an application?</p>
-     * <p>Whenever you sign up to <i>Applozic</i>, an <i>application</i> is created for you and a application key for that application
-     * is provided. This application can be explained as a "container" in which all you chat functionality and data live.</p>
+     * <p>Whenever you sign up to <i>Applozic</i>, an <i>application</i> is created for you and an application key for that application
+     * is provided. This application, in simple words, can be explained as a "container" in which all you chat functionality and data live.</p>
      *
      * @return the application key
      */
@@ -335,15 +335,20 @@ public class Applozic {
     }
 
     /**
-     * Use this method for authenticating (or registering) a {@link User} from the backend. Authentication is required before using
-     * almost all the Applozic SDK methods.
-     * On successful authentication of a user, a token is received (from the Applozic servers) and saved. This is then used to
-     * authenticate/authorize all future API calls.
+     * Use this method to log-in or register your {@link User}. This must be done before any other method of the SDK is used.
      *
-     * <p>Note: This method checks if a user is already logged in and doesn't connect otherwise.
-     * If the user (identified by {@link User#getUserId()}) is not found in the servers, it will be registered.
+     * <p>Before calling this method, for your user, make sure that {@link User#getUserId()} is not empty/null and {@link User#isValidUserId()} returns <i>true</i>.</p>
      *
-     * See {@link com.applozic.mobicomkit.api.account.register.RegisterUserClientService#createAccount(User)} for details.</p>
+     * <p>If the user (identified by it's <code>userId</code>) is not present in the servers, a new
+     * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
+     *
+     * <p>After you get the {@link AlLoginHandler#onSuccess(RegistrationResponse, Context)} callback:
+     * <ul>
+     *     <li>You will be able to access your user's id using {@link MobiComUserPreference#getUserId()}.</li>
+     *     <li>You will be able to access your user's data using {@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String)}. Pass your user-id to this method.</li>
+     *     <li>You will be able to access messages, contacts, channels and other freshly synced data to your local database for your user.</li>
+     *     <li>Other users will be able to see your status as "online".</li>
+     * </ul></p>
      *
      * @param context the context
      * @param user the user object to connect

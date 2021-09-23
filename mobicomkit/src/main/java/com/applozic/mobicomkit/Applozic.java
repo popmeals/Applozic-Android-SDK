@@ -37,7 +37,7 @@ import com.applozic.mobicommons.task.AlTask;
 import java.util.Map;
 
 /**
- * Class for all the major public methods for using the Applozic Chat SDK.
+ * Contains all the major public methods for using the <i>Applozic Chat SDK</i>.
  */
 public class Applozic {
 
@@ -60,12 +60,7 @@ public class Applozic {
     /**
      * Initializes the client SDK.
      *
-     * <p>This method basically stores the application key and application context for further use.</p>
-     *
-     * @param context the context
-     * @param applicationKey the application id/application key
-     *
-     * @return the {@link Applozic} object
+     * <p>It stores the application-key and android application context for further use.</p>
      */
     public static Applozic init(Context context, String applicationKey) {
         applozic = getInstance(context);
@@ -335,24 +330,25 @@ public class Applozic {
     }
 
     /**
-     * Use this method to log-in or register your {@link User}. This must be done before any other method of the SDK is used.
+     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
      *
-     * <p>Before calling this method, for your user, make sure that {@link User#getUserId()} is not empty/null and {@link User#isValidUserId()} returns <i>true</i>.</p>
+     * <p>Before calling this method, make sure that {@link User#isValidUserId()} returns <i>true</i>.</p>
      *
-     * <p>If the user (identified by it's <code>userId</code>) is not present in the servers, a new
+     * <p>If the user (<code>userId</code>) is not present in the servers, a new
      * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
      *
-     * <p>After you get the {@link AlLoginHandler#onSuccess(RegistrationResponse, Context)} callback:
+     * <p>After you get the {@link AlLoginHandler#onSuccess(RegistrationResponse, Context)} callback, you'll be able to access:
      * <ul>
-     *     <li>You will be able to access your user's id using {@link MobiComUserPreference#getUserId()}.</li>
-     *     <li>You will be able to access your user's data using {@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String)}. Pass your user-id to this method.</li>
-     *     <li>You will be able to access messages, contacts, channels and other freshly synced data to your local database for your user.</li>
-     *     <li>Other users will be able to see your status as "online".</li>
+     *     <li>{@link MobiComUserPreference#getUserId() your user-id}.</li>
+     *     <li>{@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String) your contact object}.</li>
+     *     <li>Your messages, contacts, channels and other freshly synced data to your local database for your user.</li>
      * </ul></p>
      *
-     * @param context the context
-     * @param user the user object to connect
-     * @param loginHandler for the success/failure callbacks
+     * <p>Other users will be able to see your status as "online".</p>
+     *
+     * <p>Next step: {@link PushNotificationTask}</p>
+     *
+     * @param loginHandler receives success/failure callbacks
      */
     public static void connectUser(Context context, User user, AlLoginHandler loginHandler) {
         if (isConnected(context)) {

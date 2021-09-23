@@ -15,7 +15,17 @@ import java.util.Map;
 import java.util.TimeZone;
 
 /**
- * Created by devashish on 5/9/14.
+ * A <i>channel</i> is a medium for multiple users to send and receive messages to and from each other. It facilitates a <i>group conversation/chat</i>.
+ *
+ * <p>Channels are identified by their {@link #key} or {@link #clientGroupId}.</p>
+ *
+ * <p>Before a user can send messages to a channel, the channel needs to be created and the user needs to either join it or be added to it. Whether a user can join a channel or not depends on the channel {@link GroupType type}.</p>
+ * <ul>
+ *     <li>To create a channel and add users to it, refer to <code>createChannelWithResponse(ChannelInfo channelInfo)</code> in <code>com.applozic.mobicomkit.channel.service.ChannelService</code>.</li>
+ *     <li>To add a user to an existing channel (it allowed), refer to <code>addMemberToChannelProcessWithResponse(Integer channelKey, String userId)</code> in <code>com.applozic.mobicomkit.channel.service.ChannelService</code></li>
+ * </ul>
+ *
+ * <p>To send a message to a channel refer to <code>com.applozic.mobicomkit.api.conversation.MessageBuilder</code>.</p>
  */
 public class Channel extends JsonMarker {
 

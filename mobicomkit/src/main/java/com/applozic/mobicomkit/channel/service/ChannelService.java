@@ -40,11 +40,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This handles all things {@link Channel}.
+ * Methods of this class handle {@link Channel} API calls and syncing of that data with the local database.
  *
- * <p>Methods of this class use the respective local database and client classes to
- * perform operations for Applozic Channels/Groups.
- * Consider this class your go-to for working with channels.</p>
+ * <p>To create a new <i>channel</i>, refer to {@link AlChannelCreate}</p>
+ *
+ * <p>For methods that solely deal with client API calls for channels, see {@link ChannelClientService}.</p>
+ * <p>For methods that only handle local channel data, see {@link ChannelDatabaseService}.</p>
  */
 public class ChannelService {
 
@@ -232,6 +233,11 @@ public class ChannelService {
     }
 
     //Cleanup: can be removed
+    /**
+     * Gets the <i>channel</i> object for the given <code>channelKey</code> from the local database.
+     *
+     * This method will be deprecated soon. You can use {@link ChannelDatabaseService#getChannelByChannelKey(Integer)} instead.
+     */
     public synchronized Channel getChannelByChannelKey(Integer channelKey) {
         if (channelKey == null) {
             return null;
@@ -240,6 +246,11 @@ public class ChannelService {
     }
 
     //Cleanup: can be removed
+    /**
+     * Gets a list of users({@link ChannelUserMapper} that are members of the <i>channel</i> with the given <code>channelKey</code> from the local database.
+     *
+     * This method will be deprecated soon. You can use {@link ChannelDatabaseService#getChannelUserList(Integer)} instead.
+     */
     public List<ChannelUserMapper> getListOfUsersFromChannelUserMapper(Integer channelKey) {
         return channelDatabaseService.getChannelUserList(channelKey);
     }
@@ -296,8 +307,8 @@ public class ChannelService {
     }
 
     /**
-     * @deprecated {@link AlResponse} is not longer used. It will be replaced by
-     * {@link ApiResponse}.
+     * @deprecated {@link AlResponse} is not longer used. It will be replaced by {@link ApiResponse}.
+     *
      * Use {@link ChannelService#createChannelWithResponse(ChannelInfo)} instead.
      */
     @Deprecated
@@ -712,13 +723,10 @@ public class ChannelService {
     }
 
     /**
-     * Creates a new Applozic {@link Channel}.
+     * Creates a new {@link Channel}.
      *
-     * <p>Details on the creation are passed with the help of the {@link ChannelInfo} object.
-     * Information about the newly created channel can be retrieved from {@link ChannelFeedApiResponse#getResponse()}.</p>
-     *
-     * @param channelInfo the channel info object
-     * @return the {@link ChannelFeedApiResponse} for the request.
+     * @param channelInfo contains the parameters/details for the creating the channel
+     * @return the response object. pass {@link ChannelFeedApiResponse#getResponse()} to {@link ChannelService#getChannel(ChannelFeed)} to get your newly created <i>channel</i> object
      */
     public ChannelFeedApiResponse createChannelWithResponse(ChannelInfo channelInfo) {
         ChannelFeedApiResponse channelFeedApiResponse = channelClientService

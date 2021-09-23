@@ -15,28 +15,29 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Used to store data for the current logged-in <i>user<i/>.
+ * User is an authenticated entity that can use chat functionality. It sends and receives messages in 1-to-1 and group chats.
  *
- * <p>A <code>User</code> sends and receives messages from other users in 1-to-1 and group chats.
- * However, before that, it must be authenticated using {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</p>
- *
- * <p>A <i>user</i> is identified by it's {@link User#userId} which is <i>unique</i> for an application.</p>
- *
- * <p>What is an application? See {@link Applozic#getApplicationKey()}.</p>
+ * <p>A <i>user</i> is identified by its {@link User#userId} which is <i>unique</i> for an {@link Applozic#getApplicationKey() application} .</p>
  *
  * <p>You can create a user like this:</p>
  * <code>
  *     User user = new User();
- *     user.setUserId(“userId”);
+ *     user.setUserId(“user123”);
  *     user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());
- *     user.setDisplayName(“displayName”);
- *     user.setEmail(“email”);
- *     user.setPassword("password");
- *     user.setImageLink("url/to/profile/image");
+ *     user.setDisplayName(“Shubham Tewari”);
+ *     user.setEmail(“shubham@dontemailme.com”);
+ *     user.setPassword("cat123");
+ *     user.setImageLink("http://mywebsite.com/profile_picture.jpg");
  * </code>
  *
- * <p>Note: When creating a new user, {@link #setUserId(String)} is mandatory and you need to pass {@link AuthenticationType#APPLOZIC} to {@link #setAuthenticationTypeId(Short)} by default.
- * All other fields are optional.</p>
+ * <p>Note: When creating a new user, you should set two fields:</p>
+ * <ol>
+ *     <li>{@link #setUserId(String)}</li>
+ *     <li>{@link #setAuthenticationTypeId(Short)}. Set this to {@link AuthenticationType#APPLOZIC} if you don't know any better.</li>
+ * </ol>
+ * <p>All other fields are optional.</p>
+ *
+ * Now you can register or login that user using {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</p>
  *
  * <p>Also see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
  */
@@ -87,9 +88,9 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Sets the list of added features enabled for the user. See {@link Features}.
+     * Sets the added {@link Features} enabled for this user. These are functionalities that are advanced enough to require added setup to work.
      *
-     * <p>Note: This method only lets the SDK know that the given user needs these features. Whether they will be enabled or not depends on other factors such as if they have been setup or not, or enabled from the dashboard.</p>
+     * <p>Note: This method only lets the SDK know that the given user needs these features. Whether they will be enabled or not depends on other factors such as if they have been set up or not, or enabled from the dashboard.</p>
      */
     public void setFeatures(List<String> features) {
         this.features = features;
@@ -110,7 +111,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Gets the local path to the user's profile/display image, if it is present.
+     * Gets the local path to the user's profile/display image, if it is present, or null otherwise.
      */
     public String getLocalImageUri() {
         return localImageUri;
@@ -131,7 +132,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * User-id is the primary identification for a user and is unique across an application.
+     * User-id is the primary identification for a user and is unique.
      *
      * <p>When you create a new user, you need to give it a <i>user-id</i>. This is mandatory.
      * And for all future references to that user, this <i>user-id</i> will be needed by both you and the SDK.</p>
@@ -193,11 +194,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Gets the id of the application in which this user exists.
-     *
-     * <p>Both application-id and application key refer to the same thing.</p>
-     *
-     * @see Applozic#getApplicationKey()
+     * Gets the id of the application in which this user exists. See {@link Applozic#getApplicationKey() application key}.
      */
     public String getApplicationId() {
         return applicationId;
@@ -218,20 +215,10 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Sets the code of the country in which the user resides (if applicable).
-     *
-     * <p>You can use this method if your use case requires it. Ignore it otherwise.</p>
+     * If your use case requires it, you can set the code of the country the user resides in.
      */
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
-    }
-
-    /**
-     * @deprecated This method is not used and will be removed soon.
-     */
-    @Deprecated
-    public Short getPrefContactAPI() {
-        return prefContactAPI;
     }
 
     /**
@@ -270,14 +257,6 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated This method is not used and will be removed soon.
-     */
-    @Deprecated
-    public Short getAppVersionCode() {
-        return appVersionCode;
-    }
-
-    /**
      * This is an internal method. Do not use. It will be deprecated soon.
      */
     public void setAppVersionCode(Short appVersionCode) {
@@ -285,17 +264,16 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Role names are no longer used. Use {@link #getRoleType()} instead.
+     * @see RoleName
+     *
      */
-    @Deprecated
     public String getRoleName() {
         return roleName;
     }
 
     /**
-     * @deprecated Role names are no longer used. Use {@link #setRoleType(Short)} instead.
+     * @see RoleName
      */
-    @Deprecated
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
@@ -315,7 +293,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * See {@link AuthenticationType}.
+     * See {@link AuthenticationType}. This is set to {@link AuthenticationType#CLIENT} by default. You probably want to use {@link AuthenticationType#APPLOZIC} instead.
      */
     public Short getAuthenticationTypeId() {
         return authenticationTypeId;
@@ -326,14 +304,6 @@ public class User extends JsonMarker {
      */
     public void setAuthenticationTypeId(Short authenticationTypeId) {
         this.authenticationTypeId = authenticationTypeId;
-    }
-
-    /**
-     * @deprecated Access to <code>appModuleName</code> is not needed.
-     */
-    @Deprecated
-    public String getAppModuleName() {
-        return appModuleName;
     }
 
     /**
@@ -404,38 +374,6 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Multiple push-notification file formats are no longer used.
-     */
-    @Deprecated
-    public Short getPushNotificationFormat() {
-        return pushNotificationFormat;
-    }
-
-    /**
-     * @deprecated Multiple push-notification file formats are no longer used.
-     */
-    @Deprecated
-    public void setPushNotificationFormat(Short pushNotificationFormat) {
-        this.pushNotificationFormat = pushNotificationFormat;
-    }
-
-    /**
-     * @deprecated This is now handled locally.
-     */
-    @Deprecated
-    public Long getLastMessageAtTime() {
-        return lastMessageAtTime;
-    }
-
-    /**
-     * @deprecated This is now handled locally.
-     */
-    @Deprecated
-    public void setLastMessageAtTime(Long lastMessageAtTime) {
-        this.lastMessageAtTime = lastMessageAtTime;
-    }
-
-    /**
      * @see #setMetadata(Map)
      */
     public Map<String, String> getMetadata() {
@@ -443,21 +381,21 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Can be used to add any custom data for a user that you might need to store in the form of <code>string</code> <i>key:value</i> pairs.
+     * Can be used to add any custom data for a user that you might need to store in the form of <i>key:value</i> pairs.
      */
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
 
     /**
-     * @see RoleType
+     * This is an internal method. You will not need it.
      */
     public void setRoleType(Short roleType) {
         this.roleType = roleType;
     }
 
     /**
-     * @see RoleType
+     * This is an internal method. You will not need it.
      */
     public Short getRoleType() {
         return roleType;
@@ -471,25 +409,10 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated This url must not be changed.
-     */
-    @Deprecated
-    public void setAlBaseUrl(String alBaseUrl) {
-        this.alBaseUrl = alBaseUrl;
-    }
-
-    /**
      * This is an internal method. You will not need it.
      */
     public String getKmBaseUrl() {
         return kmBaseUrl;
-    }
-
-    /**
-     * @deprecated This url must not be changed.
-     */
-    public void setKmBaseUrl(String kmBaseUrl) {
-        this.kmBaseUrl = kmBaseUrl;
     }
 
     /**
@@ -528,16 +451,14 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Sets the regular expression that will be used to verify the user-id before the user can be authenticated.
+     * Sets the regex that will be used to verify the user-id before the user can be authenticated.
      */
     public void setUserIdRegex(String regex) {
         this.userIdRegex = regex;
     }
 
     /**
-     * Verifies the user-id based on the regular expression set using {@link #setUserIdRegex(String)}. If none was set then {@link #DEFAULT_USER_ID_REGEX} is used.
-     *
-     * @return true if the user-id matches the regex pattern
+     * Verifies whether the user-id matches the regex set using {@link #setUserIdRegex(String)}, or {@link #DEFAULT_USER_ID_REGEX} if none was set.
      */
     public boolean isValidUserId() {
         if (TextUtils.isEmpty(userIdRegex)) {
@@ -547,10 +468,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Encodes the user-id string to <i>application/x-www-form-urlencoded</i> using the <i>UTF-8</i> scheme.
-     *
-     * @param userId the user-id of the user
-     * @return the UTF-8 encoded string, will return non-encoded string in case of any exception while encoding
+     * You typically don't need to use this directly. It's used internally by Applozic to URL-encode + and # signs before putting them in a URL, because otherwise the URL would be invalid. This function uses UTF-8; if it's not supported, the original un-encoded user-id is returned.
      */
     public static String getEncodedUserId(String userId) {
         if (!TextUtils.isEmpty(userId) && (userId.contains("+") || userId.contains("#"))) {
@@ -564,10 +482,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Decodes the <i>application/x-www-form-urlencoded</i> user-id string using the <i>UTF-8</i> scheme.
-     *
-     * @param encodedId the UTF-8 encoded user-id
-     * @return the decoded user-id, will return the non-decoded string in case of any exception while encoding such as encoding scheme mismatch
+     * Opposite of {@link #getEncodedUserId}.
      */
     public static String getDecodedUserId(String encodedId) {
         if (!TextUtils.isEmpty(encodedId)) {
@@ -580,24 +495,24 @@ public class User extends JsonMarker {
         return encodedId;
     }
 
-    /**
-     * Used to tell the backend what kind of authentication the user wishes to use to be authenticated. See the types for details.
-     */
     public enum AuthenticationType {
         /**
-         * <p>This tells the Applozic backend that you will handle authentication yourself and provide it with the access-token/password. In this case, pass your access token in the user’s `password` field ({@link #setPassword(String)}).</p>
-         * <p>Refer to this(https://docs.applozic.com/docs/access-token-url) link get more information on how to implement your own authentication.</p>
-         */
-        CLIENT(Short.valueOf("0")),
-        /**
-         * <p>This tells the Applozic backend to handle the authentication itself. This is the default. Use this if you do not know what you should be using.</p>
+         * <p>Tells Applozic to handle the authentication itself. Use this if you do not know what you should be using.</p>
          */
         APPLOZIC(Short.valueOf("1")),
+
+       /**
+         * <p>Tells Applozic that you will handle authentication yourself using ({@link #setPassword(String)}).</p>
+         * <p>This <a href="https://docs.applozic.com/docs/access-token-url">link</a> tells you how to implement your own authentication.</p>
+         */
+        CLIENT(Short.valueOf("0")),
+
         /**
          * @deprecated This type is not used anymore.
          */
         @Deprecated
         FACEBOOK(Short.valueOf("2"));
+
         private Short value;
 
         AuthenticationType(Short c) {
@@ -610,10 +525,8 @@ public class User extends JsonMarker {
     }
 
     /**
-     * These are added features that <i>Applozic</i> provides.
-     *
-     * <p>Features are functionalities that are advanced enough to require added setup for them to work. In case of <code>IP_AUDIO_CALL<code/>
-     * and <code>IP_VIDEO_CALL</code> you will need to use <i>Applozic's Audio Video Call SDK</i> that work with the Chat SDK.</p>
+     * These are added functionalities that are advanced enough to require added setup for them to work. In case of <code>IP_AUDIO_CALL<code/>
+     * and <code>IP_VIDEO_CALL</code> you will need to use <i>Applozic's Audio Video Call SDK</i> that works with the Chat SDK.</p>
      */
     public enum Features {
 
@@ -630,18 +543,10 @@ public class User extends JsonMarker {
     }
 
     /**
-     * Roles give your user certain privileges.
-     *
-     * <p>You do not need to worry about any these except {@link RoleType#APPLICATION_ADMIN}.</p>
+     * This is an internal class. You do not need to use it.
      */
     public enum RoleType {
         BOT(Short.valueOf("1")),
-        /**
-         * A user with this role-type can not only modify it's own data but also data for other users.
-         *
-         * <p>This "modifying of data" is in reference to server API calls. An application-admin can perform API calls
-         * in behalf of other users too.</p>
-         */
         APPLICATION_ADMIN(Short.valueOf("2")),
         USER_ROLE(Short.valueOf("3")),
         ADMIN_ROLE(Short.valueOf("4")),
@@ -662,6 +567,127 @@ public class User extends JsonMarker {
     }
 
     /**
+     * Roles decide the privilege level of your user.
+     */
+    public enum RoleName {
+        /**
+         * A user with this role-type can not only modify it's own data but also data for other users.
+         *
+         * <p>This "modifying of data" is in reference to server API calls. An application-admin can perform API calls
+         * in behalf of other users too.</p>
+         */
+        APPLICATION_ADMIN("APPLICATION_ADMIN"),
+
+        /**
+         * A user with this role-type can modify only its own data.
+         *
+         * <p>This "modifying of data" is in reference to server API calls. An application-admin can perform API calls
+         * in behalf of other users too.</p>
+         */
+        USER("USER"),
+
+        /** For internal use only */
+        BOT("BOT"),
+
+        /** For internal use only */
+        ADMIN("ADMIN"),
+
+        /** For internal use only */
+        BUSINESS("BUSINESS"),
+
+        /** For internal use only */
+        APPLICATION_BROADCASTER("APPLICATION_BROADCASTER"),
+
+        /** For internal use only */
+        SUPPORT("SUPPORT"),
+
+        /** For internal use only */
+        APPLICATION_WEB_ADMIN("APPLICATION_WEB_ADMIN");
+
+        private String value;
+
+        RoleName(String r) {
+            value = r;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    /**
+     * @deprecated This method is not used and will be removed soon.
+     */
+    @Deprecated
+    public Short getPrefContactAPI() {
+        return prefContactAPI;
+    }
+
+    /**
+     * @deprecated This method is not used and will be removed soon.
+     */
+    @Deprecated
+    public Short getAppVersionCode() {
+        return appVersionCode;
+    }
+
+    /**
+     * @deprecated This url must not be changed.
+     */
+    @Deprecated
+    public void setAlBaseUrl(String alBaseUrl) {
+        this.alBaseUrl = alBaseUrl;
+    }
+
+    /**
+     * @deprecated This url must not be changed.
+     */
+    @Deprecated
+    public void setKmBaseUrl(String kmBaseUrl) {
+        this.kmBaseUrl = kmBaseUrl;
+    }
+
+    /**
+     * @deprecated No longer used.
+     */
+    @Deprecated
+    public Short getPushNotificationFormat() {
+        return pushNotificationFormat;
+    }
+
+    /**
+     * @deprecated No longer used.
+     */
+    @Deprecated
+    public void setPushNotificationFormat(Short pushNotificationFormat) {
+        this.pushNotificationFormat = pushNotificationFormat;
+    }
+
+    /**
+     * @deprecated This is now handled internally.
+     */
+    @Deprecated
+    public Long getLastMessageAtTime() {
+        return lastMessageAtTime;
+    }
+
+    /**
+     * @deprecated This is now handled internally.
+     */
+    @Deprecated
+    public void setLastMessageAtTime(Long lastMessageAtTime) {
+        this.lastMessageAtTime = lastMessageAtTime;
+    }
+
+    /**
+     * @deprecated Access to <code>appModuleName</code> is not needed.
+     */
+    @Deprecated
+    public String getAppModuleName() {
+        return appModuleName;
+    }
+
+    /**
      * @deprecated The same push-notifications format is used now for all SDKs.
      */
     @Deprecated
@@ -679,31 +705,6 @@ public class User extends JsonMarker {
         }
 
         public Short getValue() {
-            return value;
-        }
-    }
-
-    /**
-     * @deprecated Role names are no longer used. Use {@link RoleType} instead.
-     */
-    @Deprecated
-    public enum RoleName {
-        BOT("BOT"),
-        APPLICATION_ADMIN("APPLICATION_ADMIN"),
-        USER("USER"),
-        ADMIN("ADMIN"),
-        BUSINESS("BUSINESS"),
-        APPLICATION_BROADCASTER("APPLICATION_BROADCASTER"),
-        SUPPORT("SUPPORT"),
-        APPLICATION_WEB_ADMIN("APPLICATION_WEB_ADMIN");
-
-        private String value;
-
-        RoleName(String r) {
-            value = r;
-        }
-
-        public String getValue() {
             return value;
         }
     }

@@ -104,7 +104,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
      * Do not use this method directly. Use the <i>asynchronous</i> {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
      *
      * @param user the user object to register/authenticate
-     * @return the {@link RegistrationResponse}
+     * @return the {@link RegistrationResponse}, {@link RegistrationResponse#isRegistrationSuccess()} will be true in case of a successful login/register. otherwise {@link RegistrationResponse#getMessage()} will have the error message
      * @throws Exception in case of empty or invalid user-id (see {@link User#isValidUserId()}, and connection errors
      */
     public RegistrationResponse createAccount(User user) throws Exception {

@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Methods of this class handle {@link Channel} API calls and syncing of that data with the local database.
+ * Methods of this class handle {@link Channel} API calls and sync that data with the local database.
  *
- * <p>To create a new <i>channel</i>, refer to {@link AlChannelCreate}</p>
+ * <p>To create a new <i>channel</i>, refer to {@link #createChannelWithResponse(ChannelInfo)}.</p>
  *
  * <p>For methods that solely deal with client API calls for channels, see {@link ChannelClientService}.</p>
  * <p>For methods that only handle local channel data, see {@link ChannelDatabaseService}.</p>
@@ -725,8 +725,10 @@ public class ChannelService {
     /**
      * Creates a new {@link Channel}.
      *
+     * <p>This method will block the main thread. Run it asynchronously.</p>
+     *
      * @param channelInfo contains the parameters/details for the creating the channel
-     * @return the response object. pass {@link ChannelFeedApiResponse#getResponse()} to {@link ChannelService#getChannel(ChannelFeed)} to get your newly created <i>channel</i> object
+     * @return The response object. Pass {@link ChannelFeedApiResponse#getResponse()} to {@link ChannelService#getChannel(ChannelFeed)} to get your newly created <i>channel</i> object.
      */
     public ChannelFeedApiResponse createChannelWithResponse(ChannelInfo channelInfo) {
         ChannelFeedApiResponse channelFeedApiResponse = channelClientService

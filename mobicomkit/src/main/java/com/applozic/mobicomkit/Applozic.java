@@ -346,7 +346,11 @@ public class Applozic {
      *
      * <p>Other users will be able to see your status as "online".</p>
      *
-     * <p>Next step: {@link PushNotificationTask}</p>
+     * <p>Next steps:</p>
+     * <ol>
+     *     <li>To set up push notifications - {@link PushNotificationTask}. This is required for receiving messages.</li>
+     *     <li>To send your first message - {@link com.applozic.mobicomkit.api.conversation.MessageBuilder}</li>
+     * </ol>
      *
      * @param loginHandler receives success/failure callbacks
      */

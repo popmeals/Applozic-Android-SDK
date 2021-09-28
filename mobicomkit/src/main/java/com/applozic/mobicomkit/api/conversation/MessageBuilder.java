@@ -18,7 +18,7 @@ import java.util.Map;
  * <code>
  *     MessageBuilder messageBuilder = new MessageBuilder(context)
  *                 .setMessage("Hello user123!")
- *                 .setTo("user123");
+ *                 .setTo("user123"); //user-id of receiver
  *
  *     messageBuilder.send();
  * </code>
@@ -42,34 +42,43 @@ import java.util.Map;
  *                 .setTo("user123")
  *                 //.setClientGroupId("group123") //attachments can also be sent to groups
  *                 .setContentType(Message.ContentType.ATTACHMENT.getValue())
- *                 .setFilePath("local/path/to/image.jpg");
+ *                 .setFilePath("local/path/to/image.jpg"); //can also be video, pdf, audio, gif
  *
  *         messageBuilder.send(new MediaUploadProgressHandler() {
  *             @Override
- *             public void onUploadStarted(ApplozicException e, String oldMessageKey) {
- *
- *             }
+ *             public void onUploadStarted(ApplozicException e, String oldMessageKey) { }
  *
  *             @Override
- *             public void onProgressUpdate(int percentage, ApplozicException e, String oldMessageKey) {
- *
- *             }
+ *             public void onProgressUpdate(int percentage, ApplozicException e, String oldMessageKey) { }
  *
  *             @Override
- *             public void onCancelled(ApplozicException e, String oldMessageKey) {
- *
- *             }
+ *             public void onCancelled(ApplozicException e, String oldMessageKey) { }
  *
  *             @Override
- *             public void onCompleted(ApplozicException e, String oldMessageKey) {
- *
- *             }
+ *             public void onCompleted(ApplozicException e, String oldMessageKey) { }
  *
  *             @Override
  *             public void onSent(Message message, String oldMessageKey) {
  *                  //message.getFileMetas() will get you remote URLs for the uploaded attachment
  *             }
  *         });
+ * </code>
+ *
+ * For other attachment types, see:
+ * <code>
+ *     //to share contact information
+ *     new MessageBuilder(context)
+ *             .setTo("user123")
+ *             .setContentType(Message.ContentType.CONTACT_MSG.getValue())
+ *             .setFilePath("local/path/to/contact.vcf")
+ *             .send();
+ *
+ *     //to share location
+ *     new MessageBuilder(context)
+ *             .setTo("user123")
+ *             .setContentType(Message.ContentType.LOCATION.getValue())
+ *             .setMessage("{\"lat\":12.9403722,\"lon\":77.6253097}")
+ *             .send();
  * </code>
  *
  * <p>To receive messages, refer to {@link com.applozic.mobicomkit.listners.ApplozicUIListener}.</p>

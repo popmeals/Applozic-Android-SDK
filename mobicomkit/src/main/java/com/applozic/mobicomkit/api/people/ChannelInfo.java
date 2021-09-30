@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Stores {@link Channel} information. Objects are passed to <i>channel</i> related API requests.
+ * Stores {@link Channel} information. Passed to <i>channel</i> related API requests.
  */
 public class ChannelInfo extends JsonMarker {
 
@@ -50,7 +50,7 @@ public class ChannelInfo extends JsonMarker {
     }
 
     /**
-     * Use this if you with to set your own <i>id</i> for the channel.
+     * Use this if you want to set your own <i>id</i> for the channel.
      *
      * @see Channel#getClientGroupId()
      */
@@ -81,7 +81,7 @@ public class ChannelInfo extends JsonMarker {
 
     /**
      * When you create a new {@link Channel} you have the option to specify the initial members for that channel.
-     * You can create a list of the user-ids of those users(/contacts) and set it here.
+     * Pass the list of <i>user-ids</i> here.
      */
     public void setGroupMemberList(List<String> groupMemberList) {
         this.groupMemberList = groupMemberList;
@@ -120,7 +120,7 @@ public class ChannelInfo extends JsonMarker {
     }
 
     /**
-     * Gets the user-id(or user-ids separated by commas) string for channel members with {@link ChannelUserMapper#getRole()} admin.
+     * Gets the user-id(or user-ids separated by commas) string for channel {@link ChannelUserMapper.UserRole admin/s}.
      */
     public String getAdmin() {
         return admin;
@@ -129,7 +129,7 @@ public class ChannelInfo extends JsonMarker {
     /**
      * Set the user-id of the user you wish to make admin when the channel is created.
      *
-     * <p>Note: The user must be present in {@link #getGroupMemberList()}.</p>
+     * <p>Note: The user-id must be present in {@link #getGroupMemberList()}.</p>
      */
     public void setAdmin(String admin) {
         this.admin = admin;
@@ -186,14 +186,16 @@ public class ChannelInfo extends JsonMarker {
     }
 
     /**
-     * @see Channel#getMetadata()
+     * @see #setMetadata(Map)
      */
     public Map<String, String> getMetadata() {
         return metadata;
     }
 
     /**
-     * @see Channel#setMetadata(Map)
+     * Custom key-value data for the channel.
+     *
+     * @see Channel#getMetadata()
      */
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;

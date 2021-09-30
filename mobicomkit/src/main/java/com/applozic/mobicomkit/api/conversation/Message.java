@@ -58,7 +58,7 @@ import java.util.regex.Matcher;
  * <p>For {@link MessageType#INBOX inbox} attachment messages, {@link #getFileMetas()} will return a non-null value. See {@link FileMeta}.</p>
  *
  * <p>To build and send a message refer to {@link MessageBuilder}.</p>
- * <p>To receive messages refer to {@link com.applozic.mobicomkit.listners.ApplozicUIListener}.</p>
+ * <p>To receive messages refer to {@link com.applozic.mobicomkit.broadcast.AlEventManager} and {@link Applozic#connectPublish(Context)}.</p>
  * <p>To retrieve existing messages refer to {@link ApplozicConversation}.</p>
  */
 public class Message extends JsonMarker {

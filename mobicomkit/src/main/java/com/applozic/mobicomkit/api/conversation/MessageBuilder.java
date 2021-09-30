@@ -81,7 +81,7 @@ import java.util.Map;
  *             .send();
  * </code>
  *
- * <p>To receive messages, refer to {@link com.applozic.mobicomkit.listners.ApplozicUIListener}.</p>
+ * <p>To receive messages, refer to {@link com.applozic.mobicomkit.broadcast.AlEventManager} and {@link com.applozic.mobicomkit.Applozic#connectPublish(Context)}.</p>
  */
 public class MessageBuilder {
 

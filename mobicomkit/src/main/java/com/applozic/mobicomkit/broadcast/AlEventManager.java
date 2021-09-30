@@ -1,5 +1,6 @@
 package com.applozic.mobicomkit.broadcast;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,14 +14,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles real-time update events.
- * These include but not limited to callbacks for events like message sent, received, user online etc.
+ * Handles real-time chat events including but not limited to <i>receiving messages</i>.
  *
- * <p>The listener can be registered for using {@link AlEventManager#registerUIListener(String, ApplozicUIListener)}.
- * Callbacks will be sent for all registered listeners.
- * Do unregister the listener when not required.</p>
+ * <p>See {@link ApplozicUIListener} for a list of all supported events.</p>
+ *
+ * <p>You can start listening for events using {@link AlEventManager#registerUIListener(String, ApplozicUIListener)}.
+ * Do remember to {@link AlEventManager#unregisterUIListener(String) unregister} the listener when not required.</p>
+ *
+ * @see com.applozic.mobicomkit.Applozic#connectPublish(Context)
  */
 public class AlEventManager {
+    /**
+     * Internal. Do not use.
+     */
     public static final String AL_EVENT = "AL_EVENT"; //Cleanup: protected
     private static AlEventManager eventManager;
     private Map<String, ApplozicUIListener> listenerMap;
@@ -34,6 +40,11 @@ public class AlEventManager {
         return eventManager;
     }
 
+    /**
+     * Call this to start listening for real-time chat events.
+     *
+     * @param id pass an id of your choice. this will be needed to unregister the listener.
+     */
     public void registerUIListener(String id, ApplozicUIListener listener) {
         if (listenerMap == null) {
             listenerMap = new HashMap<>();
@@ -52,6 +63,11 @@ public class AlEventManager {
         }
     }
 
+    /**
+     * Call this to stop listening for real-time chat events.
+     *
+     * @param id the id you registered the listener with.
+     */
     public void unregisterUIListener(String id) {
         if (listenerMap != null) {
             listenerMap.remove(id);
@@ -59,6 +75,9 @@ public class AlEventManager {
     }
 
     //Cleanup: private
+    /**
+     * Internal. Do not use.
+     */
     public void registerMqttListener(String id, AlMqttListener mqttListener) {
         if (mqttListenerMap == null) {
             mqttListenerMap = new HashMap<>();
@@ -70,6 +89,9 @@ public class AlEventManager {
     }
 
     //Cleanup: private
+    /**
+     * Internal. Do not use.
+     */
     public void unregisterMqttListener(String id) {
         if (mqttListenerMap != null) {
             mqttListenerMap.remove(id);
@@ -87,6 +109,9 @@ public class AlEventManager {
     }
 
     //Cleanup: default
+    /**
+     * Internal. Do not use.
+     */
     public void postMqttEventData(MqttMessageResponse messageResponse) {
         if (mqttListenerMap != null && !mqttListenerMap.isEmpty()) {
             for (AlMqttListener alMqttListener : mqttListenerMap.values()) {

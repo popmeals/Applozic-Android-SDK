@@ -22,7 +22,7 @@ public class AlAuthService {
         return (System.currentTimeMillis() - createdAtTime) / 60000 < validUptoMins;
     }
 
-    //Cleanup: private
+    //Cleanup: private, can get rid of it too
     /**
      * Runs the {@link RefreshAuthTokenTask} task.
      */
@@ -30,9 +30,8 @@ public class AlAuthService {
         AlTask.execute(new RefreshAuthTokenTask(context, callback));
     }
 
-    //Cleanup: default
     /**
-     * Checks if token in valid or not. A token expires after is <code>validUptoTime</code> elapses.
+     * Checks if token in valid or not. A token expires after it's {@link MobiComUserPreference#getTokenValidUptoMins()} elapses.
      */
     public static boolean isTokenValid(Context context) {
         if (context == null) {

@@ -15,6 +15,7 @@ import com.applozic.mobicomkit.api.account.user.UserClientService;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
 import com.applozic.mobicomkit.api.authentication.AlAuthService;
+import com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask;
 import com.applozic.mobicomkit.api.conversation.ApplozicMqttWorker;
 import com.applozic.mobicomkit.api.notification.MobiComPushReceiver;
 import com.applozic.mobicomkit.api.notification.NotificationChannels;
@@ -207,20 +208,20 @@ public class Applozic {
     }
 
     /**
-     * Disconnect from MQTT for publishing and receiving events.
-     *
-     * @param context the context
+     * Asynchronously disconnects from MQTT for receiving messages and other events.
      */
     public static void disconnectPublish(Context context) {
         disconnectPublish(context, true);
     }
 
     /**
-     * Connect to MQTT for publishing and receiving events.
+     * Asynchronously connects to MQTT for receiving messages and other chat events.
      *
-     * @param context the context
+     * <p>Before calling this method, make sure that {@link AlAuthService#isTokenValid(Context)} returns true.</p>
+     * <p>Otherwise refresh the token first using {@link RefreshAuthTokenTask}.</p>
+     *
+     * <p>MQTT will receive messages only for the <i>application</i> lifecycle. You can alternatively use {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
      */
-    //Cleanup: can be removed, not used in SDK
     public static void connectPublish(Context context) {
         ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, 0);
     }

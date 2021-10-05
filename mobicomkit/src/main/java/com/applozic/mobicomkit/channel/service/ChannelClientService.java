@@ -85,8 +85,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelClientService;
     }
 
-    //ApplozicInternal: private for all getters
-
+    //Cleanup: private for all getters
     public String getChannelInfoUrl() {
         return getBaseUrl() + CHANNEL_INFO_URL;
     }
@@ -168,7 +167,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return getKmBaseUrl() + CREATE_CONVERSATION_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ChannelFeed getChannelInfoByParameters(String parameters) {
         String response = "";
         try {
@@ -245,7 +244,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public SyncChannelFeed getChannelFeed(String lastChannelSyncTime) {
         String url = getChannelSyncUrl() + "?" +
                 UPDATED_AT
@@ -260,7 +259,7 @@ public class ChannelClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     @Deprecated
     public ChannelFeed createChannel(ChannelInfo channelInfo) {
         ChannelFeed channelFeed = null;
@@ -293,7 +292,7 @@ public class ChannelClientService extends MobiComKitClientService {
                 ChannelFeedApiResponse.class);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public List<ChannelFeed> createMultipleChannels(List<ChannelInfo> channels) {
         List<ChannelFeed> channelFeeds = null;
         try {
@@ -366,7 +365,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized ApiResponse addMemberToMultipleChannels(Set<String> clientGroupIds,
                                                                 Set<Integer> channelKeys, String
                                                                         userId) {
@@ -425,7 +424,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return addMemberToMultipleChannels(clientGroupIds, null, userId);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized ApiResponse addMemberToChannel(String clientGroupId, Integer channelKey,
                                                        String userId) {
         try {
@@ -476,7 +475,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return addMemberToChannel(clientGroupId, null, userId);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized ApiResponse removeMemberFromChannel(String clientGroupId, Integer
             channelKey, String userId) {
         ApiResponse apiResponse = null;
@@ -564,7 +563,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return leaveMemberFromChannel(clientGroupId, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized ApiResponse leaveMemberFromChannel(String clientGroupId, Integer
             channelKey) {
         ApiResponse apiResponse = null;
@@ -593,7 +592,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized ApiResponse deleteChannel(Integer channelKey) {
         return deleteChannel(channelKey, false, false);
     }
@@ -636,7 +635,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: rename considering its public api
+    //Cleanup: rename considering its public api
     /**
      * Sends a request to create a new channel to the server.
      *
@@ -789,7 +788,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public ChannelFeedListResponse getGroupInfoFromGroupIds(List<String> groupIds, List<String>
             clientGroupIds) {
         ChannelFeedListResponse apiResponse = null;
@@ -833,7 +832,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: fix typo
+    //Cleanup: fix typo
     public ChannelFeedListResponse getMemebersFromContactGroupIds(List<String> groupIds,
                                                                   List<String> groupNames, String
                                                                           groupType) {
@@ -880,7 +879,7 @@ public class ChannelClientService extends MobiComKitClientService {
         return channelFeedListResponse;
     }
 
-    //ApplozicInternal: remove
+    //Cleanup: remove
     public String createConversation(Integer groupId, String userId, String agentId, String
             applicationId) {
 

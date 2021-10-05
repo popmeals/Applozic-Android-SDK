@@ -2,14 +2,49 @@ package com.applozic.mobicomkit.api.conversation;
 
 import android.content.Context;
 
+import com.applozic.mobicomkit.api.people.ChannelInfo;
+import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.listners.MediaUploadProgressHandler;
+import com.applozic.mobicommons.people.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Helper class that can be used to create send a {@link Message} object.
+ * Helper class to send a {@link Message}.
+ *
+ * <p><b>To send a message to user123:</b></p>
+ * <code>
+ *     MessageBuilder messageBuilder = new MessageBuilder(context)
+ *                 .setMessage("Hello there!")
+ *                 .setTo("user123");
+ *
+ *     messageBuilder.send();
+ * </code>
+ *
+ * <p><b>To send a message to a group conversation:</b></p>
+ * <p>- First create a {@link com.applozic.mobicommons.people.channel.Channel} using {@link com.applozic.mobicomkit.channel.service.ChannelService#createChannelWithResponse(ChannelInfo)}. Have the {@link Channel#getClientGroupId()} handy. Then:</p>
+ * <code>
+ *     MessageBuilder messageBuilder = new MessageBuilder(context)
+ *                 .setMessage("Hello channel!")
+ *                 .setClientGroupId("group123");
+ *
+ *     messageBuilder.send();
+ * </code>
+ *
+ * <p><b>To send a message with an attachment:</b></p>
+ * <code>
+ *     MessageBuilder messageBuilder = new MessageBuilder(context)
+ *                 .setMessage("Hello! Here is a picture.")
+ *                 .setTo("user123")
+ *                 .setContentType(Message.ContentType.ATTACHMENT.getValue())
+ *                 .setFilePath("local/path/to/image.jpg");
+ *
+ *         messageBuilder.send(new MediaUploadProgressHandler() { ... });
+ * </code>
+ *
+ * <p>To receive messages, refer to {@link com.applozic.mobicomkit.broadcast.AlEventManager} and {@link com.applozic.mobicomkit.Applozic#connectPublish(Context)}.</p>
  */
 public class MessageBuilder {
 
@@ -22,10 +57,7 @@ public class MessageBuilder {
     }
 
     /**
-     * Set the id of the receiver you wish to send the message to.
-     *
-     * @param to the user id of the user you want to send the message to
-     * @return the message builder object
+     * Sets the user-id of the receiver for a 1:1 chat.
      */
     public MessageBuilder setTo(String to) {
         message.setTo(to);
@@ -33,10 +65,7 @@ public class MessageBuilder {
     }
 
     /**
-     * Set the text of the message.
-     *
-     * @param message the message string/text content
-     * @return the message builder object
+     * Set the message text. This is optional if you're sending an attachment.
      */
     public MessageBuilder setMessage(String message) {
         this.message.setMessage(message);
@@ -44,11 +73,7 @@ public class MessageBuilder {
     }
 
     /**
-     * Set the type ({@link com.applozic.mobicomkit.api.conversation.Message.MessageType}
-     * of the message.
-     *
-     * @param type the MessageType
-     * @return the message builder object
+     * Set the message {@link com.applozic.mobicomkit.api.conversation.Message.MessageType type}.
      */
     public MessageBuilder setType(Short type) {
         message.setType(type);
@@ -56,13 +81,9 @@ public class MessageBuilder {
     }
 
     /**
-     * Set the local path to any attachment.
+     * Set the local path to the message attachment file.
      *
-     * <p>Image, video, audio, documents etc. are supported.</p>
-     *
-     * @param filePath the local path to the file you want to be sent as
-     *                 attachment with the message
-     * @return the message builder object
+     * <p>Images, video, audio, documents are supported.</p>
      */
     public MessageBuilder setFilePath(String filePath) {
         List<String> pathList = new ArrayList<>();
@@ -72,11 +93,7 @@ public class MessageBuilder {
     }
 
     /**
-     * Set the content type ({@link com.applozic.mobicomkit.api.conversation.Message.ContentType}
-     * of the message.
-     *
-     * @param contentType the ContentType
-     * @return the message builder object
+     * Set the message {@link com.applozic.mobicomkit.api.conversation.Message.ContentType content type}.
      */
     public MessageBuilder setContentType(short contentType) {
         message.setContentType(contentType);
@@ -84,11 +101,9 @@ public class MessageBuilder {
     }
 
     /**
-     * Set the id of the {@link com.applozic.mobicommons.people.channel.Channel} (/group) you
-     * wish to send this message to
+     * To send a message to a group, call this to set its {@link Channel#getKey() id} (also called key/channel key).
      *
-     * @param groupId the id of the Channel
-     * @return the message builder object
+     * This is an alternative to {@link #setClientGroupId(String)}.
      */
     public MessageBuilder setGroupId(Integer groupId) {
         message.setGroupId(groupId);
@@ -96,26 +111,9 @@ public class MessageBuilder {
     }
 
     /**
-     * Set any metadata for the message.
+     * To send a message to a group, call this to set the {@link com.applozic.mobicommons.people.channel.Channel#setClientGroupId(String) client group id}.
      *
-     * <p>This can be any extra key-value pair you wish to send with the message.</p>
-     *
-     * @param metadata A map containing the key-value metadata
-     * @return the message builder object
-     */
-    public MessageBuilder setMetadata(Map<String, String> metadata) {
-        message.setMetadata(metadata);
-        return this;
-    }
-
-    /**
-     * Set the client group id of the {@link com.applozic.mobicommons.people.channel.Channel} (/group) you
-     * wish to send this message to
-     *
-     * <p>A Channel can be identified by either it's groupId or it's clientGroupId.</p>
-     *
-     * @param clientGroupId the client group id of the Channel
-     * @return the message builder object
+     * This is an alternative to {@link #setGroupId(Integer)}.
      */
     public MessageBuilder setClientGroupId(String clientGroupId) {
         message.setClientGroupId(clientGroupId);
@@ -123,13 +121,15 @@ public class MessageBuilder {
     }
 
     /**
-     * If you want more attributes, you can create a {@link Message} object on your own and pass to
-     * this method.
-     *
-     * <p>Refer to the {@link Message} class for detail.</p>
-     *
-     * @param message the message object
-     * @return the message builder object
+     * Sets any custom key-value data for the message.
+     */
+    public MessageBuilder setMetadata(Map<String, String> metadata) {
+        message.setMetadata(metadata);
+        return this;
+    }
+
+    /**
+     * Alternatively, you can directly set a {@link Message} object to send.
      */
     public MessageBuilder setMessageObject(Message message) {
         this.message = message;
@@ -137,28 +137,21 @@ public class MessageBuilder {
     }
 
     /**
-     * Returns the message object.
-     *
-     * @return the message object.
+     * Returns the message object to be sent.
      */
     public Message getMessageObject() {
         return message;
     }
 
     /**
-     * Sends the message to the server. It will then be delivered to the respective user/group.
+     * Sends the created message.
      */
     public void send() {
         new MobiComConversationService(context).sendMessageWithHandler(message, null);
     }
 
     /**
-     * Sends the message to the server. It will then be delivered to the respective user/group.
-     *
-     * <p>You can optionally pass a {@link MediaUploadProgressHandler} that can be used to
-     * receive callbacks for updates on the attachment upload.</p>
-     *
-     * @param handler the callback
+     * Sends the created message with attachment progress and success callbacks.
      */
     public void send(MediaUploadProgressHandler handler) {
         new MobiComConversationService(context).sendMessageWithHandler(message, handler);

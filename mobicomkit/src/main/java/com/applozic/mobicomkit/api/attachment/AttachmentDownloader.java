@@ -38,7 +38,7 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 /**
- * @ApplozicInternal This task downloads bytes from a resource addressed by a URL. When the task has finished, it calls handleState to report its results.
+ * This task downloads bytes from a resource addressed by a URL. When the task has finished, it calls handleState to report its results.
 
  * <p>Objects of this class are instantiated and managed by instances of PhotoTask, which
  * implements the methods of TaskRunnableDecodeMethods. PhotoTask objects call

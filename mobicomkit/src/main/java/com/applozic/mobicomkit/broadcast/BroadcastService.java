@@ -199,7 +199,7 @@ public class BroadcastService {
         sendBroadcast(context, intentTyping);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void sendUpdate(Context context, boolean isMetadataUpdate, boolean isMQTTReconnectionBroadcast, final String action) {
         if (INTENT_ACTIONS.MQTT_CONNECTED.toString().equals(action)) {
             postEventData(context, new AlMessageEvent().setAction(AlMessageEvent.ActionType.MQTT_CONNECTED));
@@ -372,7 +372,7 @@ public class BroadcastService {
         return intentFilter;
     }
 
-    //ApplozicInternal: default, see what instructions utils does
+    //Cleanup: default, see what instructions utils does
     public static void sendBroadcast(Context context, Intent intent) {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

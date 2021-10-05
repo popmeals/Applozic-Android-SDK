@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-//ApplozicInternal: default
+//Cleanup: default
 /**
- * @ApplozicInternal This class stores the JWT payload.
+ * This class stores the JWT payload.
  */
 public class JWTPayload {
     final String iss;

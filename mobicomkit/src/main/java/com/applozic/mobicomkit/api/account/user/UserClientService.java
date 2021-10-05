@@ -52,7 +52,7 @@ import java.util.Set;
  * never need to work with any of them.</p>
  */
 public class UserClientService extends MobiComKitClientService {
-    //ApplozicInternal: all need to be private
+    //Cleanup: all need to be private
     public static final String APP_VERSION_UPDATE_URL = "/rest/ws/register/version/update";
     public static final String USER_INFO_URL = "/rest/ws/user/info?";
     public static final Short MOBICOMKIT_VERSION_CODE = 109;
@@ -80,73 +80,73 @@ public class UserClientService extends MobiComKitClientService {
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserProfileUpdateUrl() {
         return getBaseUrl() + USER_PROFILE_UPDATE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getAppVersionUpdateUrl() {
         return getBaseUrl() + APP_VERSION_UPDATE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUpdateUserDisplayNameUrl() {
         return getBaseUrl() + USER_DISPLAY_NAME_UPDATE;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserInfoUrl() {
         return getBaseUrl() + USER_INFO_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getBlockUserUrl() {
         return getBaseUrl() + BLOCK_USER_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getBlockUserSyncUrl() {
         return getBaseUrl() + BLOCK_USER_SYNC_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: the name says sync but the url isn't for sync
     public String getUnBlockUserSyncUrl() {
         return getBaseUrl() + UNBLOCK_USER_SYNC_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserDetailsListUrl() {
         return getBaseUrl() + USER_DETAILS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getOnlineUserListUrl() {
         return getBaseUrl() + ONLINE_USER_LIST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getRegisteredUserListUrl() {
         return getBaseUrl() + REGISTERED_USER_LIST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserDetailsListPostUrl() {
         return getBaseUrl() + USER_DETAILS_LIST_POST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserReadUrl() {
         return getBaseUrl() + USER_READ_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUpdateUserPasswordUrl() {
         return getBaseUrl() + UPDATE_USER_PASSWORD;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserLogout() {
         return getBaseUrl() + USER_LOGOUT;
     }
@@ -166,7 +166,7 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * Performs logout for the current user.
      *
-     * @ApplozicInternal Use {@link UserLogoutTask} or {@link Applozic#logoutUser(Context, AlLogoutHandler)}. They wrap around this method asynchronously.
+     * Use {@link UserLogoutTask} or {@link Applozic#logoutUser(Context, AlLogoutHandler)}. They wrap around this method asynchronously.
      *
      * <p>A logout server call will be sent. Along with that:
      * - {@link MobiComUserPreference} shared preference will be cleared.
@@ -184,9 +184,9 @@ public class UserClientService extends MobiComKitClientService {
         return logout(false);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
-     * @ApplozicInternal This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
+     * This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
      */
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
@@ -204,7 +204,7 @@ public class UserClientService extends MobiComKitClientService {
         ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: fromLogin is always false
     /**
      * @deprecated This methods has a un-necessary parameter. Use {@link UserClientService#logout()} instead.
@@ -265,7 +265,7 @@ public class UserClientService extends MobiComKitClientService {
 
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is no longer used and will be removed soon. Use {@link #getUserDetails(Set)} instead.
      */
@@ -348,7 +348,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method has been replaced with {@link #userBlock(String, boolean)}. Pass "false" in the second parameter.
      */
@@ -367,10 +367,9 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: default
-
+    //Cleanup: default
     /**
-     * @ApplozicInternal This is an internal method. Syncing is handled by the SDK internally.
+     * This is an internal method. Syncing is handled by the SDK internally.
      *
      * <p>Returns the users that were blocked since the last sync time.</p>
      */
@@ -424,7 +423,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Retrieves data of users for the given user-ids from the backend and updates it locally.
      *
@@ -478,7 +477,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets a list of online users from the server.
      *
@@ -537,11 +536,11 @@ public class UserClientService extends MobiComKitClientService {
         return response;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Updates details of the current user.
      *
-     * @ApplozicInternal Use {@link UserService#updateDisplayNameORImageLink(String, String, String, String, String, String, Map, String)} instead.
+     * Use {@link UserService#updateDisplayNameORImageLink(String, String, String, String, String, String, Map, String)} instead.
      *
      * <p>Note: This is a network method. Run it asynchronously.</p>
      *
@@ -637,7 +636,7 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */
@@ -657,7 +656,7 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */

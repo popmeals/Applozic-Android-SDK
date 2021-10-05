@@ -10,36 +10,42 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * An asynchronous task that updates the server with a "device-id" (or "registration-id") that will be used
- * to identify the device for FCM push notifications.
+ * Enables push notifications, for messages and other events.
  *
- <p>Created for async execution of the {@link RegisterUserClientService#updatePushNotificationId(String)}.
+ * <p>To set up:</p>
+ * <ol>
+ *     <li>Add <i>Firebase Cloud Messaging</i> to your app if you don't already use it.</li>
+ *     <li>Override <code>FirebaseMessageService.onNewToken(String registrationToken)</code> to get the <i>registration-id</i>.</li>
+ *     <li>Execute this task inside your <code>onNewToken</code> implementation with that <i>registration-id</i>.</li>
+ * </ol>
  *
+ * <p>To execute this task:</p>
  * <code>
- *     PushNotificationTask pushNotificationTask = new PushNotificationTask(context, "pushNotificationId", new AlPushNotificationHandler() {
- *                 @Override
- *                 public void onSuccess(RegistrationResponse registrationResponse) {
- *                     //registrationResponse.getMessage();
- *                 }
+ *     PushNotificationTask pushNotificationTask = new PushNotificationTask(context, "registrationId", new AlPushNotificationHandler() {
+ *         @Override
+ *         public void onSuccess(RegistrationResponse registrationResponse) {
+ *             // Your application logic to handle success.
+ *         }
  *
- *                 @Override
- *                 public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
- *                     //if(exception != null) {
- *                         //exception.printStackTrace();
- *                     //}
- *                 }
- *             });
- *             AlTask.execute(pushNotificationTask);
+ *         @Override
+ *         public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+ *             // Your application logic to handle failure.
+ *         }
+ *      });
+
+ *      AlTask.execute(pushNotificationTask);
  *
- *             //for versions prior to v5.95 use:
- *             //pushNotificationTask.execute();
+ *      // For versions prior to v5.95 use:
+ *      // pushNotificationTask.execute();
  * </code>
  *
- * Use {@link AlPushNotificationHandler} to get the results.</p>
+ * <p>Use {@link AlPushNotificationHandler} to get the results.</p>
+ *
+ * <p>If you're running in a background thread, you can instead use {@link RegisterUserClientService#updatePushNotificationId(String)}.
  */
 public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
 
-    private String pushNotificationId;
+    private String firebaseRegistrationToken;
     private TaskListener taskListener;
     private WeakReference<Context> context;
     private Exception mException;
@@ -52,26 +58,25 @@ public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
      */
     @Deprecated
     public PushNotificationTask(String pushNotificationId, TaskListener listener, Context context) {
-        this.pushNotificationId = pushNotificationId;
+        this.firebaseRegistrationToken = pushNotificationId;
         this.taskListener = listener;
         this.context = new WeakReference<Context>(context);
     }
 
     /**
-     * @param context the context
-     * @param pushNotificationId the registration-id/push-notification-id received from Firebase
-     * @param listener the callback
+     * @param context pass the application context, not the activity/service context (this would leak memory).
+     * @param listener receives success / failure callbacks.
      */
-    public PushNotificationTask(Context context, String pushNotificationId, AlPushNotificationHandler listener) {
-        this.pushNotificationId = pushNotificationId;
+    public PushNotificationTask(Context context, String firebaseRegistrationToken, AlPushNotificationHandler listener) {
+        this.firebaseRegistrationToken = firebaseRegistrationToken;
         this.pushNotificationHandler = listener;
-        this.context = new WeakReference<Context>(context);
+        this.context = new WeakReference<>(context);
     }
 
     @Override
     protected Boolean doInBackground() {
         try {
-            registrationResponse = new RegisterUserClientService(context.get()).updatePushNotificationId(pushNotificationId);
+            registrationResponse = new RegisterUserClientService(context.get()).updatePushNotificationId(firebaseRegistrationToken);
         } catch (Exception e) {
             e.printStackTrace();
             mException = e;
@@ -84,14 +89,10 @@ public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
     protected void onPostExecute(final Boolean result) {
         // And if it is we call the callback function on it.
         if (taskListener != null) {
-            if (registrationResponse != null) {
-                if (registrationResponse.isRegistrationSuccess()) {
-                    taskListener.onSuccess(registrationResponse);
-                } else {
-                    taskListener.onFailure(registrationResponse, mException);
-                }
+            if (registrationResponse != null && registrationResponse.isRegistrationSuccess()) {
+                taskListener.onSuccess(registrationResponse);
             } else {
-                taskListener.onFailure(null, mException);
+                taskListener.onFailure(registrationResponse, mException);
             }
         }
 

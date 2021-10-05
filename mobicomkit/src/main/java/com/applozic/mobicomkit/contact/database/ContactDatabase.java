@@ -47,7 +47,7 @@ public class ContactDatabase {
         this.dbHelper = dbHelper;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public Contact getContact(Cursor cursor) {
         return getContact(cursor, null);
     }
@@ -89,7 +89,7 @@ public class ContactDatabase {
         return contact;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public List<Contact> getContactList(Cursor cursor) {
 
         List<Contact> smsList = new ArrayList<Contact>();
@@ -215,14 +215,14 @@ public class ContactDatabase {
         dbHelper.close();
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateLocalImageUri(Contact contact) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.CONTACT_IMAGE_LOCAL_URI, contact.getLocalImageUrl());
         dbHelper.getWritableDatabase().update(CONTACT, contentValues, MobiComDatabaseHelper.USERID + "=?", new String[]{contact.getUserId()});
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateConnectedOrDisconnectedStatus(String userId, Date date, boolean connected) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.CONNECTED, connected ? 1 : 0);
@@ -249,7 +249,7 @@ public class ContactDatabase {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateUserBlockStatus(String userId, boolean userBlocked) {
         try {
             ContentValues contentValues = new ContentValues();
@@ -262,7 +262,7 @@ public class ContactDatabase {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateUserBlockByStatus(String userId, boolean userBlockedBy) {
         try {
             ContentValues contentValues = new ContentValues();
@@ -304,7 +304,7 @@ public class ContactDatabase {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ContentValues prepareContactValues(Contact contact, boolean isContactUpdated) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.FULL_NAME, getFullNameForUpdate(contact));
@@ -451,7 +451,7 @@ public class ContactDatabase {
         deleteContactById(contact.getUserId());
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void deleteContactById(String id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(CONTACT, "userId=?", new String[]{id});
@@ -469,7 +469,7 @@ public class ContactDatabase {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateNotificationAfterTime(String userId, Long notificationAfterTime) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.NOTIFICATION_AFTER_TIME, notificationAfterTime);
@@ -596,7 +596,7 @@ public class ContactDatabase {
         };
     }
 
-    //ApplozicInternal: private, remove
+    //Cleanup: private, remove
     public boolean isContactPresent(String contactNumber, Contact.ContactType contactType) {
         Cursor cursor = null;
         try {
@@ -615,7 +615,7 @@ public class ContactDatabase {
         return false;
     }
 
-    //ApplozicInternal: private, remove
+    //Cleanup: private, remove
     public void saveOrUpdate(Contact contact) {
         Contact existingContact = getContactById(contact.getUserId());
         if (existingContact == null) {
@@ -646,7 +646,7 @@ public class ContactDatabase {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateMetadataKeyValueForUserId(String userId, String key, String value) {
         Contact contact = getContactById(userId);
         if (contact != null) {

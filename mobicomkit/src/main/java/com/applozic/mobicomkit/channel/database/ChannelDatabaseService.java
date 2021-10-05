@@ -72,7 +72,7 @@ public class ChannelDatabaseService {
         return channelDatabaseService;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static ChannelUserMapper getChannelUser(Cursor cursor) {
         ChannelUserMapper channelUserMapper = new ChannelUserMapper();
         channelUserMapper.setUserKey(cursor.getString(cursor.getColumnIndex(MobiComDatabaseHelper.USERID)));
@@ -84,7 +84,7 @@ public class ChannelDatabaseService {
         return channelUserMapper;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static List<ChannelUserMapper> getListOfUsers(Cursor cursor) {
         List<ChannelUserMapper> channelUserMapper = new ArrayList<ChannelUserMapper>();
         try {
@@ -104,7 +104,7 @@ public class ChannelDatabaseService {
         return channelUserMapper;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void addChannel(Channel channel) {
         try {
             ContentValues contentValues = prepareChannelValues(channel);
@@ -116,7 +116,7 @@ public class ChannelDatabaseService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ContentValues prepareChannelValues(Channel channel) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.CHANNEL_DISPLAY_NAME, channel.getName());
@@ -156,7 +156,7 @@ public class ChannelDatabaseService {
         return contentValues;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void addChannelUserMapper(ChannelUserMapper channelUserMapper) {
         try {
             ContentValues contentValues = prepareChannelUserMapperValues(channelUserMapper);
@@ -168,7 +168,7 @@ public class ChannelDatabaseService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ContentValues prepareChannelUserMapperValues(ChannelUserMapper channelUserMapper) {
         ContentValues contentValues = new ContentValues();
         if (channelUserMapper != null) {
@@ -338,7 +338,7 @@ public class ChannelDatabaseService {
         return contactList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public List<Channel> getChannelList(Cursor cursor) {
         try {
             List<Channel> channelList = new ArrayList<Channel>();
@@ -356,14 +356,14 @@ public class ChannelDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateChannel(Channel channel) {
         ContentValues contentValues = prepareChannelValues(channel);
         dbHelper.getWritableDatabase().update(CHANNEL, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=?", new String[]{String.valueOf(channel.getKey())});
         dbHelper.close();
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Updates the time after which notifications should be received for a muted channel in the local database.
      *
@@ -376,7 +376,7 @@ public class ChannelDatabaseService {
         dbHelper.getWritableDatabase().update(CHANNEL, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=?", new String[]{String.valueOf(id)});
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateChannelUserMapper(ChannelUserMapper channelUserMapper) {
         ContentValues contentValues = prepareChannelUserMapperValues(channelUserMapper);
         dbHelper.getWritableDatabase().update(CHANNEL_USER_X, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=?  and " + MobiComDatabaseHelper.USERID + "=?", new String[]{String.valueOf(channelUserMapper.getKey()), String.valueOf(channelUserMapper.getUserKey())});
@@ -405,7 +405,7 @@ public class ChannelDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateChannelLocalImageURI(Integer channelKey, String channelLocalURI) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.CHANNEL_IMAGE_LOCAL_URI, channelLocalURI);
@@ -441,13 +441,13 @@ public class ChannelDatabaseService {
         return present;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int removeMemberFromChannel(String clientGroupId, String userId) {
         Channel channel = getChannelByClientGroupId(clientGroupId);
         return removeMemberFromChannel(channel.getKey(), userId);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int removeMemberFromChannel(Integer channelKey, String userId) {
         int deleteUser = 0;
         try {
@@ -458,13 +458,13 @@ public class ChannelDatabaseService {
         return deleteUser;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int leaveMemberFromChannel(String clientGroupId, String userId) {
         Channel channel = getChannelByClientGroupId(clientGroupId);
         return leaveMemberFromChannel(channel.getKey(), userId);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int leaveMemberFromChannel(Integer channelKey, String userId) {
         int deletedRows = 0;
         try {
@@ -475,7 +475,7 @@ public class ChannelDatabaseService {
         return deletedRows;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public @Nullable Map<String, String> getMetadataToUpdateToDatabaseFromGroupInfoUpdate(GroupInfoUpdate groupInfoUpdate) {
         Map<String, String> updateMetadata = groupInfoUpdate.getMetadata();
         if(updateMetadata == null) {
@@ -507,7 +507,7 @@ public class ChannelDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int updateChannel(GroupInfoUpdate groupInfoUpdate) {
         if (groupInfoUpdate.getImageUrl() == null && groupInfoUpdate.getNewName() == null) {
             return 0;
@@ -545,7 +545,7 @@ public class ChannelDatabaseService {
         return rowUpdated;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int deleteChannel(Integer channelKey) {
         int deletedRows = 0;
         try {
@@ -556,7 +556,7 @@ public class ChannelDatabaseService {
         return deletedRows;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public int deleteChannelUserMappers(Integer channelKey) {
         int deletedRows = 0;
         try {
@@ -647,14 +647,14 @@ public class ChannelDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateRoleInChannelUserMapper(Integer channelKey, String userId, Integer role) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.ROLE, role);
         dbHelper.getWritableDatabase().update(CHANNEL_USER_X, contentValues, MobiComDatabaseHelper.CHANNEL_KEY + "=? AND " + MobiComDatabaseHelper.USERID + "=?", new String[]{String.valueOf(channelKey), userId});
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public ChannelUserMapper getChannelUserByChannelKey(final Integer channelKey) {
         ChannelUserMapper channelUserMapper = null;
         Cursor cursor = null;
@@ -713,7 +713,7 @@ public class ChannelDatabaseService {
         return channelUserMapper;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public List<String> getChildGroupIds(Integer parentGroupKey) {
         if (parentGroupKey == null || parentGroupKey == 0) {
             return new ArrayList<>();
@@ -745,7 +745,7 @@ public class ChannelDatabaseService {
         return null;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void updateParentGroupKeyInUserMapper(Integer channelKey, Integer parentGroupKey) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.PARENT_GROUP_KEY, parentGroupKey);

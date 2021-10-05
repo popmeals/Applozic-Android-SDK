@@ -30,7 +30,7 @@ import java.util.Queue;
 
 public class MobiComPushReceiver {
 
-    //ApplozicInternal: private all
+    //Cleanup: private all
     public static final String MTCOM_PREFIX = "APPLOZIC_";
     public static final List<String> notificationKeyList = new ArrayList<String>();
     public static final String BLOCKED_TO = "BLOCKED_TO";
@@ -76,7 +76,7 @@ public class MobiComPushReceiver {
         notificationKeyList.add("APPLOZIC_39");//34 for group mute notification
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static boolean isMobiComPushNotification(Intent intent) {
         Log.d(TAG, "checking for Applozic notification.");
         if (intent == null) {
@@ -85,7 +85,7 @@ public class MobiComPushReceiver {
         return isMobiComPushNotification(intent.getExtras());
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static boolean isMobiComPushNotification(Bundle bundle) {
         //This is to identify collapse key sent in notification..
         if (bundle == null) {

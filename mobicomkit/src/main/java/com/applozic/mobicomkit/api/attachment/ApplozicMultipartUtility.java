@@ -19,10 +19,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-//ApplozicInternal: default
+//Cleanup: default
 
 /**
- * @ApplozicInternal This is an internal class.
+ * This is an internal class.
  */
 public class ApplozicMultipartUtility {
     private static final String LINE_FEED = "\r\n";
@@ -32,7 +32,7 @@ public class ApplozicMultipartUtility {
     private OutputStream outputStream;
     private PrintWriter writer;
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public ApplozicMultipartUtility(String requestURL, String charset, Context context)
             throws IOException {
 
@@ -52,7 +52,7 @@ public class ApplozicMultipartUtility {
                 true);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void addFilePart(String fieldName, File uploadFile, Handler handler, String oldMessageKey)
             throws IOException, InterruptedException {
         String fileName = uploadFile.getName();
@@ -121,7 +121,7 @@ public class ApplozicMultipartUtility {
         writer.flush();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getResponse() throws IOException {
         StringBuilder sb = new StringBuilder();
         writer.append(LINE_FEED).flush();

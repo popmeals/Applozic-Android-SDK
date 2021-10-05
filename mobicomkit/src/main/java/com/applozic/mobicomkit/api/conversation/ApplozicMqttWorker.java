@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Handles all the real-time MQTT related code. Example: typing, subscribing etc.
  */
-//ApplozicInternal: default if possible (maybe keep it at the root)
+//Cleanup: default if possible (maybe keep it at the root)
 public class ApplozicMqttWorker extends Worker {
     public static final String TAG = "ApplozicMqttWorker";
 

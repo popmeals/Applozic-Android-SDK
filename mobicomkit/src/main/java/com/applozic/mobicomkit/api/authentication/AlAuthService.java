@@ -11,28 +11,27 @@ import com.applozic.mobicomkit.listners.AlCallback;
 import com.applozic.mobicommons.task.AlTask;
 
 /**
- * @ApplozicInternal Contains methods for working with the JWT authentication token.
+ * Contains methods for working with the JWT authentication token.
  */
 public class AlAuthService {
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Checks the validity of the JWT token.
+     * Checks the validity of the JWT token.
      */
     public static boolean isTokenValid(long createdAtTime, int validUptoMins) {
         return (System.currentTimeMillis() - createdAtTime) / 60000 < validUptoMins;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private, can get rid of it too
     /**
-     * @ApplozicInternal Runs the {@link RefreshAuthTokenTask} task.
+     * Runs the {@link RefreshAuthTokenTask} task.
      */
     public static void refreshToken(Context context, AlCallback callback) {
         AlTask.execute(new RefreshAuthTokenTask(context, callback));
     }
 
-    //ApplozicInternal: default
     /**
-     * @ApplozicInternal Checks if token in valid or not. A token expires after is <code>validUptoTime</code> elapses.
+     * Checks if token in valid or not. A token expires after it's {@link MobiComUserPreference#getTokenValidUptoMins()} elapses.
      */
     public static boolean isTokenValid(Context context) {
         if (context == null) {
@@ -58,9 +57,9 @@ public class AlAuthService {
         return true;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
-     * @ApplozicInternal Refreshes, decodes and saves token in local storage.
+     * Refreshes, decodes and saves token in local storage.
      */
     public static void verifyToken(Context context, String loadingMessage, AlCallback callback) {
         if (context == null) {
@@ -88,9 +87,9 @@ public class AlAuthService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Get a fresh token from the server and replaces the current (invalid) one with it.
+     * Get a fresh token from the server and replaces the current (invalid) one with it.
      */
     public static void refreshToken(Context context, String loadingMessage, final AlCallback callback) {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity(context));
@@ -121,9 +120,9 @@ public class AlAuthService {
         });
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Gets the activity from the context.
+     * Gets the activity from the context.
      */
     public static Activity getActivity(Context context) {
         while (context instanceof ContextWrapper) {

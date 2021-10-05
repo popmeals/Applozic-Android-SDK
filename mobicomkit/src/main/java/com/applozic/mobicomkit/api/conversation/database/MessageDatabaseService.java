@@ -45,7 +45,7 @@ import java.util.Map;
 public class MessageDatabaseService {
     private static final String TAG = "MessageDatabaseService";
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public static List<Message> recentlyAddedMessage = new ArrayList<Message>();
     private Context context = null;
     private MobiComDatabaseHelper dbHelper;
@@ -75,9 +75,9 @@ public class MessageDatabaseService {
         skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Gets the message object from the query's {@link Cursor}.
+     * Gets the message object from the query's {@link Cursor}.
      */
     public static Message getMessage(Cursor cursor) {
         Message message = new Message();
@@ -157,9 +157,9 @@ public class MessageDatabaseService {
         return message;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Gets the message list from the query's {@link Cursor}.
+     * Gets the message list from the query's {@link Cursor}.
      */
     public static List<Message> getMessageList(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
@@ -187,9 +187,9 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Gets the message list from the query's (for most recent message for each channel/contact) {@link Cursor}.
+     * Gets the message list from the query's (for most recent message for each channel/contact) {@link Cursor}.
      */
     public static List<Message> getLatestMessageList(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
@@ -215,9 +215,9 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Gets the message list from the query's (for most recent notification message for each channel/contact) {@link Cursor}.
+     * Gets the message list from the query's (for most recent notification message for each channel/contact) {@link Cursor}.
      */
     public static List<Message> getLatestMessageListForNotification(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
@@ -330,7 +330,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Gets the count of unread messages. This may not correctly synced with the server.
+     * Gets the count of unread messages. This may not correctly synced with the server.
      */
     public List<Message> getUnreadMessages() {
         String structuredNameWhere = "";
@@ -345,7 +345,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Gets the list of messages added to the database but not yet sent for some reason.
+     * Gets the list of messages added to the database but not yet sent for some reason.
      */
     public List<Message> getPendingMessages() {
         String structuredNameWhere = "";
@@ -361,7 +361,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Gets a list of messages that are supposed to be deleted.
+     * Gets a list of messages that are supposed to be deleted.
      */
     public List<Message> getPendingDeleteMessages() {
         String structuredNameWhere = "";
@@ -374,7 +374,7 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */
@@ -397,9 +397,9 @@ public class MessageDatabaseService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal Gets message by the contact number and message string associated with it.
+     * Gets message by the contact number and message string associated with it.
      */
     public Message getMessage(String contactNumber, String message) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -427,7 +427,7 @@ public class MessageDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Checks if the message with the given <code>keystring</code> is present in the database.
      *
@@ -485,7 +485,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Gets a list of messages scheduled for the given time (in milliseconds).
+     * Gets a list of messages scheduled for the given time (in milliseconds).
      *
      * @deprecated The schedule message functionality will be removed soon.
      */
@@ -581,7 +581,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Updates the message file-metas ({@link FileMeta}) for the message.
+     * Updates the message file-metas ({@link FileMeta}) for the message.
      *
      * @param messageId the message id ({@link Message#getMessageId()})
      * @param message the message object with the new file-metas, key-string must not be null
@@ -610,7 +610,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Adds the given message object to the database. Adds multiple if the given message is {@link Message#isSentToMany()}. If the message already exists (keystring), it is not replaced.
+     * Adds the given message object to the database. Adds multiple if the given message is {@link Message#isSentToMany()}. If the message already exists (keystring), it is not replaced.
      */
     public synchronized long createMessage(final Message message) {
         long id = -1;
@@ -634,7 +634,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Adds the given message object to the database. If the message already exists (keystring), it is not replaced.
+     * Adds the given message object to the database. If the message already exists (keystring), it is not replaced.
      */
     public synchronized long createSingleMessage(final Message message) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -763,7 +763,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Set all messages to delivered or delivered and read for the given contact.
+     * Set all messages to delivered or delivered and read for the given contact.
      */
     public int updateMessageDeliveryReportForContact(String contactId, boolean markRead) {
         try {
@@ -789,7 +789,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Set a particular message (with the given keystring) to delivered or delivered and read for the given contact.
+     * Set a particular message (with the given keystring) to delivered or delivered and read for the given contact.
      */
     public void updateMessageDeliveryReportForContact(String messageKeyString, String contactNumber, boolean markRead) {
         try {
@@ -813,7 +813,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Set <code>sentToServer</code> true for the given message.
+     * Set <code>sentToServer</code> true for the given message.
      */
     public void updateMessageSyncStatus(Message message, String keyString) {
         try {
@@ -830,7 +830,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Set <code>deleted</code> true for the given message.
+     * Set <code>deleted</code> true for the given message.
      */
     public void updateDeleteSyncStatus(Message message, String deleteStatus) {
         try {
@@ -845,7 +845,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Update the message attachments local filepath for the message with the given key-string.
+     * Update the message attachments local filepath for the message with the given key-string.
      */
     public void updateInternalFilePath(String keyString, String filePath) {
         ContentValues values = new ContentValues();
@@ -856,7 +856,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Update the passed values for the message with the given local <code>id</code>.
+     * Update the passed values for the message with the given local <code>id</code>.
      */
     public void updateMessage(Long id, Long createdAt, String KeyString, boolean isSentToServer) {
         ContentValues values = new ContentValues();
@@ -868,7 +868,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Set the message to cancelled.
+     * Set the message to cancelled.
      */
     public void updateCanceledFlag(long smsId, int value) {
         ContentValues values = new ContentValues();
@@ -878,7 +878,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Set the status of the message to read/unread.
+     * Set the status of the message to read/unread.
      */
     public void updateMessageReadFlag(long smsId, boolean read) {
         ContentValues values = new ContentValues();
@@ -1072,7 +1072,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Checks if the message is present in the local database and is of the passed replyMessageType.
+     * Checks if the message is present in the local database and is of the passed replyMessageType.
      *
      * @param key the message key-string
      * @param replyMessageType the reply message type {@link Message.ReplyMessage}
@@ -1145,7 +1145,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Update the status to read for the message with the given <code>keystring</code>.
+     * Update the status to read for the message with the given <code>keystring</code>.
      */
     public int updateReadStatusForKeyString(String keyString) {
         ContentValues values = new ContentValues();
@@ -1157,7 +1157,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Update the status to read for all the messages of the contact with the given <code>userId</code>.
+     * Update the status to read for all the messages of the contact with the given <code>userId</code>.
      */
     public int updateReadStatusForContact(String userId) {
         ContentValues values = new ContentValues();
@@ -1168,7 +1168,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Update the status to read for all the messages of the channel with the given <code>channelKey</code>.
+     * Update the status to read for all the messages of the channel with the given <code>channelKey</code>.
      */
     public int updateReadStatusForChannel(String channelKey) {
         ContentValues values = new ContentValues();
@@ -1242,7 +1242,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Gets a list of messages created before the given time (in milliseconds).
+     * Gets a list of messages created before the given time (in milliseconds).
      */
     public List<Message> getMessages(Long createdAt) {
         return getMessages(createdAt, null, null);
@@ -1253,7 +1253,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Gets a list of messages created before the given time (in milliseconds), or for the search term or for the given <code>parentGroupKey</code>.
+     * Gets a list of messages created before the given time (in milliseconds), or for the search term or for the given <code>parentGroupKey</code>.
      */
     public List<Message> getMessages(Long createdAt, String searchText, Integer parentGroupKey) {
 
@@ -1402,7 +1402,7 @@ public class MessageDatabaseService {
 
     //Cleanup: remove 2nd parameter
     /**
-     * @ApplozicInternal Deletes the given message (and hides reply messages). Pass <code>contactNumber</code> as <i>null</i>.
+     * Deletes the given message (and hides reply messages). Pass <code>contactNumber</code> as <i>null</i>.
      */
     public String deleteMessage(Message message, String contactNumber) {
         if (!message.isSentToServer()) {
@@ -1416,7 +1416,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Simply deleted the given message from the database.
+     * Simply deleted the given message from the database.
      */
     public void deleteMessageFromDb(Message message) {
         try {
@@ -1429,7 +1429,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Deletes the messages of the one-to-one chat with the given <code>contactNumber</code>.
+     * Deletes the messages of the one-to-one chat with the given <code>contactNumber</code>.
      */
     public void deleteConversation(String contactNumber) {
         Utils.printLog(context, TAG, "Deleting conversation for contactNumber: " + contactNumber);
@@ -1451,7 +1451,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Increments the unread count for the contact with the given user-id by 1.
+     * Increments the unread count for the contact with the given user-id by 1.
      */
     public synchronized void updateContactUnreadCount(String userId) {
         try {
@@ -1463,7 +1463,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Increments the unread count for the channel with the given channel-key by 1.
+     * Increments the unread count for the channel with the given channel-key by 1.
      */
     public synchronized void updateChannelUnreadCount(Integer channelKey) {
         try {
@@ -1475,7 +1475,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Sets the unread count for the channel with the give channel-key to 0.
+     * Sets the unread count for the channel with the give channel-key to 0.
      */
     public synchronized void updateChannelUnreadCountToZero(Integer channelKey) {
         try {
@@ -1487,7 +1487,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Replaces the passed message in the database. The message <code>keystring</code> is used to identify the message.
+     * Replaces the passed message in the database. The message <code>keystring</code> is used to identify the message.
      */
     public synchronized void replaceExistingMessage(Message message) {
         deleteMessageFromDb(message);
@@ -1495,7 +1495,7 @@ public class MessageDatabaseService {
     }
 
     /**
-     * @ApplozicInternal Sets the unread count for the contact with the give user-id to 0.
+     * Sets the unread count for the contact with the give user-id to 0.
      */
     public synchronized void updateContactUnreadCountToZero(String userId) {
         try {

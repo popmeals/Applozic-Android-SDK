@@ -13,9 +13,9 @@ import com.applozic.mobicommons.ApplozicService;
 import com.applozic.mobicommons.commons.core.utils.DBUtils;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 
-//ApplozicInternal: default (move to root)
+//Cleanup: default (move to root)
 public class MobiComDatabaseHelper extends SQLiteOpenHelper {
-    //ApplozicInternal: all the public constants can be move to a diff class
+    //Cleanup: all the public constants can be move to a diff class
     public static final int DB_VERSION = 35;
 
     public static final String _ID = "_id";
@@ -252,7 +252,7 @@ public class MobiComDatabaseHelper extends SQLiteOpenHelper {
         this.context = ApplozicService.getContext(context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public MobiComDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }

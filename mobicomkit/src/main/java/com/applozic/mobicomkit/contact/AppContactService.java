@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class AppContactService implements BaseContactService {
 
-    //ApplozicInternal: private all
+    //Cleanup: private all
     private static final String TAG = "AppContactService";
     ContactDatabase contactDatabase;
     Context context;
@@ -314,7 +314,7 @@ public class AppContactService implements BaseContactService {
         contactDatabase.updateLocalImageUri(contact);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void getContactByIdAsync(String userId, AlContactListener contactListener) {
         AlTask.execute(new AlGetPeopleTask(context, userId, null, null, null, contactListener, this, null));
     }

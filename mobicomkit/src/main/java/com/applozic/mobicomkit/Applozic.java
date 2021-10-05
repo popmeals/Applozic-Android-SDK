@@ -15,6 +15,7 @@ import com.applozic.mobicomkit.api.account.user.UserClientService;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
 import com.applozic.mobicomkit.api.authentication.AlAuthService;
+import com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask;
 import com.applozic.mobicomkit.api.conversation.ApplozicMqttWorker;
 import com.applozic.mobicomkit.api.notification.MobiComPushReceiver;
 import com.applozic.mobicomkit.api.notification.NotificationChannels;
@@ -37,7 +38,7 @@ import com.applozic.mobicommons.task.AlTask;
 import java.util.Map;
 
 /**
- * Class for all the major public methods for using the Applozic Chat SDK.
+ * Contains all the major public methods for using the <i>Applozic Chat SDK</i>.
  */
 public class Applozic {
 
@@ -60,12 +61,7 @@ public class Applozic {
     /**
      * Initializes the client SDK.
      *
-     * <p>This method basically stores the application key and application context for further use.</p>
-     *
-     * @param context the context
-     * @param applicationKey the application id/application key
-     *
-     * @return the {@link Applozic} object
+     * <p>It stores the application-key and android application context for further use.</p>
      */
     public static Applozic init(Context context, String applicationKey) {
         applozic = getInstance(context);
@@ -117,12 +113,13 @@ public class Applozic {
     }
 
     /**
-     * This method will give you the application key/id with which the given SDK has been initialized.
+     * Returns the application key with which the given SDK has been initialized.
      *
-     * <p>This application key/id is retrieved from one of three places:
-     * - From the server call (usually the registration server call)
-     * - From the AndroidManifest.xml metadata value
-     * - From the shared preferences (key is written here during SDK initialization)</p>
+     * <p>For this method to return a valid value, the SDK must be initialized using {@link Applozic#init(Context, String)}.</p>
+     *
+     * <p>What is an application?</p>
+     * <p>Whenever you sign up to <i>Applozic</i>, an <i>application</i> is created for you and an application key for that application
+     * is provided. This application, in simple words, can be explained as a "container" in which all you chat functionality and data live.</p>
      *
      * @return the application key
      */
@@ -187,7 +184,7 @@ public class Applozic {
         return sharedPreferences.getString(CUSTOM_NOTIFICATION_SOUND, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * Publish offline status, unsubscribe from conversation topic (for real time updates) and disconnect MQTT.
      *
@@ -211,20 +208,20 @@ public class Applozic {
     }
 
     /**
-     * Disconnect from MQTT for publishing and receiving events.
-     *
-     * @param context the context
+     * Asynchronously disconnects from MQTT for receiving messages and other events.
      */
     public static void disconnectPublish(Context context) {
         disconnectPublish(context, true);
     }
 
     /**
-     * Connect to MQTT for publishing and receiving events.
+     * Asynchronously connects to MQTT for receiving messages and other chat events.
      *
-     * @param context the context
+     * <p>Before calling this method, make sure that {@link AlAuthService#isTokenValid(Context)} returns true.</p>
+     * <p>Otherwise refresh the token first using {@link RefreshAuthTokenTask}.</p>
+     *
+     * <p>MQTT will receive messages only for the <i>application</i> lifecycle. You can alternatively use {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
      */
-    //Cleanup: can be removed, not used in SDK
     public static void connectPublish(Context context) {
         ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, 0);
     }
@@ -263,19 +260,19 @@ public class Applozic {
         });
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void disconnectPublish(Context context, boolean useEncrypted) {
         final String deviceKeyString = MobiComUserPreference.getInstance(context).getDeviceKeyString();
         final String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
         disconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void subscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkSubscribeToSupportGroup(context, useEncrypted);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void unSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkUnSubscribeToSupportGroup(context, useEncrypted);
     }
@@ -334,19 +331,29 @@ public class Applozic {
     }
 
     /**
-     * Use this method for authenticating (or registering) a {@link User} from the backend. Authentication is required before using
-     * almost all the Applozic SDK methods.
-     * On successful authentication of a user, a token is received (from the Applozic servers) and saved. This is then used to
-     * authenticate/authorize all future API calls.
+     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
      *
-     * <p>Note: This method checks if a user is already logged in and doesn't connect otherwise.
-     * If the user (identified by {@link User#getUserId()}) is not found in the servers, it will be registered.
+     * <p>Before calling this method, make sure that {@link User#isValidUserId()} returns <i>true</i>.</p>
      *
-     * See {@link com.applozic.mobicomkit.api.account.register.RegisterUserClientService#createAccount(User)} for details.</p>
+     * <p>If the user (<code>userId</code>) is not present in the servers, a new
+     * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
      *
-     * @param context the context
-     * @param user the user object to connect
-     * @param loginHandler for the success/failure callbacks
+     * <p>After you get the {@link AlLoginHandler#onSuccess(RegistrationResponse, Context)} callback, you'll be able to access:
+     * <ul>
+     *     <li>{@link MobiComUserPreference#getUserId() your user-id}.</li>
+     *     <li>{@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String) your contact object}.</li>
+     *     <li>Your messages, contacts, channels and other freshly synced data to your local database for your user.</li>
+     * </ul></p>
+     *
+     * <p>Other users will be able to see your status as "online".</p>
+     *
+     * <p>Next steps:</p>
+     * <ol>
+     *     <li>To set up push notifications - {@link PushNotificationTask}. This is required for receiving messages.</li>
+     *     <li>To send your first message - {@link com.applozic.mobicomkit.api.conversation.MessageBuilder}</li>
+     * </ol>
+     *
+     * @param loginHandler receives success/failure callbacks
      */
     public static void connectUser(Context context, User user, AlLoginHandler loginHandler) {
         if (isConnected(context)) {
@@ -367,7 +374,7 @@ public class Applozic {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void connectUserWithoutCheck(Context context, User user, AlLoginHandler loginHandler) {
         AlTask.execute(new UserLoginTask(user, loginHandler, context));
     }
@@ -384,7 +391,7 @@ public class Applozic {
         return MobiComUserPreference.getInstance(context).isLoggedIn();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method is not longer used and will be removed soon.
      */
@@ -435,7 +442,7 @@ public class Applozic {
         AlTask.execute(new PushNotificationTask(context, pushToken, handler));
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
      * @deprecated This method has been deprecated. You can directly use the {@link PushNotificationTask}.
      */

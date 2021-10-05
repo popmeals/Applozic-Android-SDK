@@ -184,7 +184,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void subscribeToConversation(boolean useEncryptedTopic) {
         try {
             String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
@@ -229,7 +229,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void unSubscribeToConversation(final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -256,7 +256,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
     }
 
     //Cleanup: can be removed
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void subscribeToCustomTopic(String customTopic, boolean useEncrypted) {
         try {
             String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
@@ -275,7 +275,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
     }
 
     //Cleanup: can be removed
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void unSubscribeToCustomTopic(final String customTopic, final boolean useEncrypted) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -297,7 +297,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
     }
 
     //Cleanup: can be removed
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void publishCustomData(final String customTopic, final String data, final boolean useEncrypted) {
         try {
             final AlMqttClient client = getClientInstance();
@@ -376,7 +376,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void disconnect() {
         if (client != null && client.isConnected()) {
             try {
@@ -657,7 +657,7 @@ public class ApplozicMqttService extends MobiComKitClientService implements Mqtt
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public synchronized void publishTopic(final String applicationId, final String status, final String loggedInUserId, final String userId) {
         try {
             final MqttClient client = getClientInstance();

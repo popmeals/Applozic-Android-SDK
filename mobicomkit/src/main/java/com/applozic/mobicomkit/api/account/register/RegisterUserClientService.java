@@ -32,15 +32,15 @@ import java.util.Map;
 import java.util.TimeZone;
 
 /**
- * The <code>RegisterUserClientService</code> has methods required for user authentication/registration.
- * This class handles server API calls for the mentioned functions.
+ * Handles registration and authentication for your {@link User} and login session.
  *
- * <p>Methods of this class mostly deal with <i>device session</i> related code. You can use methods of this class for:
+ * <p>The <i>user</i></p> need to be registered/authenticated before any of the SDK's methods can be used.
+ * <p>The <i>login session</i> needs to be registered if you want real-time updates to be delivered.</p>
+ *
  * <ul>
- *     <li>Logging in/connecting a user. See {@link RegisterUserClientService#createAccount(User)}.</li>
- *     <li>Updating user details. See {@link RegisterUserClientService#updateRegisteredAccount(User)}.</li>
- *     <li>Setting up FCM/GCM push notifications. See {@link RegisterUserClientService#updatePushNotificationId(String)}.</li>
- * </ul></p>
+ *     <li>To register or authenticate a user, see the doc for {@link RegisterUserClientService#createAccount(User)}.</li>
+ *     <li>To register your login session, see the doc for {@link RegisterUserClientService#updatePushNotificationId(String)}.</li>
+ * </ul>
  */
 public class RegisterUserClientService extends MobiComKitClientService {
     private static final String CREATE_ACCOUNT_URL = "/rest/ws/register/client?";
@@ -52,15 +52,12 @@ public class RegisterUserClientService extends MobiComKitClientService {
      */
     public static final Short MOBICOMKIT_VERSION_CODE = 112;
     private static final String TAG = "RegisterUserClient";
-    //Cleanup: can be removed
-    private static final String INVALID_APP_ID = "INVALID_APPLICATIONID";
+    private static final String INVALID_APP_ID = "INVALID_APPLICATIONID"; //Cleanup: can be removed
     private HttpRequestUtils httpRequestUtils;
 
     /**
-     * Constructor. Also initializes static `application` object with the context passed.
-     * Use it using {@link ApplozicService#getAppContext()}.
+     * Constructor. Also stores the application context. You can access later it using {@link ApplozicService#getAppContext()}.
      *
-     * @see ApplozicService#initWithContext(Context)
      * @param context the context
      */
     public RegisterUserClientService(Context context) {
@@ -69,59 +66,45 @@ public class RegisterUserClientService extends MobiComKitClientService {
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getCreateAccountUrl() {
         return getBaseUrl() + CREATE_ACCOUNT_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getPricingPackageUrl() {
         return getBaseUrl() + CHECK_PRICING_PACKAGE;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getUpdateAccountUrl() {
         return getBaseUrl() + UPDATE_ACCOUNT_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     /**
-     * @ApplozicInternal This is an internal method. Do not use.
+     * This is an internal method. Do not use.
      */
     public String getRefreshTokenUrl() {
         return getBaseUrl() + REFRESH_TOKEN_URL;
     }
 
     /**
-     * @ApplozicInternal Do not use this method directly. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
+     * This method registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.
      *
-     * This method registers(or authenticates/logs in) a {@link User} in
-     * the Applozic servers. It also initializes the SDK for that user.
-     *
-     * <p>If the user (identified by it's userId) is not present in the servers, a new
-     * one will be created and registered. Otherwise the user will be authenticated/logged in.
-     *
-     * After the server call to register/authenticate the user is successful a number of things
-     * happen:
-     * <ul>
-     *     <li>Data for the user received in the register/authenticate response is saved locally.</li>
-     *     <li>A {@link Contact} with the user's details is created and added to the local database.</li>
-     *     <li>Sync messages, contacts, channels and other data from the server.</li>
-     *     <li>Bring the client online.</li>
-     * </ul>
-     * </p>
+     * Do not use this method directly. Use the <i>asynchronous</i> {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
      *
      * @param user the user object to register/authenticate
-     * @return the {@link RegistrationResponse}
+     * @return the {@link RegistrationResponse}, {@link RegistrationResponse#isRegistrationSuccess()} will be true in case of a successful login/register. otherwise {@link RegistrationResponse#getMessage()} will have the error message
      * @throws Exception in case of empty or invalid user-id (see {@link User#isValidUserId()}, and connection errors
      */
     public RegistrationResponse createAccount(User user) throws Exception {
@@ -248,15 +231,15 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This method gets a fresh auth token from the Applozic servers and saves it locally for application use.
+     * This method gets a fresh JWT authentication token from the Applozic servers and saves it locally for application use.
      *
-     * <p>A JWT auth token is retrieved from the backend and saved in the
-     * user specific shared preference file {@link MobiComUserPreference}.
-     * This token is used for authentication/authorization of user level server calls.
-     * See the implementation in {@link HttpRequestUtils#addGlobalHeaders(HttpURLConnection, String)} for details on
-     * where and how this token is used.</p>
+     * <p><b>Note:</b> You do not need to use this method and refresh the JWT token manually. All this is handled by the SDK.</p>
      *
-     * <p>Tip: Run this method asynchronously. Or use {@link com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask}.</p>
+     * <p><i>What is this JWT token?</i></p>
+     * <p>The JWT token is used for authentication/authorization of user level server calls.
+     * This token is received from the backend after your user has been successfully logged-in or registered.</p>
+     *
+     * @see com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask
      *
      * @param applicationId the Applozic application id
      * @param userId the user id of the user to get the auth token for
@@ -319,26 +302,13 @@ public class RegisterUserClientService extends MobiComKitClientService {
 
     //Cleanup: can be removed, is used in just the PushNotificationTask
     /**
-     * Updates the user's account with the push notification id from <i>FCM/GCM</i>.
+     * Updates the user's account with the registration-id from <i>Firebase Cloud Messaging</i>.
      *
-     * <p>This is required for setting up push notifications.
+     * <p>FCM is used for providing real-time updates for messages and other events to your device.</p>
      *
-     * <p>Applozic uses <i>Firebase push-notifications</i> to deliver {@link com.applozic.mobicomkit.api.conversation.Message}s and
-     * other important updates when your app is in the background.</p>
+     * <p>This method will block the main thread. Use the asynchronous {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask} instead.</p>
      *
-     * <p>To setup push-notification you need to get the <i>push notification id</i> for your device from Firebase.</p>
-     * <ol>
-     *     <li>Override <code>FirebaseMessageService#onNewToken</code> to get a registration-id.</li>
-     *     <li>Pass that <i>id</i> to this method.</li>
-     * </ol>
-     *
-     * This <i>id</i> will then be used to deliver push notifications to the user's device.
-     *
-     * <p>This method will also save the <i>id</i> locally in a shared preference {@link MobiComUserPreference}.</p>
-     *
-     * <p>Tip: Run this method asynchronously. Or use {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask}.</p>
-     *
-     * @param pushNotificationId the <i>push notification id</i> received from <i>FCM</i>
+     * @param pushNotificationId the <i>registration id/token</i> received from <i>Firebase Cloud Messaging</i>
      * @return the user account update response from the server
      */
     public RegistrationResponse updatePushNotificationId(final String pushNotificationId) throws Exception {
@@ -361,15 +331,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
     /**
      * This method updates the user's details in the backend.
      *
-     * <p>The user object that you pass to this method will be used to update
-     * the user's account in the server.
-     * <b>However,<b/> not all data is taken from the user object.
-     *
-     * The applicationId, encryption enable/disable, time zone, pref contact api value, app version code,
-     * authentication type, app module name and device registration id will be taken from
-     * the local applozic shared preference if present.</p>
-     *
-     * <p>Tip: Run this method asynchronously.</p>
+     * <p>This is an internal method. You do not need to use it.</p>
      *
      * @param user the user data
      * @return registration response obtained from server

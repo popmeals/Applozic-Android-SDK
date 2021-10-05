@@ -12,10 +12,12 @@ import com.applozic.mobicommons.task.AlTask;
 import java.lang.ref.WeakReference;
 
 /**
- * This task can be used to refresh the jwt auth token for a user once the original one has expired.
- * Simply call this task and the token will be refreshed and updated in the local storage.
+ * Refreshes the JWT authentication token and saves it locally for future use.
+ * This token is used by the SDK to authenticate all future API calls.
  *
- * <p>This task is an async wrapper around the {@link RegisterUserClientService#refreshAuthToken(String, String)} method.</p>
+ * <p>To save unnecessary calls, run this task only if {@link AlAuthService#isTokenValid(Context)} returns <code>false</code>.</p>
+ *
+ * <p>Use {@link RegisterUserClientService#refreshAuthToken(String, String)} if you do not need a separate thread for execution.</p>
  *
  * <code>
  *     RefreshAuthTokenTask refreshAuthTokenTask = new RefreshAuthTokenTask(context, new AlCallback() {
@@ -51,9 +53,6 @@ public class RefreshAuthTokenTask extends AlAsyncTask<Void, Boolean> {
         this.callback = callback;
     }
 
-    /**
-     * Returns an instance of the <code>RefreshAuthTokenTask</code>.
-     */
     public RefreshAuthTokenTask(Context context, AlCallback callback) {
         this(context, MobiComKitClientService.getApplicationKey(context), MobiComUserPreference.getInstance(context).getUserId(), callback);
     }

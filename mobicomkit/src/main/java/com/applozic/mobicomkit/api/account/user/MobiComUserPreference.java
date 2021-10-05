@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * The <code>MobiComUserPreference</code> class is a wrapper around {@link SharedPreferences} used to store user and session level local data.
  *
- * @ApplozicInternal This class is not a part of Applozic's public API. Direct access to the methods and fields of this class will not be required.
+ * This class is not a part of Applozic's public API. Direct access to the methods and fields of this class will not be required.
  */
 //move the code used here to Applozic class eg: Applozic.getCurrentUser();
 public class MobiComUserPreference {
@@ -25,7 +25,7 @@ public class MobiComUserPreference {
 
     public static final String AL_USER_PREF_KEY = "al_user_pref_key";
 
-    public static MobiComUserPreference userpref; //ApplozicInternal: private
+    public static MobiComUserPreference userpref; //Cleanup: private
 
     private static String device_registration_id = "device_registration_id";
     private static String device_key_string = "device_key_string";

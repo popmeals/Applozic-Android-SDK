@@ -8,7 +8,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-//ApplozicInternal: default
+//Cleanup: default
 
 /**
  * This class provides URLs for upload/download of media stored at Mongo storage.
@@ -20,12 +20,12 @@ public class ApplozicMongoStorageService implements URLService {
     private static final String UPLOAD_URL ="/files/v2/upload";
     private static final String DOWNLOAD_URL ="/files/get/";
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public ApplozicMongoStorageService(Context context) {
         mobiComKitClientService = new MobiComKitClientService(context);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the HTTP connection object that can be used to download the attachment image for the given message.
      *
@@ -42,7 +42,7 @@ public class ApplozicMongoStorageService implements URLService {
 
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL to download the image/video attachment thumbnail.
      *
@@ -55,7 +55,7 @@ public class ApplozicMongoStorageService implements URLService {
         return message.getFileMetas().getThumbnailUrl();
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL that can be used to upload media files to the Mongo storage.
      * @return the string URL
@@ -65,7 +65,7 @@ public class ApplozicMongoStorageService implements URLService {
         return mobiComKitClientService.getFileBaseUrl() + UPLOAD_URL;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
      * Gets the URL that can be used to download media files from the Mongo storage.
      * @return the string URL

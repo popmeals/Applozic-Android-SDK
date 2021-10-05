@@ -3,7 +3,7 @@ package com.applozic.mobicomkit.channel.service;
 import java.util.ArrayList;
 import java.util.List;
 
-//ApplozicInternal: default
+//Cleanup: default
 public class ApplozicAddMemberOfGroupType {
     List<String> groupMemberList = new ArrayList<>();
     String type;

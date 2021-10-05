@@ -21,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Message, Contact and Channel syncing.
  */
-//ApplozicInternal: default if possible
+//Cleanup: default if possible
 public class ConversationWorker extends Worker {
     private static final String TAG = "ConversationWorker";
 

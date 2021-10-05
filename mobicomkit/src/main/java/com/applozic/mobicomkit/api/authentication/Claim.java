@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
 
-//ApplozicInternal: protected
+//Cleanup: protected
 /**
- * @ApplozicInternal Class for storing the JWT Payload values.
+ * Class for storing the JWT Payload values.
  *
  * The Claim class holds the value in a generic way so that it can be recovered in many representations.
  */

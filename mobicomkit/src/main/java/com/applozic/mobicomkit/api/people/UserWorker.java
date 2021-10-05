@@ -72,7 +72,7 @@ public class UserWorker extends Worker {
         WorkManager.getInstance(context).enqueue(messageWorkerRequest);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void checkAndSaveLoggedUserDeletedDataToSharedPref() {
         String userId = MobiComUserPreference.getInstance(getApplicationContext()).getUserId();
         if(TextUtils.isEmpty(userId)) {

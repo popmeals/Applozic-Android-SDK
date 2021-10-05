@@ -40,17 +40,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This handles all things {@link Channel}.
+ * Methods of this class handle {@link Channel} API calls and sync that data with the local database.
  *
- * <p>Methods of this class use the respective local database and client classes to
- * perform operations for Applozic Channels/Groups.
- * Consider this class your go-to for working with channels.</p>
+ * <p>To create a new <i>channel</i>, refer to {@link #createChannelWithResponse(ChannelInfo)}.</p>
+ *
+ * <p>For methods that solely deal with client API calls for channels, see {@link ChannelClientService}.</p>
+ * <p>For methods that only handle local channel data, see {@link ChannelDatabaseService}.</p>
  */
 public class ChannelService {
 
     public static boolean isUpdateTitle = false;
     private static ChannelService channelService;
-    public Context context; //ApplozicInternal: private
+    public Context context; //Cleanup: private
     private ChannelDatabaseService channelDatabaseService;
     private ChannelClientService channelClientService;
     private BaseContactService baseContactService;
@@ -169,7 +170,7 @@ public class ChannelService {
         }
     }
 
-    //ApplozicInternal: or rename
+    //Cleanup: private or rename
     public void processChannelFeedList(ChannelFeed[] channelFeeds, boolean isUserDetails) {
         if (channelFeeds != null && channelFeeds.length > 0) {
             for (ChannelFeed channelFeed : channelFeeds) {
@@ -178,7 +179,7 @@ public class ChannelService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void processChannelFeed(ChannelFeed channelFeed, boolean isUserDetails) {
         if (channelFeed != null) {
             Set<String> memberUserIds = null;
@@ -232,6 +233,11 @@ public class ChannelService {
     }
 
     //Cleanup: can be removed
+    /**
+     * Gets the <i>channel</i> object for the given <code>channelKey</code> from the local database.
+     *
+     * This method will be deprecated soon. You can use {@link ChannelDatabaseService#getChannelByChannelKey(Integer)} instead.
+     */
     public synchronized Channel getChannelByChannelKey(Integer channelKey) {
         if (channelKey == null) {
             return null;
@@ -240,6 +246,11 @@ public class ChannelService {
     }
 
     //Cleanup: can be removed
+    /**
+     * Gets a list of users({@link ChannelUserMapper} that are members of the <i>channel</i> with the given <code>channelKey</code> from the local database.
+     *
+     * This method will be deprecated soon. You can use {@link ChannelDatabaseService#getChannelUserList(Integer)} instead.
+     */
     public List<ChannelUserMapper> getListOfUsersFromChannelUserMapper(Integer channelKey) {
         return channelDatabaseService.getChannelUserList(channelKey);
     }
@@ -296,8 +307,8 @@ public class ChannelService {
     }
 
     /**
-     * @deprecated {@link AlResponse} is not longer used. It will be replaced by
-     * {@link ApiResponse}.
+     * @deprecated {@link AlResponse} is not longer used. It will be replaced by {@link ApiResponse}.
+     *
      * Use {@link ChannelService#createChannelWithResponse(ChannelInfo)} instead.
      */
     @Deprecated
@@ -712,13 +723,12 @@ public class ChannelService {
     }
 
     /**
-     * Creates a new Applozic {@link Channel}.
+     * Creates a new {@link Channel}.
      *
-     * <p>Details on the creation are passed with the help of the {@link ChannelInfo} object.
-     * Information about the newly created channel can be retrieved from {@link ChannelFeedApiResponse#getResponse()}.</p>
+     * <p>This method will block the main thread. Run it asynchronously.</p>
      *
-     * @param channelInfo the channel info object
-     * @return the {@link ChannelFeedApiResponse} for the request.
+     * @param channelInfo contains the parameters/details for the creating the channel
+     * @return The response object. Pass {@link ChannelFeedApiResponse#getResponse()} to {@link ChannelService#getChannel(ChannelFeed)} to get your newly created <i>channel</i> object.
      */
     public ChannelFeedApiResponse createChannelWithResponse(ChannelInfo channelInfo) {
         ChannelFeedApiResponse channelFeedApiResponse = channelClientService
@@ -872,7 +882,7 @@ public class ChannelService {
         return channelDatabaseService.getChildGroupIds(parentGroupKey);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public List<ChannelFeed> getGroupInfoFromGroupIds(List<String> groupIds, List<String>
             clientGroupIds) {
 
@@ -954,7 +964,7 @@ public class ChannelService {
         return null;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove
     public ChannelFeed[] getMembersFromContactGroupList(List<String> groupIdList, List<String>
             groupNames, String groupType) {
@@ -1095,13 +1105,13 @@ public class ChannelService {
         return channelDatabaseService.getParentGroupKey(parentClientGroupKey);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove
     public void getChannelByChannelKeyAsync(Integer groupId, AlChannelListener channelListener) {
         AlTask.execute(new AlGetPeopleTask(context, null, null, groupId, channelListener, null, null, this));
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: remove
     public void getChannelByClientKeyAsync(String clientChannelKey, AlChannelListener channelListener) {
         AlTask.execute(new AlGetPeopleTask(context, null, clientChannelKey, null, channelListener, null, null, this));

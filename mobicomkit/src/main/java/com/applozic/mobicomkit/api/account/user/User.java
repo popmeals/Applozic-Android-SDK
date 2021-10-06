@@ -4,7 +4,9 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.listners.AlLoginHandler;
+import com.applozic.mobicommons.ALSpecificSettings;
 import com.applozic.mobicommons.json.JsonMarker;
 
 import java.io.UnsupportedEncodingException;
@@ -12,6 +14,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 /**
@@ -42,58 +45,67 @@ import java.util.regex.Pattern;
  * <p>Also see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
  */
 public class User extends JsonMarker {
+    private static final String LOG_TAG = "User";
 
-    private static final String DEFAULT_USER_ID_REGEX = "^[a-zA-Z0-9_+#@.?|=;-]+$";
-    private String userIdRegex;
     /**
      * @see #setUserId(String)
      */
     private String userId;
-    private String email;
     private String password;
-    private String registrationId;
-    private String applicationId;
-    private String contactNumber;
-    private String countryCode;
-    private Short prefContactAPI = Short.valueOf("2");
-    private boolean emailVerified = true;
-    private String timezone;
-    private Short appVersionCode;
-    private String roleName = "USER";
-    private Short deviceType;
-    private String imageLink;
-    private boolean enableEncryption;
-    private Short pushNotificationFormat;
     private Short authenticationTypeId = AuthenticationType.CLIENT.getValue();
     private String displayName;
-    private String appModuleName;
-    private Short userTypeId;
-    private List<String> features;
-    private String notificationSoundFilePath;
-    private Long lastMessageAtTime;
-    private Map<String, String> metadata;
-    private String alBaseUrl;
-    private String kmBaseUrl;
-    private String status;
+    private String imageLink;
     private String localImageUri;
-    private boolean skipDeletedGroups;
-    private boolean hideActionMessages;
+    private String email;
+    private String status;
+    private String contactNumber;
+    private String countryCode;
+    private String timezone;
+    private Map<String, String> metadata;
+    private String applicationId;
+    private String registrationId;
+    private String userIdRegex = "^[a-zA-Z0-9_+#@.?|=;-]+$";
+    private boolean enableEncryption;
+    private boolean emailVerified = true;
+    private List<String> features;
+
+    //internal
     private Short roleType = RoleType.USER_ROLE.getValue();
-
     /**
-     * @see #setFeatures(List)
+     * @see #getDeviceType()
      */
-    public List<String> getFeatures() {
-        return features;
-    }
+    private Short deviceType = Short.valueOf("1");
+    private String appModuleName;
 
+    //deprecated
+    @Deprecated
+    private String roleName = "USER";
     /**
-     * Sets the added {@link Features} enabled for this user. These are functionalities that are advanced enough to require added setup to work.
-     *
-     * <p>Note: This method only lets the SDK know that the given user needs these features. Whether they will be enabled or not depends on other factors such as if they have been set up or not, or enabled from the dashboard.</p>
+     * Identifies user sub-types.
      */
-    public void setFeatures(List<String> features) {
-        this.features = features;
+    @Deprecated
+    private Short userTypeId;
+    @Deprecated
+    private Long lastMessageAtTime;
+    @Deprecated
+    private Short pushNotificationFormat;
+    @Deprecated
+    private Short appVersionCode = 112; //old code. used to track API versions.
+    @Deprecated
+    private boolean hideActionMessages;
+    @Deprecated
+    private boolean skipDeletedGroups;
+    @Deprecated
+    private Short prefContactAPI = Short.valueOf("2");
+    @Deprecated
+    private String kmBaseUrl;
+    @Deprecated
+    private String alBaseUrl;
+    @Deprecated
+    private String notificationSoundFilePath;
+
+    public User() {
+        this.timezone = TimeZone.getDefault().getID();
     }
 
     /**
@@ -166,20 +178,6 @@ public class User extends JsonMarker {
     }
 
     /**
-     * The registration-id is used to identify a user session and for push notifications (real-time updates).
-     */
-    public String getRegistrationId() {
-        return registrationId;
-    }
-
-    /**
-     * @see #getRegistrationId()
-     */
-    public void setRegistrationId(String registrationId) {
-        this.registrationId = registrationId;
-    }
-
-    /**
      * @see #setContactNumber(String)
      */
     public String getContactNumber() {
@@ -191,20 +189,6 @@ public class User extends JsonMarker {
      */
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
-    }
-
-    /**
-     * Gets the id of the application in which this user exists. See {@link Applozic#getApplicationKey() application key}.
-     */
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    /**
-     * @see #getApplicationId()
-     */
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
     }
 
     /**
@@ -222,13 +206,6 @@ public class User extends JsonMarker {
     }
 
     /**
-     * This is an internal method. Do not use. It will be deprecated soon.
-     */
-    public void  setPrefContactAPI(Short prefContactAPI) {
-        this.prefContactAPI = prefContactAPI;
-    }
-
-    /**
      * @see #setEmailVerified(boolean)
      */
     public boolean isEmailVerified() {
@@ -243,56 +220,6 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @see #setTimezone(String)
-     */
-    public String getTimezone() {
-        return timezone;
-    }
-
-    /**
-     * Can be used to set a timezone for your user, if your use-case requires.
-     */
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
-
-    /**
-     * This is an internal method. Do not use. It will be deprecated soon.
-     */
-    public void setAppVersionCode(Short appVersionCode) {
-        this.appVersionCode = appVersionCode;
-    }
-
-    /**
-     * @see RoleName
-     *
-     */
-    public String getRoleName() {
-        return roleName;
-    }
-
-    /**
-     * @see RoleName
-     */
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    /**
-     * This is an internal method. Do not use. It will be deprecated soon.
-     */
-    public Short getDeviceType() {
-        return deviceType;
-    }
-
-    /**
-     * This is an internal method. Do not use. It will be deprecated soon.
-     */
-    public void setDeviceType(Short deviceType) {
-        this.deviceType = deviceType;
-    }
-
-    /**
      * See {@link AuthenticationType}. This is set to {@link AuthenticationType#CLIENT} by default. You probably want to use {@link AuthenticationType#APPLOZIC} instead.
      */
     public Short getAuthenticationTypeId() {
@@ -304,13 +231,6 @@ public class User extends JsonMarker {
      */
     public void setAuthenticationTypeId(Short authenticationTypeId) {
         this.authenticationTypeId = authenticationTypeId;
-    }
-
-    /**
-     * This is an internal method. Do not use. It will be deprecated soon.
-     */
-    public void setAppModuleName(String appModuleName) {
-        this.appModuleName = appModuleName;
     }
 
     /**
@@ -346,34 +266,6 @@ public class User extends JsonMarker {
     }
 
     /**
-     * This is an internal method. You will not need it.
-     */
-    public Short getUserTypeId() {
-        return userTypeId;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public void setUserTypeId(Short userTypeId) {
-        this.userTypeId = userTypeId;
-    }
-
-    /**
-     * @see #setNotificationSoundFilePath(String)
-     */
-    public String getNotificationSoundFilePath() {
-        return notificationSoundFilePath;
-    }
-
-    /**
-     * Sets the local absolute path to a custom sound that will be played whenever notifications arrive for this user.
-     */
-    public void setNotificationSoundFilePath(String notificationSoundFilePath) {
-        this.notificationSoundFilePath = notificationSoundFilePath;
-    }
-
-    /**
      * @see #setMetadata(Map)
      */
     public Map<String, String> getMetadata() {
@@ -388,59 +280,19 @@ public class User extends JsonMarker {
     }
 
     /**
-     * This is an internal method. You will not need it.
+     * @see #setFeatures(List)
      */
-    public void setRoleType(Short roleType) {
-        this.roleType = roleType;
+    public List<String> getFeatures() {
+        return features;
     }
 
     /**
-     * This is an internal method. You will not need it.
+     * Sets the added {@link Features} enabled for this user. These are functionalities that are advanced enough to require added setup to work.
+     *
+     * <p>Note: This method only lets the SDK know that the given user needs these features. Whether they will be enabled or not depends on other factors such as if they have been set up or not, or enabled from the dashboard.</p>
      */
-    public Short getRoleType() {
-        return roleType;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public String getAlBaseUrl() {
-        return alBaseUrl;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public String getKmBaseUrl() {
-        return kmBaseUrl;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public boolean isSkipDeletedGroups() {
-        return skipDeletedGroups;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public void setSkipDeletedGroups(boolean skipDeletedGroups) {
-        this.skipDeletedGroups = skipDeletedGroups;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public boolean isHideActionMessages() {
-        return hideActionMessages;
-    }
-
-    /**
-     * This is an internal method. You will not need it.
-     */
-    public void setHideActionMessages(boolean hideActionMessages) {
-        this.hideActionMessages = hideActionMessages;
+    public void setFeatures(List<String> features) {
+        this.features = features;
     }
 
     /**
@@ -457,14 +309,33 @@ public class User extends JsonMarker {
         this.userIdRegex = regex;
     }
 
+    public String getTimezone() {
+        return timezone;
+    }
+
     /**
-     * Verifies whether the user-id matches the regex set using {@link #setUserIdRegex(String)}, or {@link #DEFAULT_USER_ID_REGEX} if none was set.
+     * Gets the id of the application in which this user exists. See {@link Applozic#getApplicationKey() application key}.
+     */
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    /**
+     * The registration-id is used to identify a user session and for push notifications (real-time updates).
+     */
+    public String getRegistrationId() {
+        return registrationId;
+    }
+
+    /**
+     * Verifies whether the user-id matches the regex from {@link #userIdRegex}.
      */
     public boolean isValidUserId() {
         if (TextUtils.isEmpty(userIdRegex)) {
-            setUserIdRegex(DEFAULT_USER_ID_REGEX);
+            Applozic.logError(LOG_TAG, "User-id regex is null or empty. The default value was overwritten.", null);
+            return false;
         }
-        return Pattern.compile(userIdRegex).matcher(getUserId()).matches();
+        return Pattern.matches(userIdRegex, userId);
     }
 
     /**
@@ -529,7 +400,6 @@ public class User extends JsonMarker {
      * and <code>IP_VIDEO_CALL</code> you will need to use <i>Applozic's Audio Video Call SDK</i> that works with the Chat SDK.</p>
      */
     public enum Features {
-
         IP_AUDIO_CALL("100"), IP_VIDEO_CALL("101");
         private String value;
 
@@ -543,19 +413,65 @@ public class User extends JsonMarker {
     }
 
     /**
-     * This is an internal class. You do not need to use it.
+     * This is an internal method. You will not need it.
+     *
+     * @see RoleType
+     */
+    public void setRoleType(Short roleType) {
+        this.roleType = roleType;
+    }
+
+    /**
+     * This is an internal method. You will not need it.
+     *
+     * @see RoleType
+     */
+    public Short getRoleType() {
+        return roleType;
+    }
+
+    /**
+     * This is an internal method. Do not use.
+     */
+    public void setAppModuleName(String appModuleName) {
+        this.appModuleName = appModuleName;
+    }
+
+    /**
+     * This is an internal method. You will not need it.
+     *
+     * @see #getRegistrationId()
+     */
+    public void setRegistrationId(String registrationId) {
+        this.registrationId = registrationId;
+    }
+
+    /**
+     * Internal. 0 = Web, 1 = Android, 4 = iOS.
+     */
+    public Short getDeviceType() {
+        return deviceType;
+    }
+
+    /**
+     * This is an internal class. You will not need it.
      */
     public enum RoleType {
-        BOT(Short.valueOf("1")),
-        APPLICATION_ADMIN(Short.valueOf("2")),
         USER_ROLE(Short.valueOf("3")),
+        APPLICATION_ADMIN(Short.valueOf("2")),
+        AGENT(Short.valueOf("8")),
+        @Deprecated
+        BOT(Short.valueOf("1")),
+        @Deprecated
         ADMIN_ROLE(Short.valueOf("4")),
+        @Deprecated
         BUSINESS(Short.valueOf("5")),
+        @Deprecated
         APPLICATION_BROADCASTER(Short.valueOf("6")),
-        SUPPORT(Short.valueOf("7")),
-        AGENT(Short.valueOf("8"));
+        @Deprecated
+        SUPPORT(Short.valueOf("7"));
 
-        private Short value;
+        private final Short value;
 
         RoleType(Short r) {
             value = r;
@@ -567,11 +483,234 @@ public class User extends JsonMarker {
     }
 
     /**
+     * @deprecated You should not set the application-id manually.
+     */
+    @Deprecated
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    /**
+     * @deprecated Set internally.
+     */
+    @Deprecated
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    /**
+     * @deprecated Will no longer return the base URL. Use {@link ALSpecificSettings#getAlBaseUrl()} instead.
+     */
+    @Deprecated
+    public String getAlBaseUrl() {
+        return alBaseUrl;
+    }
+
+    /**
+     * Base URl for all API calls.
+     *
+     * @deprecated Will no longer set the base URL. Use {@link com.applozic.mobicommons.ALSpecificSettings#setAlBaseUrl(String)} instead.
+     */
+    @Deprecated
+    public void setAlBaseUrl(String alBaseUrl) {
+        this.alBaseUrl = alBaseUrl;
+    }
+
+    /**
+     * @deprecated Not required at client level.
+     *
+     * @see RoleName
+     */
+    @Deprecated
+    public String getRoleName() {
+        return roleName;
+    }
+
+    /**
+     * @deprecated Not required at client level.
+     *
+     * @see RoleName
+     */
+    @Deprecated
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    /**
+     * @deprecated Use {@link #setMetadata(Map)} to work with custom data such as this.
+     *
+     * @see #setUserTypeId(Short)
+     */
+    @Deprecated
+    public Short getUserTypeId() {
+        return userTypeId;
+    }
+
+    /**
+     * @deprecated Use {@link #setMetadata(Map)} to work with custom data such as this.
+     *
+     * Identifies user sub-types.
+     */
+    @Deprecated
+    public void setUserTypeId(Short userTypeId) {
+        this.userTypeId = userTypeId;
+    }
+
+    /**
+     * @deprecated Will no longer work. Use {@link ApplozicClient#isSkipDeletedGroups()} instead.
+     */
+    @Deprecated
+    public boolean isSkipDeletedGroups() {
+        return skipDeletedGroups;
+    }
+
+    /**
+     * @deprecated Will no longer work. Use {@link com.applozic.mobicomkit.ApplozicClient#skipDeletedGroups(boolean)} instead.
+     */
+    @Deprecated
+    public void setSkipDeletedGroups(boolean skipDeletedGroups) {
+        this.skipDeletedGroups = skipDeletedGroups;
+    }
+
+    /**
+     * @deprecated Will no longer work. Use {@link ApplozicClient#isActionMessagesHidden()} instead.
+     */
+    @Deprecated
+    public boolean isHideActionMessages() {
+        return hideActionMessages;
+    }
+
+    /**
+     * @deprecated Will no loner work. Use {@link com.applozic.mobicomkit.ApplozicClient#hideActionMessages(boolean)} instead.
+     */
+    @Deprecated
+    public void setHideActionMessages(boolean hideActionMessages) {
+        this.hideActionMessages = hideActionMessages;
+    }
+
+    /**
+     * @deprecated Will no longer work. Use {@link Applozic#getCustomNotificationSound()} instead.
+     */
+    @Deprecated
+    public String getNotificationSoundFilePath() {
+        return notificationSoundFilePath;
+    }
+
+    /**
+     * @deprecated Will no longer work. Use {@link Applozic#setCustomNotificationSound(String)} instead.
+     *
+     * Sets the local absolute path to a custom sound that will be played whenever notifications arrive for this user.
+     */
+    @Deprecated
+    public void setNotificationSoundFilePath(String notificationSoundFilePath) {
+        this.notificationSoundFilePath = notificationSoundFilePath;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public Short getPrefContactAPI() {
+        return prefContactAPI;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public void  setPrefContactAPI(Short prefContactAPI) {
+        this.prefContactAPI = prefContactAPI;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public Short getAppVersionCode() {
+        return appVersionCode;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public void setAppVersionCode(Short appVersionCode) {
+        this.appVersionCode = appVersionCode;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public void setKmBaseUrl(String kmBaseUrl) {
+        this.kmBaseUrl = kmBaseUrl;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public String getKmBaseUrl() {
+        return kmBaseUrl;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public Short getPushNotificationFormat() {
+        return pushNotificationFormat;
+    }
+
+    /**
+     * @deprecated No longer used. Will be removed soon.
+     */
+    @Deprecated
+    public void setPushNotificationFormat(Short pushNotificationFormat) {
+        this.pushNotificationFormat = pushNotificationFormat;
+    }
+
+    /**
+     * @deprecated This is now handled internally.
+     */
+    @Deprecated
+    public Long getLastMessageAtTime() {
+        return lastMessageAtTime;
+    }
+
+    /**
+     * @deprecated This is now handled internally.
+     */
+    @Deprecated
+    public void setLastMessageAtTime(Long lastMessageAtTime) {
+        this.lastMessageAtTime = lastMessageAtTime;
+    }
+
+    /**
+     * @deprecated Access is not needed.
+     */
+    @Deprecated
+    public String getAppModuleName() {
+        return appModuleName;
+    }
+
+    /**
+     * @deprecated This method should not be used.
+     */
+    @Deprecated
+    public void setDeviceType(Short deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    /**
+     * @deprecated Not required at client level. Will be removed soon.
+     *
      * Roles decide the privilege level of your user.
      */
+    @Deprecated
     public enum RoleName {
         /**
-         * A user with this role-type can not only modify it's own data but also data for other users.
+         * A user with this role-name can not only modify it's own data but also data for other users.
          *
          * <p>This "modifying of data" is in reference to server API calls. An application-admin can perform API calls
          * in behalf of other users too.</p>
@@ -579,7 +718,7 @@ public class User extends JsonMarker {
         APPLICATION_ADMIN("APPLICATION_ADMIN"),
 
         /**
-         * A user with this role-type can modify only its own data.
+         * A user with this role-name can modify only its own data.
          *
          * <p>This "modifying of data" is in reference to server API calls. An application-admin can perform API calls
          * in behalf of other users too.</p>
@@ -613,78 +752,6 @@ public class User extends JsonMarker {
         public String getValue() {
             return value;
         }
-    }
-
-    /**
-     * @deprecated This method is not used and will be removed soon.
-     */
-    @Deprecated
-    public Short getPrefContactAPI() {
-        return prefContactAPI;
-    }
-
-    /**
-     * @deprecated This method is not used and will be removed soon.
-     */
-    @Deprecated
-    public Short getAppVersionCode() {
-        return appVersionCode;
-    }
-
-    /**
-     * @deprecated This url must not be changed.
-     */
-    @Deprecated
-    public void setAlBaseUrl(String alBaseUrl) {
-        this.alBaseUrl = alBaseUrl;
-    }
-
-    /**
-     * @deprecated This url must not be changed.
-     */
-    @Deprecated
-    public void setKmBaseUrl(String kmBaseUrl) {
-        this.kmBaseUrl = kmBaseUrl;
-    }
-
-    /**
-     * @deprecated No longer used.
-     */
-    @Deprecated
-    public Short getPushNotificationFormat() {
-        return pushNotificationFormat;
-    }
-
-    /**
-     * @deprecated No longer used.
-     */
-    @Deprecated
-    public void setPushNotificationFormat(Short pushNotificationFormat) {
-        this.pushNotificationFormat = pushNotificationFormat;
-    }
-
-    /**
-     * @deprecated This is now handled internally.
-     */
-    @Deprecated
-    public Long getLastMessageAtTime() {
-        return lastMessageAtTime;
-    }
-
-    /**
-     * @deprecated This is now handled internally.
-     */
-    @Deprecated
-    public void setLastMessageAtTime(Long lastMessageAtTime) {
-        this.lastMessageAtTime = lastMessageAtTime;
-    }
-
-    /**
-     * @deprecated Access to <code>appModuleName</code> is not needed.
-     */
-    @Deprecated
-    public String getAppModuleName() {
-        return appModuleName;
     }
 
     /**

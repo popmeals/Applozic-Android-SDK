@@ -47,10 +47,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
     private static final String UPDATE_ACCOUNT_URL = "/rest/ws/register/update?";
     private static final String CHECK_PRICING_PACKAGE = "/rest/ws/application/pricing/package";
     private static final String REFRESH_TOKEN_URL = "/rest/ws/register/refresh/token";
-    /**
-     * This is an internal field. Do not use.
-     */
-    public static final Short MOBICOMKIT_VERSION_CODE = 112;
     private static final String TAG = "RegisterUserClient";
     private static final String INVALID_APP_ID = "INVALID_APPLICATIONID"; //Cleanup: can be removed
     private HttpRequestUtils httpRequestUtils;
@@ -108,21 +104,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
      * @throws Exception in case of empty or invalid user-id (see {@link User#isValidUserId()}, and connection errors
      */
     public RegistrationResponse createAccount(User user) throws Exception {
-        if (user.getDeviceType() == null) {
-            user.setDeviceType(Short.valueOf("1"));
-        }
-        user.setPrefContactAPI(Short.valueOf("2"));
-        user.setTimezone(TimeZone.getDefault().getID());
-        user.setEnableEncryption(user.isEnableEncryption());
-
-        if (!TextUtils.isEmpty(user.getAlBaseUrl())) {
-            ALSpecificSettings.getInstance(context).setAlBaseUrl(user.getAlBaseUrl());
-        }
-
-        if (!TextUtils.isEmpty(user.getKmBaseUrl())) {
-            ALSpecificSettings.getInstance(context).setKmBaseUrl(user.getKmBaseUrl());
-        }
-
         if (TextUtils.isEmpty(user.getUserId())) {
             throw new ApplozicException("userId cannot be empty");
         }
@@ -134,7 +115,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
 
         Gson gson = new Gson();
-        user.setAppVersionCode(MOBICOMKIT_VERSION_CODE);
         user.setApplicationId(getApplicationKey(context));
         user.setRegistrationId(mobiComUserPreference.getDeviceRegistrationId());
 
@@ -187,7 +167,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
             if (registrationResponse.getNotificationAfter() != null) {
                 ALSpecificSettings.getInstance(context).setNotificationAfterTime(registrationResponse.getNotificationAfter());
             }
-            ApplozicClient.getInstance(context).skipDeletedGroups(user.isSkipDeletedGroups()).hideActionMessages(user.isHideActionMessages());
             if (!TextUtils.isEmpty(registrationResponse.getUserEncryptionKey())) {
                 mobiComUserPreference.setUserEncryptionKey(registrationResponse.getUserEncryptionKey());
             }
@@ -337,22 +316,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
      * @return registration response obtained from server
      */
     public RegistrationResponse updateRegisteredAccount(User user) throws Exception {
-        RegistrationResponse registrationResponse = null;
-
-        if (user.getDeviceType() == null) {
-            user.setDeviceType(Short.valueOf("1"));
-        }
-        user.setPrefContactAPI(Short.valueOf("2"));
-        user.setTimezone(TimeZone.getDefault().getID());
-        user.setAppVersionCode(MOBICOMKIT_VERSION_CODE);
-
-        if (!TextUtils.isEmpty(user.getAlBaseUrl())) {
-            ALSpecificSettings.getInstance(context).setAlBaseUrl(user.getAlBaseUrl());
-        }
-
-        if (!TextUtils.isEmpty(user.getKmBaseUrl())) {
-            ALSpecificSettings.getInstance(context).setKmBaseUrl(user.getKmBaseUrl());
-        }
+        RegistrationResponse registrationResponse;
 
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
 

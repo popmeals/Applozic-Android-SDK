@@ -51,7 +51,7 @@ public class Applozic {
     private SharedPreferences sharedPreferences;
     private Context context;
     private ApplozicBroadcastReceiver applozicBroadcastReceiver;
-    private AlLog.AlLoggerListener alLoggerListener;
+    private static AlLog.AlLoggerListener alLoggerListener;
 
     private Applozic(Context context) {
         this.context = ApplozicService.getContext(context);
@@ -460,7 +460,7 @@ public class Applozic {
      * @param tag The log tag.
      * @param message The log message.
      */
-    public void logInfo(String tag, String message) {
+    public static void logInfo(String tag, String message) {
         AlLog alLog = AlLog.i(tag, null, message);
 
         if (alLoggerListener != null) {
@@ -478,7 +478,7 @@ public class Applozic {
      * @param tag The log tag.
      * @param message The log message.
      */
-    public void logError(String tag, String message, Throwable throwable) {
+    public static void logError(String tag, String message, Throwable throwable) {
         AlLog alLog = AlLog.e(tag, null, message, throwable);
 
         if (alLoggerListener != null) {

@@ -179,9 +179,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
             if (user.getUserTypeId() != null) {
                 mobiComUserPreference.setUserTypeId(String.valueOf(user.getUserTypeId()));
             }
-            if (!TextUtils.isEmpty(user.getNotificationSoundFilePath())) {
-                Applozic.getInstance(context).setCustomNotificationSound(user.getNotificationSoundFilePath());
-            }
             Contact contact = new Contact();
             contact.setUserId(user.getUserId());
             contact.setFullName(registrationResponse.getDisplayName());
@@ -194,8 +191,8 @@ public class RegisterUserClientService extends MobiComKitClientService {
             contact.setRoleType(user.getRoleType());
             contact.setStatus(registrationResponse.getStatusMessage());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Applozic.getInstance(context).setNotificationChannelVersion(NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
-                new NotificationChannels(context, Applozic.getInstance(context).getCustomNotificationSound()).prepareNotificationChannels();
+                Applozic.Store.setNotificationChannelVersion(context, NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
+                new NotificationChannels(context).prepareNotificationChannels();
             }
             ApplozicClient.getInstance(context).setChatDisabled(contact.isChatForUserDisabled());
             new AppContactService(context).upsert(contact);

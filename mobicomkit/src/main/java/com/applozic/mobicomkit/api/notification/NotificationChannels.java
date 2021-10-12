@@ -38,9 +38,13 @@ public class NotificationChannels {
         this.mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
+    public NotificationChannels(Context context) {
+        this(context, Applozic.Store.getCustomNotificationSound(context));
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void prepareNotificationChannels() {
-        if (Applozic.getInstance(context).getNotificationChannelVersion() < NOTIFICATION_CHANNEL_VERSION) {
+        if (Applozic.Store.getNotificationChannelVersion(context) < NOTIFICATION_CHANNEL_VERSION) {
             if (isNotificationChannelCreated()) {
                 deleteNotificationChannel();
             }
@@ -48,7 +52,7 @@ public class NotificationChannels {
                 deleteSilentNotificationChannel();
             }
             if (isAppChannelCreated()) {
-                Applozic.getInstance(context).setCustomNotificationSound(null);
+                Applozic.Store.setCustomNotificationSound(context, null);
                 soundFilePath = null;
                 deleteAppNotificationChannel();
             }
@@ -67,7 +71,7 @@ public class NotificationChannels {
             createSilentNotificationChannel();
             createCallNotificationChannel();
 
-            Applozic.getInstance(context).setNotificationChannelVersion(NOTIFICATION_CHANNEL_VERSION);
+            Applozic.Store.setNotificationChannelVersion(context, NOTIFICATION_CHANNEL_VERSION);
         }
     }
 

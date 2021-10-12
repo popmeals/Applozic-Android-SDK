@@ -413,6 +413,13 @@ public class User extends JsonMarker {
     }
 
     /**
+     * This is an internal method. Do not use.
+     */
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    /**
      * This is an internal method. You will not need it.
      *
      * @see RoleType
@@ -480,14 +487,6 @@ public class User extends JsonMarker {
         public Short getValue() {
             return value;
         }
-    }
-
-    /**
-     * @deprecated You should not set the application-id manually.
-     */
-    @Deprecated
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
     }
 
     /**
@@ -597,7 +596,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no longer work. Use {@link Applozic#setCustomNotificationSound(String)} instead.
+     * @deprecated Use {@link Applozic.Store#setCustomNotificationSound(Context, String)} instead.
      *
      * Sets the local absolute path to a custom sound that will be played whenever notifications arrive for this user.
      */

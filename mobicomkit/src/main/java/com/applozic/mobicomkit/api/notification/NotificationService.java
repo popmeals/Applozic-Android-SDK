@@ -81,9 +81,9 @@ public class NotificationService {
         this.activityToOpen = Utils.getMetaDataValue(context, "activity.open.on.notification");
         this.messageDatabaseService = new MessageDatabaseService(context);
         this.notificationDisableThreshold = applozicClient.getNotificationMuteThreshold();
-        this.notificationFilePath = Applozic.getInstance(context).getCustomNotificationSound();
+        this.notificationFilePath = Applozic.Store.getCustomNotificationSound(context);
 
-        notificationChannels = new NotificationChannels(context, notificationFilePath);
+        notificationChannels = new NotificationChannels(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannels.prepareNotificationChannels();

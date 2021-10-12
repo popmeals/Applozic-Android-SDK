@@ -44,21 +44,18 @@ public class MobiComKitClientService {
     private static final String KM_PROD_BASE_URL = "https://api.kommunicate.io";
     private static final String KM_TEST_BASE_URL = "https://api-test.kommunicate.io";
 
-    public MobiComKitClientService() {
-
-    }
+    public MobiComKitClientService() { }
 
     public MobiComKitClientService(Context context) {
         this.context = ApplozicService.getContext(context);
     }
 
     //Cleanup: default
+    /**
+     * Internal. Use {@link Applozic#getApplicationKey()} instead.
+     */
     public static String getApplicationKey(Context context) {
-        String applicationKey = Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
-        if (!TextUtils.isEmpty(applicationKey)) {
-            return applicationKey;
-        }
-        return Utils.getMetaDataValue(ApplozicService.getContext(context), APPLICATION_KEY_HEADER_VALUE_METADATA);
+        return Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
     }
 
     //Cleanup: default

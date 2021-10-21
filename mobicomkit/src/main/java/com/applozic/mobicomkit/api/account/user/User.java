@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  * <p>Also see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
  */
 public class User extends JsonMarker {
-    private static final String LOG_TAG = "User";
+    private static final String TAG = "User";
 
     /**
      * @see #setUserId(String)
@@ -332,7 +332,7 @@ public class User extends JsonMarker {
      */
     public boolean isValidUserId() {
         if (TextUtils.isEmpty(userIdRegex)) {
-            Applozic.logError(LOG_TAG, "User-id regex is null or empty. The default value was overwritten.", null);
+            Applozic.logError(TAG, "User-id regex is null or empty. The default value was overwritten.", null);
             return false;
         }
         return Pattern.matches(userIdRegex, userId);
@@ -498,7 +498,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no longer return the base URL. Use {@link ALSpecificSettings#getAlBaseUrl()} instead.
+     * @deprecated Use {@link ALSpecificSettings#getAlBaseUrl()} instead.
      */
     @Deprecated
     public String getAlBaseUrl() {
@@ -508,7 +508,7 @@ public class User extends JsonMarker {
     /**
      * Base URl for all API calls.
      *
-     * @deprecated Will no longer set the base URL. Use {@link com.applozic.mobicommons.ALSpecificSettings#setAlBaseUrl(String)} instead.
+     * @deprecated Use {@link com.applozic.mobicommons.ALSpecificSettings#setAlBaseUrl(String)} instead.
      */
     @Deprecated
     public void setAlBaseUrl(String alBaseUrl) {
@@ -536,7 +536,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Use {@link #setMetadata(Map)} to work with custom data such as this.
+     * @deprecated Use {@link #setMetadata(Map)} instead, to work with custom data such as this.
      *
      * @see #setUserTypeId(Short)
      */
@@ -546,7 +546,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Use {@link #setMetadata(Map)} to work with custom data such as this.
+     * @deprecated Use {@link #setMetadata(Map)} instead, to work with custom data such as this.
      *
      * Identifies user sub-types.
      */
@@ -556,7 +556,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no longer work. Use {@link ApplozicClient#isSkipDeletedGroups()} instead.
+     * @deprecated Use {@link ApplozicClient#isSkipDeletedGroups()} instead.
      */
     @Deprecated
     public boolean isSkipDeletedGroups() {
@@ -564,7 +564,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no longer work. Use {@link com.applozic.mobicomkit.ApplozicClient#skipDeletedGroups(boolean)} instead.
+     * @deprecated Use {@link com.applozic.mobicomkit.ApplozicClient#skipDeletedGroups(boolean)} instead.
      */
     @Deprecated
     public void setSkipDeletedGroups(boolean skipDeletedGroups) {
@@ -572,7 +572,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no longer work. Use {@link ApplozicClient#isActionMessagesHidden()} instead.
+     * @deprecated Use {@link ApplozicClient#isActionMessagesHidden()} instead.
      */
     @Deprecated
     public boolean isHideActionMessages() {
@@ -580,7 +580,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no loner work. Use {@link com.applozic.mobicomkit.ApplozicClient#hideActionMessages(boolean)} instead.
+     * @deprecated Use {@link com.applozic.mobicomkit.ApplozicClient#hideActionMessages(boolean)} instead.
      */
     @Deprecated
     public void setHideActionMessages(boolean hideActionMessages) {
@@ -588,7 +588,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated Will no longer work. Use {@link Applozic#getCustomNotificationSound()} instead.
+     * @deprecated Use {@link Applozic#getCustomNotificationSound()} instead.
      */
     @Deprecated
     public String getNotificationSoundFilePath() {
@@ -694,7 +694,7 @@ public class User extends JsonMarker {
     }
 
     /**
-     * @deprecated This method should not be used.
+     * @deprecated Functionality not used anymore.
      */
     @Deprecated
     public void setDeviceType(Short deviceType) {

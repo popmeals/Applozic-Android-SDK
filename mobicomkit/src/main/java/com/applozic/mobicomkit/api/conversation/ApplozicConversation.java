@@ -243,4 +243,12 @@ public class ApplozicConversation {
             exception.printStackTrace();
         }
     }
+
+    public static class Channels {
+
+    }
+
+    public static class Contacts {
+
+    }
 }

@@ -2,6 +2,9 @@ package com.applozic.mobicomkit.api.conversation;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.people.ChannelInfo;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.listners.MediaUploadProgressHandler;
@@ -47,11 +50,10 @@ import java.util.Map;
  * <p>To receive messages, refer to {@link com.applozic.mobicomkit.broadcast.AlEventManager} and {@link com.applozic.mobicomkit.Applozic#connectPublish(Context)}.</p>
  */
 public class MessageBuilder {
-
     private Message message;
-    private Context context;
+    private final Context context;
 
-    public MessageBuilder(Context context) {
+    public MessageBuilder(@NonNull Context context) {
         this.message = new Message();
         this.context = context;
     }
@@ -59,7 +61,7 @@ public class MessageBuilder {
     /**
      * Sets the user-id of the receiver for a 1:1 chat.
      */
-    public MessageBuilder setTo(String to) {
+    public MessageBuilder setTo(@Nullable String to) {
         message.setTo(to);
         return this;
     }
@@ -67,7 +69,7 @@ public class MessageBuilder {
     /**
      * Set the message text. This is optional if you're sending an attachment.
      */
-    public MessageBuilder setMessage(String message) {
+    public MessageBuilder setMessage(@Nullable String message) {
         this.message.setMessage(message);
         return this;
     }
@@ -75,7 +77,7 @@ public class MessageBuilder {
     /**
      * Set the message {@link com.applozic.mobicomkit.api.conversation.Message.MessageType type}.
      */
-    public MessageBuilder setType(Short type) {
+    public MessageBuilder setType(@Nullable Short type) {
         message.setType(type);
         return this;
     }
@@ -85,7 +87,7 @@ public class MessageBuilder {
      *
      * <p>Images, video, audio, documents are supported.</p>
      */
-    public MessageBuilder setFilePath(String filePath) {
+    public MessageBuilder setFilePath(@Nullable String filePath) {
         List<String> pathList = new ArrayList<>();
         pathList.add(filePath);
         message.setFilePaths(pathList);
@@ -105,7 +107,7 @@ public class MessageBuilder {
      *
      * This is an alternative to {@link #setClientGroupId(String)}.
      */
-    public MessageBuilder setGroupId(Integer groupId) {
+    public MessageBuilder setGroupId(@Nullable Integer groupId) {
         message.setGroupId(groupId);
         return this;
     }
@@ -115,7 +117,7 @@ public class MessageBuilder {
      *
      * This is an alternative to {@link #setGroupId(Integer)}.
      */
-    public MessageBuilder setClientGroupId(String clientGroupId) {
+    public MessageBuilder setClientGroupId(@Nullable String clientGroupId) {
         message.setClientGroupId(clientGroupId);
         return this;
     }
@@ -123,7 +125,7 @@ public class MessageBuilder {
     /**
      * Sets any custom key-value data for the message.
      */
-    public MessageBuilder setMetadata(Map<String, String> metadata) {
+    public MessageBuilder setMetadata(@Nullable Map<String, String> metadata) {
         message.setMetadata(metadata);
         return this;
     }
@@ -131,7 +133,7 @@ public class MessageBuilder {
     /**
      * Alternatively, you can directly set a {@link Message} object to send.
      */
-    public MessageBuilder setMessageObject(Message message) {
+    public MessageBuilder setMessageObject(@Nullable Message message) {
         this.message = message;
         return this;
     }
@@ -153,7 +155,7 @@ public class MessageBuilder {
     /**
      * Sends the created message with attachment progress and success callbacks.
      */
-    public void send(MediaUploadProgressHandler handler) {
+    public void send(@Nullable MediaUploadProgressHandler handler) {
         new MobiComConversationService(context).sendMessageWithHandler(message, handler);
     }
 }

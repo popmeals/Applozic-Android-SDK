@@ -1,5 +1,6 @@
 package com.applozic.mobicomkit.channel.service;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -42,21 +43,23 @@ import java.util.Set;
 /**
  * Methods of this class handle {@link Channel} API calls and sync that data with the local database.
  *
+ * <p>Refer to {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels} for user-friendly, high-level <i>channel</i> methods.</p>
+ *
  * <p>To create a new <i>channel</i>, refer to {@link #createChannelWithResponse(ChannelInfo)}.</p>
  *
  * <p>For methods that solely deal with client API calls for channels, see {@link ChannelClientService}.</p>
  * <p>For methods that only handle local channel data, see {@link ChannelDatabaseService}.</p>
  */
 public class ChannelService {
-
     public static boolean isUpdateTitle = false;
+    @SuppressLint("StaticFieldLeak") //only application context is passed
     private static ChannelService channelService;
     public Context context; //Cleanup: private
     private ChannelDatabaseService channelDatabaseService;
     private ChannelClientService channelClientService;
     private BaseContactService baseContactService;
     private UserService userService;
-    private String loggedInUserId;
+    private final String loggedInUserId;
 
     private ChannelService(Context context) {
         this.context = ApplozicService.getContext(context);
@@ -67,6 +70,9 @@ public class ChannelService {
         loggedInUserId = MobiComUserPreference.getInstance(context).getUserId();
     }
 
+    /**
+     * @param context pass the <i>application context</i>
+     */
     public synchronized static ChannelService getInstance(Context context) {
         if (channelService == null) {
             channelService = new ChannelService(ApplozicService.getContext(context));
@@ -92,10 +98,6 @@ public class ChannelService {
     @VisibleForTesting
     public void setContactService(AppContactService appContactService) {
         this.baseContactService = appContactService;
-    }
-
-    public Channel getChannelInfoFromLocalDb(Integer key) {
-        return channelDatabaseService.getChannelByChannelKey(key);
     }
 
     /**
@@ -1178,5 +1180,13 @@ public class ChannelService {
      */
     public boolean isLoggedInUserAdminInChannel(Channel channel) {
         return isUserAdminInChannel(loggedInUserId, channel);
+    }
+
+    /**
+     * @deprecated Use {@link ChannelDatabaseService#getChannelByChannelKey(Integer)}.
+     */
+    @Deprecated
+    public Channel getChannelInfoFromLocalDb(Integer key) {
+        return channelDatabaseService.getChannelByChannelKey(key);
     }
 }

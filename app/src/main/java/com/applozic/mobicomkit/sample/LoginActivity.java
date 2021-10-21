@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.applozic.mobicomkit.Applozic;
@@ -251,7 +252,7 @@ public class LoginActivity extends Activity implements ActivityCompat.OnRequestP
 
             Applozic.connectUser(this, user, new AlLoginHandler() {
                 @Override
-                public void onSuccess(RegistrationResponse registrationResponse, final Context context) {
+                public void onSuccess(@NonNull RegistrationResponse registrationResponse, final Context context) {
                     // After successful registration with Applozic server the callback will come here
                     mAuthTask = null;
                     showProgress(false);

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
@@ -26,40 +29,51 @@ import com.applozic.mobicommons.people.contact.Contact;
 import com.google.gson.Gson;
 
 import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
- * Handles registration and authentication for your {@link User} and login session.
+ * This is an internal class.
+ * <ul>
+ *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</li>
+ *     <li>To register your login session, see the {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask}.</li>
+ * </ul>
+ *
+ * <p>Handles registration and authentication for your {@link User} and login session.</p>
  *
  * <p>The <i>user</i></p> need to be registered/authenticated before any of the SDK's methods can be used.
  * <p>The <i>login session</i> needs to be registered if you want real-time updates to be delivered.</p>
- *
- * <ul>
- *     <li>To register or authenticate a user, see the doc for {@link RegisterUserClientService#createAccount(User)}.</li>
- *     <li>To register your login session, see the doc for {@link RegisterUserClientService#updatePushNotificationId(String)}.</li>
- * </ul>
  */
 public class RegisterUserClientService extends MobiComKitClientService {
+    private static final String TAG = "RegisterUserClient";
+
     private static final String CREATE_ACCOUNT_URL = "/rest/ws/register/client?";
     private static final String UPDATE_ACCOUNT_URL = "/rest/ws/register/update?";
     private static final String CHECK_PRICING_PACKAGE = "/rest/ws/application/pricing/package";
     private static final String REFRESH_TOKEN_URL = "/rest/ws/register/refresh/token";
-    private static final String TAG = "RegisterUserClient";
-    private static final String INVALID_APP_ID = "INVALID_APPLICATIONID"; //Cleanup: can be removed
-    private HttpRequestUtils httpRequestUtils;
+
+    private final HttpRequestUtils httpRequestUtils;
 
     /**
      * Constructor. Also stores the application context. You can access later it using {@link ApplozicService#getAppContext()}.
-     *
-     * @param context the context
      */
-    public RegisterUserClientService(Context context) {
+    public RegisterUserClientService(@NonNull Context context) {
         this.context = ApplozicService.getContext(context);
         ApplozicService.initWithContext(context);
         this.httpRequestUtils = new HttpRequestUtils(context);
+    }
+
+    private @NonNull User getLoggedInUserDetailFromSharedPref() {
+        MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
+
+        User user = new User();
+        user.setEmail(pref.getEmailIdValue());
+        user.setUserId(pref.getUserId());
+        user.setContactNumber(pref.getContactNumber());
+        user.setDisplayName(pref.getDisplayName());
+        user.setImageLink(pref.getImageLink());
+        user.setRoleType(pref.getUserRoleType());
+        return user;
     }
 
     //Cleanup: private
@@ -95,15 +109,15 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This method registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.
+     * This is an internal method. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
      *
-     * Do not use this method directly. Use the <i>asynchronous</i> {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
+     * <p>This method registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.</p>
      *
      * @param user the user object to register/authenticate
      * @return the {@link RegistrationResponse}, {@link RegistrationResponse#isRegistrationSuccess()} will be true in case of a successful login/register. otherwise {@link RegistrationResponse#getMessage()} will have the error message
      * @throws Exception in case of empty or invalid user-id (see {@link User#isValidUserId()}, and connection errors
      */
-    public RegistrationResponse createAccount(User user) throws Exception {
+    public @NonNull RegistrationResponse createAccount(@NonNull User user) throws Exception {
         if (TextUtils.isEmpty(user.getUserId())) {
             throw new ApplozicException("userId cannot be empty");
         }
@@ -207,92 +221,21 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This method gets a fresh JWT authentication token from the Applozic servers and saves it locally for application use.
+     * This is an internal method. Use {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask} instead.
      *
-     * <p><b>Note:</b> You do not need to use this method and refresh the JWT token manually. All this is handled by the SDK.</p>
-     *
-     * <p><i>What is this JWT token?</i></p>
-     * <p>The JWT token is used for authentication/authorization of user level server calls.
-     * This token is received from the backend after your user has been successfully logged-in or registered.</p>
-     *
-     * @see com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask
-     *
-     * @param applicationId the Applozic application id
-     * @param userId the user id of the user to get the auth token for
-     * @return true if the auth token was successfully retrieved and saved/false otherwise
-     */
-    public boolean refreshAuthToken(String applicationId, String userId) {
-        try {
-            HttpRequestUtils.isRefreshTokenInProgress = true;
-            Map<String, String> tokenRefreshBodyMap = new HashMap<>();
-            tokenRefreshBodyMap.put("applicationId", applicationId);
-            tokenRefreshBodyMap.put("userId", userId);
-            String response = httpRequestUtils.postDataForAuthToken(getRefreshTokenUrl(), "application/json", "application/json", GsonUtils.getJsonFromObject(tokenRefreshBodyMap, Map.class), userId);
-            if (!TextUtils.isEmpty(response)) {
-                ApiResponse<String> jwtTokenResponse = (ApiResponse<String>) GsonUtils.getObjectFromJson(response, ApiResponse.class);
-                if (jwtTokenResponse != null && !TextUtils.isEmpty(jwtTokenResponse.getResponse())) {
-                    JWT.parseToken(context, jwtTokenResponse.getResponse());
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    //Cleanup: can be removed
-    /**
-     * @deprecated Use {@link RegisterUserClientService#createAccount(User)} instead.
-     */
-    @Deprecated
-    public RegistrationResponse createAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
-        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-        String url = mobiComUserPreference.getUrl();
-        mobiComUserPreference.clearAll();
-        mobiComUserPreference.setUrl(url);
-
-        return updateAccount(email, userId, phoneNumber, displayName, imageLink, pushNotificationId);
-    }
-
-    //Cleanup: can be removed
-    /**
-     * @deprecated This method is no longer used and will be removed soon.
-     */
-    @Deprecated
-    private RegistrationResponse updateAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
-        User user = new User();
-        user.setUserId(userId);
-        user.setEmail(email);
-        user.setImageLink(imageLink);
-        user.setRegistrationId(pushNotificationId);
-        user.setDisplayName(displayName);
-        user.setContactNumber(phoneNumber);
-
-        final RegistrationResponse registrationResponse = createAccount(user);
-
-        ApplozicMqttWorker.enqueueWorkConnectPublish(context);
-
-        return registrationResponse;
-    }
-
-    //Cleanup: can be removed, is used in just the PushNotificationTask
-    /**
      * Updates the user's account with the registration-id from <i>Firebase Cloud Messaging</i>.
      *
      * <p>FCM is used for providing real-time updates for messages and other events to your device.</p>
      *
-     * <p>This method will block the main thread. Use the asynchronous {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask} instead.</p>
-     *
      * @param pushNotificationId the <i>registration id/token</i> received from <i>Firebase Cloud Messaging</i>
      * @return the user account update response from the server
      */
-    public RegistrationResponse updatePushNotificationId(final String pushNotificationId) throws Exception {
+    public @Nullable RegistrationResponse updatePushNotificationId(@Nullable final String pushNotificationId) throws Exception {
         MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
         //Note: In case if gcm registration is done before login then only updating in pref
 
         RegistrationResponse registrationResponse = null;
-        User user = getUserDetail();
+        User user = getLoggedInUserDetailFromSharedPref();
 
         if (!TextUtils.isEmpty(pushNotificationId)) {
             pref.setDeviceRegistrationId(pushNotificationId);
@@ -305,14 +248,13 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This method updates the user's details in the backend.
+     * This is an internal method. You do not need to use it.
      *
-     * <p>This is an internal method. You do not need to use it.</p>
+     * <p>Updates the user's account details in the backend.</p>
      *
-     * @param user the user data
-     * @return registration response obtained from server
+     * @throws Exception in-case of empty/invalid response
      */
-    public RegistrationResponse updateRegisteredAccount(User user) throws Exception {
+    public @NonNull RegistrationResponse updateRegisteredAccount(@NonNull User user) throws Exception {
         RegistrationResponse registrationResponse;
 
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
@@ -348,19 +290,40 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return registrationResponse;
     }
 
-    private User getUserDetail() {
-
-        MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
-
-        User user = new User();
-        user.setEmail(pref.getEmailIdValue());
-        user.setUserId(pref.getUserId());
-        user.setContactNumber(pref.getContactNumber());
-        user.setDisplayName(pref.getDisplayName());
-        user.setImageLink(pref.getImageLink());
-        user.setRoleType(pref.getUserRoleType());
-        return user;
+    /**
+     * This is an internal method. Refreshing the JWT token is handled by the SDK.
+     *
+     * <p><i>What is this JWT token?</i></p>
+     * <p>The JWT token is used for authentication/authorization of user level server calls.
+     * This token is received from the backend after your user has been successfully logged-in or registered.</p>
+     *
+     * @see com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask
+     *
+     * @param applicationId the Applozic application id
+     * @param userId the user id of the user to get the auth token for
+     * @return true if the auth token was successfully retrieved and saved/false otherwise
+     */
+    public boolean refreshAuthToken(@Nullable String applicationId, @Nullable String userId) {
+        try {
+            HttpRequestUtils.isRefreshTokenInProgress = true;
+            Map<String, String> tokenRefreshBodyMap = new HashMap<>();
+            tokenRefreshBodyMap.put("applicationId", applicationId);
+            tokenRefreshBodyMap.put("userId", userId);
+            String response = httpRequestUtils.postDataForAuthToken(getRefreshTokenUrl(), "application/json", "application/json", GsonUtils.getJsonFromObject(tokenRefreshBodyMap, Map.class), userId);
+            if (!TextUtils.isEmpty(response)) {
+                ApiResponse<String> jwtTokenResponse = (ApiResponse<String>) GsonUtils.getObjectFromJson(response, ApiResponse.class);
+                if (jwtTokenResponse != null && !TextUtils.isEmpty(jwtTokenResponse.getResponse())) {
+                    JWT.parseToken(context, jwtTokenResponse.getResponse());
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
+
+    //deprecated code >>>
 
     //Cleanup: can be removed
     /**
@@ -379,5 +342,40 @@ public class RegisterUserClientService extends MobiComKitClientService {
         } catch (Exception e) {
             Utils.printLog(context, TAG, "Account status sync call failed");
         }
+    }
+
+    //Cleanup: can be removed
+    /**
+     * @deprecated Use {@link RegisterUserClientService#createAccount(User)} instead.
+     */
+    @Deprecated
+    public RegistrationResponse createAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
+        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+        String url = mobiComUserPreference.getUrl();
+        mobiComUserPreference.clearAll();
+        mobiComUserPreference.setUrl(url);
+
+        return updateAccount(email, userId, phoneNumber, displayName, imageLink, pushNotificationId);
+    }
+
+    //Cleanup: can be removed
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
+    private RegistrationResponse updateAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
+        User user = new User();
+        user.setUserId(userId);
+        user.setEmail(email);
+        user.setImageLink(imageLink);
+        user.setRegistrationId(pushNotificationId);
+        user.setDisplayName(displayName);
+        user.setContactNumber(phoneNumber);
+
+        final RegistrationResponse registrationResponse = createAccount(user);
+
+        ApplozicMqttWorker.enqueueWorkConnectPublish(context);
+
+        return registrationResponse;
     }
 }

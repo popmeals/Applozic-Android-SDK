@@ -147,7 +147,7 @@ public class Applozic {
      *
      * @param loginHandler receives success/failure callbacks
      */
-    public static void connectUser(Context context, User user, AlLoginHandler loginHandler) {
+    public static void connectUser(@NonNull Context context, @NonNull User user, @Nullable AlLoginHandler loginHandler) {
         if (isConnected(context)) {
             RegistrationResponse registrationResponse = new RegistrationResponse();
             registrationResponse.setMessage("User already Logged in");
@@ -160,7 +160,9 @@ public class Applozic {
                 registrationResponse.setDisplayName(contact.getDisplayName());
                 registrationResponse.setStatusMessage(contact.getStatus());
             }
-            loginHandler.onSuccess(registrationResponse, context);
+            if (loginHandler != null) {
+                loginHandler.onSuccess(registrationResponse, context);
+            }
         } else {
             AlTask.execute(new UserLoginTask(user, loginHandler, context));
         }

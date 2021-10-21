@@ -35,6 +35,7 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.data.AlPrefSettings;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
+import com.applozic.mobicommons.task.AlAsyncTask;
 import com.applozic.mobicommons.task.AlTask;
 
 import java.util.ArrayList;
@@ -121,6 +122,38 @@ public class Applozic {
             return Utils.getMetaDataValue(ApplozicService.getContext(context), APPLICATION_KEY_MANIFEST_METADATA);
         }
     }
+
+    //new api >>>
+
+    /**
+     * Logout the current user.
+     * @see UserClientService#logout(boolean)
+     *
+     * <code>
+     *     //this will run in calling thread
+     *     Boolean success = logoutUser(context).executeSync();
+     *
+     *     //this will execute in a background thread
+     *     logoutUser(context).executeAsync(new BaseAsyncTask.AsyncListener<Boolean>() {
+     *         @Override
+     *         public void onComplete(Boolean aBoolean) { }
+     *
+     *         @Override
+     *         public void onFailed(Throwable t) { }
+     *     });
+     * </code>
+     */
+    public static AlAsyncTask<Void, Boolean> logoutUser(Context context) {
+        return new AlAsyncTask<Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground() {
+                new UserClientService(context).logout();
+                return true;
+            }
+        };
+    }
+
+    //<<< new api
 
     /**
      * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.

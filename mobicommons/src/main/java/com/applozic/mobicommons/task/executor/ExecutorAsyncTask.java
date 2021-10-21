@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.applozic.mobicommons.task.BaseAsyncTask;
 
@@ -55,17 +56,20 @@ public abstract class ExecutorAsyncTask<Progress, Result> extends BaseAsyncTask<
                 Binder.flushPendingCommands();
             } catch (Throwable t) {
                 cancelled.set(true);
+                if (asyncListener != null) {
+                    asyncListener.onFailed(t);
+                }
                 throw t;
             } finally {
                 status = Status.FINISHED;
-                postResult(result);
+                postResult(result, asyncListener);
             }
             return result;
         }
     };
 
     @Override
-    public void execute() {
+    public void execute(@Nullable AsyncListener<Result> asyncListener) {
         if (status != Status.PENDING) {
             switch (status) {
                 case RUNNING:
@@ -80,35 +84,54 @@ public abstract class ExecutorAsyncTask<Progress, Result> extends BaseAsyncTask<
 
         onPreExecute();
         status = Status.RUNNING;
-        executeTask();
+        executeTask(asyncListener);
     }
 
-    private void executeTask() {
+    private void executeTask(@Nullable final AsyncListener<Result> asyncListener) {
+        if (asyncListener != null) {
+            worker.asyncListener = asyncListener;
+        }
         future = new FutureTask<Result>(worker) {
             @Override
             protected void done() {
                 try {
-                    postResultIfNotInvoked(get());
+                    Result result = get();
+                    postResultIfNotInvoked(result);
+                    if (asyncListener != null) {
+                        asyncListener.onComplete(result);
+                    }
                 } catch (InterruptedException e) {
                     android.util.Log.w(TAG, e);
+                    if (asyncListener != null) {
+                        asyncListener.onFailed(e.getCause());
+                    }
                 } catch (ExecutionException e) {
                     throw new RuntimeException("An error occurred while executing doInBackground()", e.getCause());
                 } catch (CancellationException e) {
                     postResultIfNotInvoked(null);
+                    if (asyncListener != null) {
+                        asyncListener.onFailed(new Throwable("Task cancelled."));
+                    }
                 }
             }
         };
         executor.execute(future);
     }
 
-    private void postResult(final Result result) {
+    private void postResult(final Result result, final AsyncListener<Result> asyncListener) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 if(!isCancelled()) {
                     onPostExecute(result);
+                    if (asyncListener != null) {
+                        asyncListener.onComplete(result);
+                    }
                 } else {
                     onCancelled();
+                    if (asyncListener != null) {
+                        asyncListener.onFailed(new Throwable("Task cancelled."));
+                    }
                 }
             }
         });
@@ -117,7 +140,7 @@ public abstract class ExecutorAsyncTask<Progress, Result> extends BaseAsyncTask<
     private void postResultIfNotInvoked(Result result) {
         final boolean wasTaskInvoked = taskInvoked.get();
         if (!wasTaskInvoked) {
-            postResult(result);
+            postResult(result, null);
         }
     }
 
@@ -140,7 +163,9 @@ public abstract class ExecutorAsyncTask<Progress, Result> extends BaseAsyncTask<
         return future.get();
     }
 
-    private static abstract class WorkerRunnable<Result> implements Callable<Result> { }
+    private static abstract class WorkerRunnable<Result> implements Callable<Result> {
+        AsyncListener<Result> asyncListener;
+    }
 
     public enum Status {
         /**

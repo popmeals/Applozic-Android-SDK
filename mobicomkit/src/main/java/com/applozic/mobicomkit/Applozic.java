@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
@@ -244,6 +245,37 @@ public class Applozic {
     }
 
     /**
+     * Refreshes the JWT authentication token and saves it locally for future use.
+     * This token is used by the SDK to authenticate all future API calls.
+     *
+     * <p>To save unnecessary calls, run this task only if {@link AlAuthService#isTokenValid(Context)} returns <code>false</code>.</p>
+     *
+     * <code>
+     *     //this will run in calling thread
+     *     Boolean success = Applozic.refreshAuthToken(context).executeSync();
+     *
+     *     //this will execute in a background thread
+     *     Applozic.refreshAuthToken(context).executeAsync(new BaseAsyncTask.AsyncListener<Boolean>() {
+     *         @Override
+     *         public void onComplete(Boolean aBoolean) { }
+     *
+     *         @Override
+     *         public void onFailed(Throwable t) { }
+     *     });
+     * </code>
+     *
+     * <p><i><b>Note:</b> <code>aBoolean</code> will be true for success, false otherwise.
+     */
+    public static @NonNull AlAsyncTask<Void, Boolean> refreshAuthToken(@NonNull Context context) {
+        return new AlAsyncTask<Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground() {
+                return new RegisterUserClientService(context).refreshAuthToken(Applozic.getInstance(context).getApplicationKey(), MobiComUserPreference.getInstance(context).getUserId());
+            }
+        };
+    }
+
+    /**
      * Checks if a user is connected and authenticated.
      *
      * <p>The SDK can be used only after a user has been logged in/connected.</p>
@@ -259,7 +291,7 @@ public class Applozic {
      * Asynchronously connects to MQTT for receiving messages and other chat events.
      *
      * <p>Before calling this method, make sure that {@link AlAuthService#isTokenValid(Context)} returns true.</p>
-     * <p>Otherwise refresh the token first using {@link RefreshAuthTokenTask}.</p>
+     * <p>Otherwise refresh the token first using {@link #refreshAuthToken(Context)}.</p>
      *
      * <p>MQTT will receive messages only for the <i>application</i> lifecycle. You can alternatively use {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
      */

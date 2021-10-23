@@ -35,13 +35,12 @@ import java.util.Map;
 import java.util.TimeZone;
 
 /**
- * This is an internal class.
+ * <p>Handles registration and authentication for your {@link User} and login session.</p>
+ *
  * <ul>
  *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User)}.</li>
  *     <li>To register your login session, see the {@link Applozic#registerForPushNotification(Context, String)}.</li>
  * </ul>
- *
- * <p>Handles registration and authentication for your {@link User} and login session.</p>
  *
  * <p>The <i>user</i></p> need to be registered/authenticated before any of the SDK's methods can be used.
  * <p>The <i>login session</i> needs to be registered if you want real-time updates to be delivered.</p>
@@ -83,42 +82,10 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return user;
     }
 
-    //Cleanup: private
     /**
-     * This is an internal method. Do not use.
-     */
-    public String getCreateAccountUrl() {
-        return getBaseUrl() + CREATE_ACCOUNT_URL;
-    }
-
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getPricingPackageUrl() {
-        return getBaseUrl() + CHECK_PRICING_PACKAGE;
-    }
-
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getUpdateAccountUrl() {
-        return getBaseUrl() + UPDATE_ACCOUNT_URL;
-    }
-
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getRefreshTokenUrl() {
-        return getBaseUrl() + REFRESH_TOKEN_URL;
-    }
-
-    /**
-     * This is an internal method. Use {@link Applozic#connectUser(Context, User)} instead.
+     * This is an internal method. Use {@link Applozic#connectUser(Context, User)}.
      *
-     * <p>This method registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.</p>
+     * <p>Registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.</p>
      *
      * @param user the user object to register/authenticate
      * @return the {@link RegistrationResponse}, {@link RegistrationResponse#isRegistrationSuccess()} will be true in case of a successful login/register. otherwise {@link RegistrationResponse#getMessage()} will have the error message
@@ -248,6 +215,69 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
+     * <p><i>What is this JWT token?</i></p>
+     * <p>The JWT token is used for authentication/authorization of user level server calls.
+     * This token is received from the backend after your user has been successfully logged-in or registered.</p>
+     *
+     * @param applicationId the Applozic application id
+     * @param userId the user id of the user to get the auth token for
+     * @return true if the auth token was successfully retrieved and saved/false otherwise
+     */
+    public boolean refreshAuthToken(@Nullable String applicationId, @Nullable String userId) {
+        try {
+            HttpRequestUtils.isRefreshTokenInProgress = true;
+            Map<String, String> tokenRefreshBodyMap = new HashMap<>();
+            tokenRefreshBodyMap.put("applicationId", applicationId);
+            tokenRefreshBodyMap.put("userId", userId);
+            String response = httpRequestUtils.postDataForAuthToken(getRefreshTokenUrl(), "application/json", "application/json", GsonUtils.getJsonFromObject(tokenRefreshBodyMap, Map.class), userId);
+            if (!TextUtils.isEmpty(response)) {
+                ApiResponse<String> jwtTokenResponse = (ApiResponse<String>) GsonUtils.getObjectFromJson(response, ApiResponse.class);
+                if (jwtTokenResponse != null && !TextUtils.isEmpty(jwtTokenResponse.getResponse())) {
+                    JWT.parseToken(context, jwtTokenResponse.getResponse());
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //internal methods >>>
+
+    //Cleanup: private
+    /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getCreateAccountUrl() {
+        return getBaseUrl() + CREATE_ACCOUNT_URL;
+    }
+
+    //Cleanup: private
+    /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getPricingPackageUrl() {
+        return getBaseUrl() + CHECK_PRICING_PACKAGE;
+    }
+
+    //Cleanup: private
+    /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getUpdateAccountUrl() {
+        return getBaseUrl() + UPDATE_ACCOUNT_URL;
+    }
+
+    //Cleanup: private
+    /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getRefreshTokenUrl() {
+        return getBaseUrl() + REFRESH_TOKEN_URL;
+    }
+
+    /**
      * Internal method. Adds a logged in check to {@link #createAccount(User)}.
      */
     public @NonNull RegistrationResponse checkLoggedInAndCreateAccount(@NonNull User user) throws Exception {
@@ -352,39 +382,6 @@ public class RegisterUserClientService extends MobiComKitClientService {
         }
 
         return registrationResponse;
-    }
-
-    /**
-     * This is an internal method. Refreshing the JWT token is handled by the SDK.
-     *
-     * <p><i>What is this JWT token?</i></p>
-     * <p>The JWT token is used for authentication/authorization of user level server calls.
-     * This token is received from the backend after your user has been successfully logged-in or registered.</p>
-     *
-     * @see com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask
-     *
-     * @param applicationId the Applozic application id
-     * @param userId the user id of the user to get the auth token for
-     * @return true if the auth token was successfully retrieved and saved/false otherwise
-     */
-    public boolean refreshAuthToken(@Nullable String applicationId, @Nullable String userId) {
-        try {
-            HttpRequestUtils.isRefreshTokenInProgress = true;
-            Map<String, String> tokenRefreshBodyMap = new HashMap<>();
-            tokenRefreshBodyMap.put("applicationId", applicationId);
-            tokenRefreshBodyMap.put("userId", userId);
-            String response = httpRequestUtils.postDataForAuthToken(getRefreshTokenUrl(), "application/json", "application/json", GsonUtils.getJsonFromObject(tokenRefreshBodyMap, Map.class), userId);
-            if (!TextUtils.isEmpty(response)) {
-                ApiResponse<String> jwtTokenResponse = (ApiResponse<String>) GsonUtils.getObjectFromJson(response, ApiResponse.class);
-                if (jwtTokenResponse != null && !TextUtils.isEmpty(jwtTokenResponse.getResponse())) {
-                    JWT.parseToken(context, jwtTokenResponse.getResponse());
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     //deprecated code >>>

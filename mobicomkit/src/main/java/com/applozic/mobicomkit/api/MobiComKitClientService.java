@@ -3,6 +3,8 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 
@@ -64,7 +66,7 @@ public class MobiComKitClientService {
     }
 
     //Cleanup: protected
-    public String getBaseUrl() {
+    public @NonNull String getBaseUrl() {
         String SELECTED_BASE_URL = MobiComUserPreference.getInstance(context).getUrl();
 
         if (!TextUtils.isEmpty(SELECTED_BASE_URL)) {
@@ -77,7 +79,7 @@ public class MobiComKitClientService {
         }
 
         String BASE_URL = Utils.getMetaDataValue(context.getApplicationContext(), BASE_URL_METADATA);
-        if (!TextUtils.isEmpty(BASE_URL)) {
+        if (BASE_URL != null && !TextUtils.isEmpty(BASE_URL)) {
             return BASE_URL;
         }
 

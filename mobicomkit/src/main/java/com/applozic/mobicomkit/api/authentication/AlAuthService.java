@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.listners.AlCallback;
 import com.applozic.mobicommons.task.AlTask;
@@ -61,7 +64,7 @@ public class AlAuthService {
     /**
      * Refreshes, decodes and saves token in local storage.
      */
-    public static void verifyToken(Context context, String loadingMessage, AlCallback callback) {
+    public static void verifyToken(@Nullable Context context, @Nullable String loadingMessage, @Nullable AlCallback callback) {
         if (context == null) {
             return;
         }
@@ -91,7 +94,7 @@ public class AlAuthService {
     /**
      * Get a fresh token from the server and replaces the current (invalid) one with it.
      */
-    public static void refreshToken(Context context, String loadingMessage, final AlCallback callback) {
+    public static void refreshToken(@NonNull Context context, @Nullable String loadingMessage, @Nullable final AlCallback callback) {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity(context));
         progressDialog.setMessage(loadingMessage);
         progressDialog.setCancelable(false);

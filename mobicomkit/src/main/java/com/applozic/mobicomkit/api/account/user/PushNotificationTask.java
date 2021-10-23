@@ -13,6 +13,8 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#registerForPushNotification(Context, String)}.
+ *
  * Enables push notifications, for messages and other events.
  *
  * <p>To set up:</p>
@@ -46,6 +48,7 @@ import java.lang.ref.WeakReference;
  *
  * <p>If you're running in a background thread, you can instead use {@link RegisterUserClientService#updatePushNotificationId(String)}.
  */
+@Deprecated
 public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
     private final String firebaseRegistrationToken;
     private final WeakReference<Context> context;
@@ -64,7 +67,7 @@ public class PushNotificationTask extends AlAsyncTask<Void, Boolean> {
 
     /**
      * @deprecated Instantiation using this constructor solves no unique purpose.
-     * Use {@link PushNotificationTask#PushNotificationTask(Context, String, AlPushNotificationHandler)} instead.
+     * Use {@link #PushNotificationTask(Context, String, AlPushNotificationHandler)} instead.
      */
     @Deprecated
     public PushNotificationTask(String pushNotificationId, TaskListener listener, Context context) {

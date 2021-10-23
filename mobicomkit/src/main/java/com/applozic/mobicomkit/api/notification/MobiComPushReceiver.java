@@ -7,6 +7,9 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -164,7 +167,7 @@ public class MobiComPushReceiver {
     }
 
     //the MqttMessageResponse objects used in this class are not actual MQTT responses, but just their data model is used
-    public static void processMessage(Context context, Bundle bundle, Map<String, String> data) {
+    public static void processMessage(@NonNull Context context, @Nullable Bundle bundle, @Nullable Map<String, String> data) {
 
         try {
             String payloadForDelivered = null, userConnected = null,
@@ -522,7 +525,7 @@ public class MobiComPushReceiver {
         processMessageAsync(context, intent.getExtras());
     }
 
-    public static void processMessageAsync(final Context context, final Map<String, String> data) {
+    public static void processMessageAsync(@NonNull final Context context, @Nullable final Map<String, String> data) {
         try {
             if (MobiComUserPreference.getInstance(context).isLoggedIn()) {
 
@@ -540,11 +543,11 @@ public class MobiComPushReceiver {
         }
     }
 
-    public static void processMessage(Context context, Map<String, String> data) {
+    public static void processMessage(@NonNull Context context, @Nullable Map<String, String> data) {
         processMessage(context, null, data);
     }
 
-    public static void processMessage(Context context, Bundle bundle) {
+    public static void processMessage(@NonNull Context context, @Nullable Bundle bundle) {
         processMessage(context, bundle, null);
     }
 

@@ -163,10 +163,42 @@ public class UserClientService extends MobiComKitClientService {
         return getBaseUrl() + USER_SEARCH_URL;
     }
 
+    //Cleanup: private
+    //Cleanup: fromLogin is always false
     /**
-     * Performs logout for the current user.
+     * Internal. This methods has a un-necessary parameter.
      *
-     * Use {@link UserLogoutTask} or {@link Applozic#logoutUser(Context, AlLogoutHandler)}. They wrap around this method asynchronously.
+     * @param fromLogin pass false
+     * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
+     */
+    public ApiResponse logout(boolean fromLogin) {
+        Utils.printLog(context, TAG, "Al Logout call !!");
+        ApiResponse apiResponse = userLogoutResponse();
+        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+        final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
+        final String userKeyString = mobiComUserPreference.getSuUserKeyString();
+        String url = mobiComUserPreference.getUrl();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Applozic.Store.setCustomNotificationSound(context, null);
+            new NotificationChannels(context).deleteAllChannels();
+        }
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        mobiComUserPreference.clearAll();
+        ALSpecificSettings.getInstance(context).clearAll();
+        MessageDatabaseService.recentlyAddedMessage.clear();
+        MobiComDatabaseHelper.getInstance(context).delDatabase();
+        mobiComUserPreference.setUrl(url);
+        if (!fromLogin) {
+            ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
+        }
+        return apiResponse;
+    }
+
+    /**
+     * Internal method. Performs logout for the current user.
+     *
+     * Use {@link Applozic#logoutUser(Context)}.
      *
      * <p>A logout server call will be sent. Along with that:
      * - {@link MobiComUserPreference} shared preference will be cleared.
@@ -202,38 +234,6 @@ public class UserClientService extends MobiComKitClientService {
         mobiComUserPreference.setUrl(url);
 
         ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
-    }
-
-    //Cleanup: private
-    //Cleanup: fromLogin is always false
-    /**
-     * @deprecated This methods has a un-necessary parameter. Use {@link UserClientService#logout()} instead.
-     *
-     * @param fromLogin pass false
-     * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
-     */
-    public ApiResponse logout(boolean fromLogin) {
-        Utils.printLog(context, TAG, "Al Logout call !!");
-        ApiResponse apiResponse = userLogoutResponse();
-        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-        final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
-        final String userKeyString = mobiComUserPreference.getSuUserKeyString();
-        String url = mobiComUserPreference.getUrl();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Applozic.Store.setCustomNotificationSound(context, null);
-            new NotificationChannels(context).deleteAllChannels();
-        }
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        mobiComUserPreference.clearAll();
-        ALSpecificSettings.getInstance(context).clearAll();
-        MessageDatabaseService.recentlyAddedMessage.clear();
-        MobiComDatabaseHelper.getInstance(context).delDatabase();
-        mobiComUserPreference.setUrl(url);
-        if (!fromLogin) {
-            ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
-        }
-        return apiResponse;
     }
 
     //Cleanup: rename to something more suitable for a public api

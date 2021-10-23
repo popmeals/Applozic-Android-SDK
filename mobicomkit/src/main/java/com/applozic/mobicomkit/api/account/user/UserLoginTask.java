@@ -13,7 +13,9 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * An asynchronous login/registration task used to authenticate the user.
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#connectUser(Context, User)} instead.
+ *
+ * <p>An asynchronous login/registration task used to authenticate the user.</p>
  *
  * <p>It provides an async wrapper for {@link RegisterUserClientService#createAccount(User)}.
  * It also wipes out the existing shared preferences before it starts the login process.</p>
@@ -41,9 +43,8 @@ import java.lang.ref.WeakReference;
  *     //for versions prior to v5.95 use:
  *     userLoginTask.execute();
  * </code>
- *
- * <p>Use this or {@link com.applozic.mobicomkit.Applozic#connectUser(Context, User, AlLoginHandler)}</p>
  */
+@Deprecated
 public class UserLoginTask extends AlAsyncTask<Void, Boolean> {
     private final WeakReference<Context> context;
     private final User user;
@@ -70,7 +71,7 @@ public class UserLoginTask extends AlAsyncTask<Void, Boolean> {
     }
 
     /**
-     * @deprecated Use {@link UserLoginTask#UserLoginTask(User, AlLoginHandler, Context)} instead.
+     * @deprecated Use {@link #UserLoginTask(User, AlLoginHandler, Context)} instead.
      */
     @Deprecated
     public UserLoginTask(User user, TaskListener listener, Context context) {

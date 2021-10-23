@@ -3,6 +3,8 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
@@ -33,9 +35,9 @@ public class HttpRequestUtils {
     public static String DEVICE_KEY_HEADER = "Device-Key";
     private static final String APZ_PRODUCT_APP_HEADER = "Apz-Product-App";
     public static boolean isRefreshTokenInProgress = false;
-    private Context context;
+    private final Context context;
 
-    public HttpRequestUtils(Context context) {
+    public HttpRequestUtils(@NonNull Context context) {
         this.context = ApplozicService.getContext(context);
     }
 

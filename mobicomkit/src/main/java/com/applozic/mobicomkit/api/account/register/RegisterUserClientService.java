@@ -18,6 +18,7 @@ import com.applozic.mobicomkit.api.conversation.ApplozicMqttWorker;
 import com.applozic.mobicomkit.api.conversation.ConversationWorker;
 import com.applozic.mobicomkit.api.notification.NotificationChannels;
 import com.applozic.mobicomkit.contact.AppContactService;
+import com.applozic.mobicomkit.contact.database.ContactDatabase;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicomkit.listners.AlLoginHandler;
@@ -36,8 +37,8 @@ import java.util.TimeZone;
 /**
  * This is an internal class.
  * <ul>
- *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</li>
- *     <li>To register your login session, see the {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask}.</li>
+ *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User)}.</li>
+ *     <li>To register your login session, see the {@link Applozic#registerForPushNotification(Context, String)}.</li>
  * </ul>
  *
  * <p>Handles registration and authentication for your {@link User} and login session.</p>
@@ -115,7 +116,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This is an internal method. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
+     * This is an internal method. Use {@link Applozic#connectUser(Context, User)} instead.
      *
      * <p>This method registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.</p>
      *
@@ -247,7 +248,29 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This is an internal method. Use {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask} instead.
+     * Internal method. Adds a logged in check to {@link #createAccount(User)}.
+     */
+    public @NonNull RegistrationResponse checkLoggedInAndCreateAccount(@NonNull User user) throws Exception {
+        if (MobiComUserPreference.getInstance(context).isLoggedIn()) {
+            RegistrationResponse registrationResponse = new RegistrationResponse();
+            registrationResponse.setMessage("User already Logged in.");
+            Contact contact = new ContactDatabase(context).getContactById(MobiComUserPreference.getInstance(context).getUserId());
+            if (contact != null) {
+                registrationResponse.setUserId(contact.getUserId());
+                registrationResponse.setContactNumber(contact.getContactNumber());
+                registrationResponse.setRoleType(contact.getRoleType());
+                registrationResponse.setImageLink(contact.getImageURL());
+                registrationResponse.setDisplayName(contact.getDisplayName());
+                registrationResponse.setStatusMessage(contact.getStatus());
+            }
+            return registrationResponse;
+        } else {
+            return createAccount(user);
+        }
+    }
+
+    /**
+     * This is an internal method. Use {@link Applozic#registerForPushNotification(Context, String)} instead.
      *
      * Updates the user's account with the registration-id from <i>Firebase Cloud Messaging</i>.
      *

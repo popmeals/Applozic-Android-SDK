@@ -24,7 +24,7 @@ public class ApplozicService {
      *
      * @param context passing null will default to {@link #getAppContext()}
      */
-    public static @Nullable Context getContext(@Nullable Context context) {
+    public static @Nullable Context getContext(@Nullable Context context) { //return value can be null if context passed is null
         if (application == null && context != null) {
             application = context instanceof Application ? context : context.getApplicationContext();
         }

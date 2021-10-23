@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.applozic.mobicomkit.api.account.register.RegisterUserClientService;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
@@ -47,9 +48,10 @@ import java.util.Map;
  */
 public class Applozic {
     /**
-     * Can be null. Use {@link #getInstance(Context)} to get the object.
+     * Do not access directly. Use {@link #getInstance(Context)} instead.
      */
     @SuppressLint("StaticFieldLeak") //only application context is stored.
+    @Nullable
     public static Applozic applozic;
     private final Context context;
     private ApplozicBroadcastReceiver applozicBroadcastReceiver;
@@ -58,7 +60,7 @@ public class Applozic {
         this.context = ApplozicService.getContext(context);
     }
 
-    public static @NonNull Applozic getInstance(Context context) {
+    public static @NonNull Applozic getInstance(@Nullable Context context) {
         if (applozic == null) {
             applozic = new Applozic(ApplozicService.getContext(context));
         }
@@ -100,7 +102,7 @@ public class Applozic {
      *
      * <p>Must be run at-least once.</p>
      */
-    public static Applozic init(Context context, String applicationKey) {
+    public static @NonNull Applozic init(@NonNull Context context, @Nullable String applicationKey) {
         applozic = getInstance(context);
         AlPrefSettings.getInstance(context).setApplicationKey(applicationKey);
         return applozic;
@@ -123,11 +125,95 @@ public class Applozic {
         }
     }
 
-    //new api >>>
+    /**
+     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
+     *
+     * <p>Before calling this method, make sure that {@link User#isValidUserId()} returns <i>true</i>.</p>
+     *
+     * <p>If the user (<code>userId</code>) is not present in the servers, a new
+     * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
+     *
+     * <code>
+     *     //this will run in calling thread
+     *     RegistrationResponse registrationResponse = Applozic.connectUser(context, user).executeSync();
+     *
+     *     //this will execute in a background thread
+     *     Applozic.connect(context, user).executeAsync(new BaseAsyncTask.AsyncListener<RegistrationResponse>() {
+     *         @Override
+     *         public void onComplete(RegistrationResponse registrationResponse) { }
+     *
+     *         @Override
+     *         public void onFailed(Throwable t) { }
+     *     });
+     * </code>
+     *
+     * <p><i><b>Note:</b>Check if <code>registrationResponse</code> is non-null and {@link RegistrationResponse#isRegistrationSuccess()} is true to confirm a successful login.</i></p>
+     *
+     * <p>After a successful login, you'll be able to access:
+     * <ul>
+     *     <li>{@link MobiComUserPreference#getUserId() your user-id}.</li>
+     *     <li>{@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String) your contact object}.</li>
+     *     <li>Your messages, contacts, channels and other freshly synced data to your local database for your user.</li>
+     * </ul></p>
+     *
+     * <p>Other users will be able to see your status as "online".</p>
+     *
+     * <p>Next steps:</p>
+     * <ol>
+     *     <li>To set up push notifications - {@link #registerForPushNotification(Context, String)}. This is required for receiving messages.</li>
+     *     <li>To send your first message - {@link com.applozic.mobicomkit.api.conversation.MessageBuilder}</li>
+     * </ol>
+     *
+     * @see RegisterUserClientService#checkLoggedInAndCreateAccount(User)
+     */
+    public static @NonNull AlAsyncTask<Void, RegistrationResponse> connectUser(@NonNull Context context, @NonNull User user) {
+        return new AlAsyncTask<Void, RegistrationResponse>() {
+            @Override
+            protected RegistrationResponse doInBackground() throws Exception {
+                return new RegisterUserClientService(context).checkLoggedInAndCreateAccount(user);
+            }
+        };
+    }
+
+    /**
+     * Enables push notifications, for messages and other events.
+     *
+     * <p>To set up:</p>
+     * <ol>
+     *     <li>Add <i>Firebase Cloud Messaging</i> to your app if you don't already use it.</li>
+     *     <li>Override <code>FirebaseMessageService.onNewToken(String registrationToken)</code> to get the <i>registration-id</i>.</li>
+     *     <li>Execute this task inside your <code>onNewToken</code> implementation with that <i>registration-id</i>.</li>
+     * </ol>
+     *
+     * <code>
+     *     //this will run in calling thread
+     *     RegistrationResponse registrationResponse = Applozic.updatePushNotificationId(context, firebaseRegistrationToken).executeSync();
+     *
+     *     //this will execute in a background thread
+     *     Applozic.updatePushNotificationId(context, firebaseRegistrationToken).executeAsync(new BaseAsyncTask.AsyncListener<RegistrationResponse>() {
+     *         @Override
+     *         public void onComplete(RegistrationResponse registrationResponse) { }
+     *
+     *         @Override
+     *         public void onFailed(Throwable t) { }
+     *     });
+     * </code>
+     *
+     * <p><i><b>Note:</b>Check if <code>registrationResponse</code> is non-null and {@link RegistrationResponse#isRegistrationSuccess()} is true to confirm a successful registration.</i></p>
+     *
+     * @see RegisterUserClientService#updatePushNotificationId(String)
+     */
+    public static @NonNull AlAsyncTask<Void, RegistrationResponse> registerForPushNotification(@NonNull Context context, @Nullable String firebaseRegistrationToken) {
+        return new AlAsyncTask<Void, RegistrationResponse>() {
+            @Override
+            protected RegistrationResponse doInBackground() throws Exception {
+                return new RegisterUserClientService(context).updatePushNotificationId(firebaseRegistrationToken);
+            }
+        };
+    }
 
     /**
      * Logout the current user.
-     * @see UserClientService#logout(boolean)
      *
      * <code>
      *     //this will run in calling thread
@@ -142,8 +228,12 @@ public class Applozic {
      *         public void onFailed(Throwable t) { }
      *     });
      * </code>
+     *
+     * <p><i><b>Note:</b> <code>aBoolean</code> will be true for success.
+     *
+     * @see UserClientService#logout() for details.
      */
-    public static AlAsyncTask<Void, Boolean> logoutUser(Context context) {
+    public static @NonNull AlAsyncTask<Void, Boolean> logoutUser(@NonNull Context context) {
         return new AlAsyncTask<Void, Boolean>() {
             @Override
             protected Boolean doInBackground() {
@@ -151,54 +241,6 @@ public class Applozic {
                 return true;
             }
         };
-    }
-
-    //<<< new api
-
-    /**
-     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
-     *
-     * <p>Before calling this method, make sure that {@link User#isValidUserId()} returns <i>true</i>.</p>
-     *
-     * <p>If the user (<code>userId</code>) is not present in the servers, a new
-     * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
-     *
-     * <p>After you get the {@link AlLoginHandler#onSuccess(RegistrationResponse, Context)} callback, you'll be able to access:
-     * <ul>
-     *     <li>{@link MobiComUserPreference#getUserId() your user-id}.</li>
-     *     <li>{@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String) your contact object}.</li>
-     *     <li>Your messages, contacts, channels and other freshly synced data to your local database for your user.</li>
-     * </ul></p>
-     *
-     * <p>Other users will be able to see your status as "online".</p>
-     *
-     * <p>Next steps:</p>
-     * <ol>
-     *     <li>To set up push notifications - {@link PushNotificationTask}. This is required for receiving messages.</li>
-     *     <li>To send your first message - {@link com.applozic.mobicomkit.api.conversation.MessageBuilder}</li>
-     * </ol>
-     *
-     * @param loginHandler receives success/failure callbacks
-     */
-    public static void connectUser(@NonNull Context context, @NonNull User user, @Nullable AlLoginHandler loginHandler) {
-        if (isConnected(context)) {
-            RegistrationResponse registrationResponse = new RegistrationResponse();
-            registrationResponse.setMessage("User already Logged in");
-            Contact contact = new ContactDatabase(context).getContactById(MobiComUserPreference.getInstance(context).getUserId());
-            if (contact != null) {
-                registrationResponse.setUserId(contact.getUserId());
-                registrationResponse.setContactNumber(contact.getContactNumber());
-                registrationResponse.setRoleType(contact.getRoleType());
-                registrationResponse.setImageLink(contact.getImageURL());
-                registrationResponse.setDisplayName(contact.getDisplayName());
-                registrationResponse.setStatusMessage(contact.getStatus());
-            }
-            if (loginHandler != null) {
-                loginHandler.onSuccess(registrationResponse, context);
-            }
-        } else {
-            AlTask.execute(new UserLoginTask(user, loginHandler, context));
-        }
     }
 
     /**
@@ -209,7 +251,7 @@ public class Applozic {
      * @param context the context
      * @return true/false
      */
-    public static boolean isConnected(Context context) {
+    public static boolean isConnected(@NonNull Context context) {
         return MobiComUserPreference.getInstance(context).isLoggedIn();
     }
 
@@ -221,7 +263,7 @@ public class Applozic {
      *
      * <p>MQTT will receive messages only for the <i>application</i> lifecycle. You can alternatively use {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
      */
-    public static void connectPublish(Context context) {
+    public static void connectPublish(@NonNull Context context) {
         ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, 0);
     }
 
@@ -231,14 +273,14 @@ public class Applozic {
      * @param context the context
      * @param loadingMessage the message to display in the progress dialog while loading
      */
-    public static void connectPublishWithVerifyToken(final Context context, String loadingMessage) {
+    public static void connectPublishWithVerifyToken(@Nullable final Context context, @Nullable String loadingMessage) {
         connectPublishWithVerifyTokenAfter(context, loadingMessage, 0);
     }
 
     /**
      * Asynchronously disconnects from MQTT for receiving messages and other events.
      */
-    public static void disconnectPublish(Context context) {
+    public static void disconnectPublish(@NonNull Context context) {
         disconnectPublish(context, true);
     }
 
@@ -279,18 +321,6 @@ public class Applozic {
      */
     public static void publishTypingStatus(Context context, Channel channel, Contact contact, boolean typingStarted) {
         ApplozicMqttWorker.enqueueWorkPublishTypingStatus(context, channel, contact, typingStarted);
-    }
-
-    /**
-     * Logout the current user in an asynchronous thread.
-     *
-     * <p>See {@link UserClientService#logout(boolean)} for details.</p>
-     *
-     * @param context the context
-     * @param logoutHandler success/failure callbacks
-     */
-    public static void logoutUser(final Context context, AlLogoutHandler logoutHandler) {
-        AlTask.execute(new UserLogoutTask(logoutHandler, context));
     }
 
     /**
@@ -410,7 +440,7 @@ public class Applozic {
 
     //Cleanup: private
     /** This is an internal method. Do not use */
-    public static void disconnectPublish(Context context, String deviceKeyString, String userKeyString, boolean useEncrypted) {
+    public static void disconnectPublish(@NonNull Context context, @Nullable String deviceKeyString, @Nullable String userKeyString, boolean useEncrypted) {
         if (!TextUtils.isEmpty(userKeyString) && !TextUtils.isEmpty(deviceKeyString)) {
             ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
         }
@@ -418,14 +448,14 @@ public class Applozic {
 
     //Cleanup: private
     /** This is an internal method. Do not use */
-    public static void disconnectPublish(Context context, boolean useEncrypted) {
+    public static void disconnectPublish(@NonNull Context context, boolean useEncrypted) {
         final String deviceKeyString = MobiComUserPreference.getInstance(context).getDeviceKeyString();
         final String userKeyString = MobiComUserPreference.getInstance(context).getSuUserKeyString();
         disconnectPublish(context, deviceKeyString, userKeyString, useEncrypted);
     }
 
     /** This is an internal method. Do not use. */
-    public String getGeoApiKey() {
+    public @Nullable String getGeoApiKey() {
         String geoApiKey = Applozic.Store.getGeoApiKey(context);
         if (!TextUtils.isEmpty(geoApiKey)) {
             return geoApiKey;
@@ -434,7 +464,7 @@ public class Applozic {
     }
 
     /** This is an internal method. Do not use */
-    public static boolean isApplozicNotification(Context context, Map<String, String> data) {
+    public static boolean isApplozicNotification(@NonNull Context context, @Nullable Map<String, String> data) {
         if (MobiComPushReceiver.isMobiComPushNotification(data)) {
             MobiComPushReceiver.processMessageAsync(context, data);
             return true;
@@ -443,7 +473,7 @@ public class Applozic {
     }
 
     /** This is an internal method. Do not use. */
-    public static void connectPublishWithVerifyTokenAfter(final Context context, String loadingMessage, int minutes) {
+    public static void connectPublishWithVerifyTokenAfter(@Nullable final Context context, @Nullable String loadingMessage, int minutes) {
         if (context == null) {
             return;
         }
@@ -461,7 +491,42 @@ public class Applozic {
     //deprecated code >>>
 
     /**
-     * @deprecated Use {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
+     * @deprecated Use the newer {@link #connectUser(Context, User)}. It supports both sync and async execution.
+     *
+     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
+     */
+    @Deprecated
+    public static void connectUser(@NonNull Context context, @NonNull User user, @Nullable AlLoginHandler loginHandler) {
+        if (isConnected(context)) {
+            RegistrationResponse registrationResponse = new RegistrationResponse();
+            registrationResponse.setMessage("User already Logged in");
+            Contact contact = new ContactDatabase(context).getContactById(MobiComUserPreference.getInstance(context).getUserId());
+            if (contact != null) {
+                registrationResponse.setUserId(contact.getUserId());
+                registrationResponse.setContactNumber(contact.getContactNumber());
+                registrationResponse.setRoleType(contact.getRoleType());
+                registrationResponse.setImageLink(contact.getImageURL());
+                registrationResponse.setDisplayName(contact.getDisplayName());
+                registrationResponse.setStatusMessage(contact.getStatus());
+            }
+            if (loginHandler != null) {
+                loginHandler.onSuccess(registrationResponse, context);
+            }
+        } else {
+            AlTask.execute(new UserLoginTask(user, loginHandler, context));
+        }
+    }
+
+    /**
+     * @deprecated Use the newer {@link Applozic#logoutUser(Context)}. It supports both sync and async execution.
+     */
+    @Deprecated
+    public static void logoutUser(@NonNull final Context context, @Nullable AlLogoutHandler logoutHandler) {
+        AlTask.execute(new UserLogoutTask(logoutHandler, context));
+    }
+
+    /**
+     * @deprecated Use {@link Applozic#connectUser(Context, User)}.
      */
     @Deprecated
     public static void loginUser(Context context, User user, boolean withLoggedInCheck, AlLoginHandler loginHandler) {
@@ -475,7 +540,7 @@ public class Applozic {
     }
 
     /**
-     * @deprecated User {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
+     * @deprecated Use {@link Applozic#connectUser(Context, User)}.
      */
     @Deprecated
     public static void loginUser(Context context, User user, AlLoginHandler loginHandler) {
@@ -490,7 +555,7 @@ public class Applozic {
 
     //Cleanup: private
     /**
-     * @deprecated User {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
+     * @deprecated Use {@link Applozic#connectUser(Context, User)}.
      */
     @Deprecated
     public static void connectUserWithoutCheck(Context context, User user, AlLoginHandler loginHandler) {
@@ -516,7 +581,7 @@ public class Applozic {
     }
 
     /**
-     * @deprecated Use the {@link PushNotificationTask}.
+     * @deprecated Use {@link #registerForPushNotification(Context, String)}.
      */
     @Deprecated
     public static void registerForPushNotification(Context context, String pushToken, AlPushNotificationHandler handler) {
@@ -525,7 +590,7 @@ public class Applozic {
 
     //Cleanup: private
     /**
-     * @deprecated Use the {@link PushNotificationTask}.
+     * @deprecated Use {@link #registerForPushNotification(Context, String)}.
      */
     @Deprecated
     public static void registerForPushNotification(Context context, AlPushNotificationHandler handler) {

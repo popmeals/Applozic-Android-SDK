@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * </ol>
  * <p>All other fields are optional.</p>
  *
- * Now you can register or login that user using {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</p>
+ * Now you can register or login that user using {@link Applozic#connectUser(Context, User)}.</p>
  *
  * <p>Also see {@link com.applozic.mobicommons.people.contact.Contact}.</p>
  */

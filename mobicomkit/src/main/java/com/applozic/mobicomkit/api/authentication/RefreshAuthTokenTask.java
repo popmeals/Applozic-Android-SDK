@@ -42,19 +42,18 @@ public class RefreshAuthTokenTask extends AlAsyncTask<Void, Boolean> {
     private final WeakReference<Context> context;
     private final AlCallback callback;
 
+    public RefreshAuthTokenTask(Context context, AlCallback callback) {
+        this(context, MobiComKitClientService.getApplicationKey(context), MobiComUserPreference.getInstance(context).getUserId(), callback);
+    }
+
     /**
-     * @deprecated Use {@link #RefreshAuthTokenTask(Context, AlCallback)} instead.
+     * Internal. Use {@link #RefreshAuthTokenTask(Context, AlCallback)} instead.
      */
-    @Deprecated
     public RefreshAuthTokenTask(Context context, String applicationId, String userId, AlCallback callback) {
         this.context = new WeakReference<>(context);
         this.applicationId = applicationId;
         this.userId = userId;
         this.callback = callback;
-    }
-
-    public RefreshAuthTokenTask(Context context, AlCallback callback) {
-        this(context, MobiComKitClientService.getApplicationKey(context), MobiComUserPreference.getInstance(context).getUserId(), callback);
     }
 
     @Override

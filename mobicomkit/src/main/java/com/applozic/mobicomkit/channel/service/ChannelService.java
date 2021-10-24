@@ -788,7 +788,7 @@ public class ChannelService {
      * @param channelKey the channel key
      * @return the channel object (one with just the channel key if no channel is found)
      */
-    public Channel getChannel(Integer channelKey) {
+    public @NonNull Channel getChannel(@NonNull Integer channelKey) {
         Channel channel;
         channel = MessageSearchCache.getChannelByKey(channelKey);
         if (channel == null) {

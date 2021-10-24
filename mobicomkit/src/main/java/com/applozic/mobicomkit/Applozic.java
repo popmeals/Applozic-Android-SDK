@@ -21,6 +21,7 @@ import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
 import com.applozic.mobicomkit.api.authentication.AlAuthService;
 import com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask;
 import com.applozic.mobicomkit.api.conversation.ApplozicMqttWorker;
+import com.applozic.mobicomkit.api.conversation.MessageBuilder;
 import com.applozic.mobicomkit.api.notification.MobiComPushReceiver;
 import com.applozic.mobicomkit.api.notification.NotificationChannels;
 import com.applozic.mobicomkit.broadcast.ApplozicBroadcastReceiver;
@@ -45,7 +46,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains the major public methods for using the <i>Applozic Chat SDK</i>.
+ * Contains the major public methods for using the <i>Applozic Chat SDK</i>. Handles SDK initialization and authentication.
+ *
+ * <p>To send a message, refer to {@link MessageBuilder}.</p>
+ * <p>To receive a message, refer to {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
+ * <p>To handle conversations, channels and contacts, refer to {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation} and it sub classes.</p>
  */
 public class Applozic {
     /**

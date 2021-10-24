@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 
 public class MessageListTask extends AlAsyncTask<Void, List<Message>> {
-
     private WeakReference<Context> context;
     private Contact contact;
     private Channel channel;

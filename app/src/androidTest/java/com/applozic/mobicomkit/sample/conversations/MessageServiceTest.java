@@ -167,7 +167,7 @@ public class MessageServiceTest {
 
             when(messageClientService.getUserDetailsList(anyString())).thenReturn(response);
             when(appContactService.getContactById("")).thenReturn(new Contact());
-            Mockito.doNothing().when(appContactService).upsert(any(Contact.class));
+            //Mockito.doNothing().when(appContactService).upsert(any(Contact.class));
             mobiComConversationService.processLastSeenAtStatus();
 
             assertEquals(response.getGeneratedAt(), MobiComUserPreference.getInstance(context).getLastSeenAtSyncTime());

@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -90,7 +92,7 @@ public class ContactDatabase {
     }
 
     //Cleanup: private
-    public List<Contact> getContactList(Cursor cursor) {
+    public @NonNull List<Contact> getContactList(@NonNull Cursor cursor) {
 
         List<Contact> smsList = new ArrayList<Contact>();
         cursor.moveToFirst();
@@ -174,7 +176,7 @@ public class ContactDatabase {
      * @param id the user id
      * @return the {@link Contact} object
      */
-    public Contact getContactById(String id) {
+    public @Nullable Contact getContactById(@Nullable String id) {
         Cursor cursor = null;
         try {
             if (TextUtils.isEmpty(id)) {
@@ -305,7 +307,7 @@ public class ContactDatabase {
     }
 
     //Cleanup: private
-    public ContentValues prepareContactValues(Contact contact, boolean isContactUpdated) {
+    public @NonNull ContentValues prepareContactValues(@NonNull Contact contact, boolean isContactUpdated) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.FULL_NAME, getFullNameForUpdate(contact));
 
@@ -447,12 +449,12 @@ public class ContactDatabase {
      *
      * @param contact the contact object to delete. the contact will be identified by the user id
      */
-    public void deleteContact(Contact contact) {
+    public void deleteContact(@NonNull Contact contact) {
         deleteContactById(contact.getUserId());
     }
 
     //Cleanup: private
-    public void deleteContactById(String id) {
+    public void deleteContactById(@NonNull String id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(CONTACT, "userId=?", new String[]{id});
         dbHelper.close();
@@ -631,7 +633,7 @@ public class ContactDatabase {
      * @param contactType the {@link com.applozic.mobicommons.people.contact.Contact.ContactType}
      * @return the list of contacts
      */
-    public List<Contact> getContacts(Contact.ContactType contactType) {
+    public @NonNull List<Contact> getContacts(@NonNull Contact.ContactType contactType) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = dbHelper.getReadableDatabase();

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.account.user.UserDetail;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.channel.service.ChannelService;
@@ -27,7 +30,7 @@ public class MessageSearchCache {
     private static Map<String, Contact> contactMap;
     private static List<Message> messageList;
 
-    public static Channel getChannelByKey(Integer channelKey) {
+    public static @Nullable Channel getChannelByKey(@NonNull Integer channelKey) {
         if (channelSparseArray != null) {
             return channelSparseArray.get(channelKey);
         }

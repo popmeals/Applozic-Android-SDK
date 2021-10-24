@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by mihir on 18/04/18.
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels#updateChannelMetadata(Context, Integer, HashMap)}.
  */
-
+@Deprecated
 public class ApplozicChannelMetaDataUpdateTask extends AlAsyncTask<Void, Boolean> {
     Context context;
     Integer channelKey;

@@ -6,19 +6,18 @@ import com.applozic.mobicommons.json.JsonMarker;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Model class used for sending a mute notification request to the server.
+ * To a mute notification request to the server for either a {@link #userId 1-to-1} or {@link #groupId group} conversation.
  *
- * <p>Set either the userId or the groupId/clientGroupId along with the
- * time for which the notification is to be disabled.</p>
+ * <p>Set either the userId or the groupId/clientGroupId along with the time for which the notification is to be disabled and pass this to the respective method.</p>
  */
 public class MuteNotificationRequest extends JsonMarker {
     /**
-     * User id of the contact/user to mute the notifications from.
+     * User id of the contact/user to mute the notifications from. Ignore this if you want to mute notification for a channel.
      */
     String userId;
 
     /**
-     * Group id of the channel (/group) to mute the notifications for.
+     * Group id of the channel (/group) to mute the notifications for. Ignore this if you want to mute notification for a 1-to-1 conversation.
      *
      * <p>Use either this or clientGroupId.</p>
      */
@@ -26,7 +25,7 @@ public class MuteNotificationRequest extends JsonMarker {
     Integer groupId;
 
     /**
-     * Client group id of the channel (/group) to mute the notifications for.
+     * Client group id of the channel (/group) to mute the notifications for. Ignore this if you want to mute notification for a 1-to-1 conversation.
      *
      * <p>Use either this or groupId.</p>
      */

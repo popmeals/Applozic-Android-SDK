@@ -27,7 +27,7 @@ import java.util.Map;
  * </code>
  *
  * <p><b>To send a message to a group conversation:</b></p>
- * <p>- First create a {@link com.applozic.mobicommons.people.channel.Channel} using {@link com.applozic.mobicomkit.channel.service.ChannelService#createChannelWithResponse(ChannelInfo)}. Have the {@link Channel#getClientGroupId()} handy. Then:</p>
+ * <p>- First create a {@link com.applozic.mobicommons.people.channel.Channel} using {@link ApplozicConversation.Channels#createChannel(Context, ChannelInfo)}. Have the {@link Channel#getClientGroupId()} handy. Then:</p>
  * <code>
  *     MessageBuilder messageBuilder = new MessageBuilder(context)
  *                 .setMessage("Hello channel!")

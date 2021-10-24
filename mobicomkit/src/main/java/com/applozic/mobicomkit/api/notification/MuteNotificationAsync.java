@@ -7,11 +7,13 @@ import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
 /**
- * Mutes notification for a user or channel for a specified amount of time.
- * Asynchronous wrapper over {@link ChannelService#muteNotifications(MuteNotificationRequest)}.
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels#muteNotifications(Context, Integer, String, long)}.
+ *
+ * <p>Mutes notification for a user or channel for a specified amount of time.
+ * Asynchronous wrapper over {@link ChannelService#muteNotifications(MuteNotificationRequest)}.</p>
  */
+@Deprecated
 public class MuteNotificationAsync extends AlAsyncTask<Void, Boolean> {
-
     private final MuteNotificationAsync.TaskListener taskListener;
     private final Context context;
     private ApiResponse apiResponse;
@@ -47,13 +49,8 @@ public class MuteNotificationAsync extends AlAsyncTask<Void, Boolean> {
     }
 
     public interface TaskListener {
-
         void onSuccess(ApiResponse apiResponse);
-
         void onFailure(ApiResponse apiResponse, Exception exception);
-
         void onCompletion();
     }
-
-
 }

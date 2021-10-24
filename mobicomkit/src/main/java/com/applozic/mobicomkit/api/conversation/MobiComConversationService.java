@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Process;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -748,7 +749,7 @@ public class MobiComConversationService {
         BroadcastService.sendConversationDeleteBroadcast(context, BroadcastService.INTENT_ACTIONS.DELETE_CONVERSATION.toString(), contact.getContactIds(), 0, "success");
     }
 
-    public String deleteSync(final Contact contact, final Channel channel, Integer conversationId) {
+    public String deleteSync(@Nullable final Contact contact, @Nullable final Channel channel, @Nullable Integer conversationId) {
         String response = "";
         if (contact != null || channel != null) {
             response = messageClientService.syncDeleteConversationThreadFromServer(contact, channel);

@@ -315,6 +315,10 @@ public class AppContactService implements BaseContactService {
     }
 
     //Cleanup: private
+    /**
+     * @deprecated Run {@link #getContactById(String)} asynchronously instead.
+     */
+    @Deprecated
     public void getContactByIdAsync(String userId, AlContactListener contactListener) {
         AlTask.execute(new AlGetPeopleTask(context, userId, null, null, null, contactListener, this, null));
     }

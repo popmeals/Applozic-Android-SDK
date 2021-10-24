@@ -3,6 +3,9 @@ package com.applozic.mobicomkit.channel.service;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.MultipleChannelFeedApiResponse;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
@@ -219,7 +222,7 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param muteNotificationRequest the mute notification parameter object
      * @return the {@link ApiResponse} for the request
      */
-    public ApiResponse muteNotification(MuteNotificationRequest muteNotificationRequest) {
+    public ApiResponse muteNotification(@NonNull MuteNotificationRequest muteNotificationRequest) {
         ApiResponse apiResponse = null;
 
         try {
@@ -293,7 +296,7 @@ public class ChannelClientService extends MobiComKitClientService {
     }
 
     //Cleanup: default
-    public List<ChannelFeed> createMultipleChannels(List<ChannelInfo> channels) {
+    public @Nullable List<ChannelFeed> createMultipleChannels(@NonNull List<ChannelInfo> channels) {
         List<ChannelFeed> channelFeeds = null;
         try {
             String jsonFromObject = GsonUtils.getJsonFromObject(channels, new
@@ -425,8 +428,8 @@ public class ChannelClientService extends MobiComKitClientService {
     }
 
     //Cleanup: private
-    public synchronized ApiResponse addMemberToChannel(String clientGroupId, Integer channelKey,
-                                                       String userId) {
+    public synchronized ApiResponse addMemberToChannel(@Nullable String clientGroupId, @Nullable Integer channelKey,
+                                                       @Nullable String userId) {
         try {
             String parameters = "";
             if (!TextUtils.isEmpty(clientGroupId)) {
@@ -460,7 +463,7 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param userId the id of the user to add to the channel
      * @return the {@link ApiResponse} for the request
      */
-    public synchronized ApiResponse addMemberToChannel(Integer channelKey, String userId) {
+    public synchronized ApiResponse addMemberToChannel(@Nullable Integer channelKey, @Nullable String userId) {
         return addMemberToChannel(null, channelKey, userId);
     }
 
@@ -534,7 +537,7 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param groupInfoUpdate the object used to store data to update
      * @return the {@link ApiResponse} for the request
      */
-    public synchronized ApiResponse updateChannel(GroupInfoUpdate groupInfoUpdate) {
+    public synchronized @Nullable ApiResponse updateChannel(@Nullable GroupInfoUpdate groupInfoUpdate) {
         ApiResponse apiResponse = null;
         try {
             if (groupInfoUpdate != null) {
@@ -645,7 +648,7 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param channelInfo the channel info object
      * @return the {@link ChannelFeedApiResponse} for the request.
      */
-    public ChannelFeedApiResponse createChannelWithResponse(ChannelInfo channelInfo) {
+    public ChannelFeedApiResponse createChannelWithResponse(@NonNull ChannelInfo channelInfo) {
         try {
             String jsonFromObject = GsonUtils.getJsonFromObject(channelInfo, channelInfo.getClass
                     ());
@@ -709,8 +712,8 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param contactGroupMemberList list of userIds of contacts to add in group
      * @return the {@link ApiResponse} for the request
      */
-    public ApiResponse addMemberToContactGroupOfType(String contactGroupId, String groupType,
-                                                     List<String> contactGroupMemberList) {
+    public @Nullable ApiResponse addMemberToContactGroupOfType(@Nullable String contactGroupId, @Nullable String groupType,
+                                                     @Nullable List<String> contactGroupMemberList) {
         String response;
         if (!TextUtils.isEmpty(contactGroupId) && !TextUtils.isEmpty(groupType) &&
                 contactGroupMemberList != null) {
@@ -748,7 +751,7 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param contactGroupId the contact group id
      * @return {@link ChannelFeed}. User {@link ChannelFeed#getGroupUsers()} to get the contacts.
      */
-    public ChannelFeed getMembersFromContactGroup(String contactGroupId) {
+    public @Nullable ChannelFeed getMembersFromContactGroup(@Nullable String contactGroupId) {
         String response;
         if (!TextUtils.isEmpty(contactGroupId)) {
             String url = String.format(getMembersFromContactGroupUrl(), contactGroupId);
@@ -772,7 +775,7 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param groupType the group type
      * @return {@link ChannelFeed}. User {@link ChannelFeed#getGroupUsers()} to get the contacts.
      */
-    public ChannelFeed getMembersFromContactGroupOfType(String contactGroupId, String groupType) {
+    public @Nullable ChannelFeed getMembersFromContactGroupOfType(@Nullable String contactGroupId, @Nullable String groupType) {
         String response;
         if (!TextUtils.isEmpty(contactGroupId) && !TextUtils.isEmpty(groupType)) {
             String url = String.format(getMembersFromContactGroupOfTypeUrl() + "?" + GROUPTYPE +
@@ -917,8 +920,8 @@ public class ChannelClientService extends MobiComKitClientService {
      * @param userId id of contact to remove
      * @return the {@link ApiResponse} for the request
      */
-    public ApiResponse removeMemberFromContactGroupOfType(String groupName, String groupType,
-                                                          String userId) {
+    public @Nullable ApiResponse removeMemberFromContactGroupOfType(@Nullable String groupName, @Nullable String groupType,
+                                                          @Nullable String userId) {
         String response;
         String parameters;
         String url;

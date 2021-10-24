@@ -1,5 +1,6 @@
 package com.applozic.mobicomkit.cache;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
@@ -7,6 +8,7 @@ import com.applozic.mobicomkit.api.account.user.UserDetail;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicomkit.feed.ChannelFeed;
+import com.applozic.mobicommons.ApplozicService;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 
@@ -16,10 +18,11 @@ import java.util.Map;
 
 //Replace this with LRU cache implementation in future
 /**
- * This is a temporary static data storage class.
+ * Internal class.
+ *
+ * <p>This is a temporary static data storage class.</p>
  */
 public class MessageSearchCache {
-
     private static SparseArray<Channel> channelSparseArray;
     private static Map<String, Contact> contactMap;
     private static List<Message> messageList;
@@ -51,7 +54,11 @@ public class MessageSearchCache {
             if (channelSparseArray == null) {
                 channelSparseArray = new SparseArray<>();
             }
-            ChannelService channelService = ChannelService.getInstance(null);
+            Context context = ApplozicService.getAppContext();
+            if (context == null) {
+                return;
+            }
+            ChannelService channelService = ChannelService.getInstance(context);
             for (ChannelFeed channelFeed : channelFeeds) {
                 channelSparseArray.append(channelFeed.getId(), channelService.getChannel(channelFeed));
             }

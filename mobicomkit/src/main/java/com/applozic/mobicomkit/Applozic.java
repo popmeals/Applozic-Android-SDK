@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains all the major public methods for using the <i>Applozic Chat SDK</i>.
+ * Contains the major public methods for using the <i>Applozic Chat SDK</i>.
  */
 public class Applozic {
     /**
@@ -66,14 +66,6 @@ public class Applozic {
             applozic = new Applozic(ApplozicService.getContext(context));
         }
         return applozic;
-    }
-
-    private static class LoggerListenerListSingletonHelper {
-        private static final List<AlLog.AlLoggerListener> alLoggerListenerList = new ArrayList<>();
-    }
-
-    private static @NonNull List<AlLog.AlLoggerListener> getLoggerListenerListSingleton() {
-        return LoggerListenerListSingletonHelper.alLoggerListenerList;
     }
 
     /**
@@ -466,6 +458,14 @@ public class Applozic {
         public static void setNotificationChannelVersion(@NonNull Context context, int version) {
             getSharedPreferences(context).edit().putInt(NOTIFICATION_CHANNEL_VERSION_STATE, version).apply();
         }
+    }
+
+    private static class LoggerListenerListSingletonHelper {
+        private static final List<AlLog.AlLoggerListener> alLoggerListenerList = new ArrayList<>();
+    }
+
+    private static @NonNull List<AlLog.AlLoggerListener> getLoggerListenerListSingleton() {
+        return LoggerListenerListSingletonHelper.alLoggerListenerList;
     }
 
     //internal methods >>>

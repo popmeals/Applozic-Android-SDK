@@ -9,8 +9,9 @@ import com.applozic.mobicomkit.uiwidgets.R;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
 /**
- * Created by sunil on 17/5/16.
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels#addMemberToChannel(Context, String, Integer)}
  */
+@Deprecated
 public class ApplozicChannelAddMemberTask extends AlAsyncTask<Void, Boolean> {
 
     Context context;

@@ -10,6 +10,10 @@ import androidx.annotation.Nullable;
 import com.applozic.mobicomkit.api.ApplozicMqttService;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
+import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserClientService;
+import com.applozic.mobicomkit.api.account.user.UserDetail;
+import com.applozic.mobicomkit.api.account.user.UserService;
 import com.applozic.mobicomkit.api.attachment.AttachmentManager;
 import com.applozic.mobicomkit.api.attachment.AttachmentTask;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
@@ -25,23 +29,28 @@ import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicomkit.feed.ChannelFeed;
 import com.applozic.mobicomkit.feed.ChannelFeedApiResponse;
 import com.applozic.mobicomkit.feed.ChannelName;
+import com.applozic.mobicomkit.feed.ErrorResponseFeed;
 import com.applozic.mobicomkit.feed.GroupInfoUpdate;
 import com.applozic.mobicomkit.listners.ConversationListHandler;
 import com.applozic.mobicomkit.listners.MediaDownloadProgressHandler;
 import com.applozic.mobicomkit.listners.MessageListHandler;
+import com.applozic.mobicommons.json.GsonUtils;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 import com.applozic.mobicommons.task.AlAsyncTask;
 import com.applozic.mobicommons.task.AlTask;
 import com.applozic.mobicommons.task.BaseAsyncTask;
+import com.google.gson.reflect.TypeToken;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Public methods for {@link AlConversation conversations}, {@link Channel channels} and {@link Contact contacts}.
@@ -515,6 +524,83 @@ public class ApplozicConversation {
                 }
             };
             return new AppContactService(context);
+        }
+
+        /**
+         * Get user details from the backend for the given user-ids.
+         *
+         * <p>Contact objects for these users are also created/updated.</p>
+         */
+        public static @NonNull AlAsyncTask<Void, List<UserDetail>> userDetails(@NonNull Context context, @Nullable Set<String> userIds) {
+            return new AlAsyncTask<Void, List<UserDetail>>() {
+                @Override
+                protected List<UserDetail> doInBackground() throws Exception {
+                    String response = new UserClientService(context).postUserDetailsByUserIds(userIds);
+                    try {
+                        return (List<UserDetail>) GsonUtils.getObjectFromJson(response, new TypeToken<List<UserDetail>>() {}.getType());
+                    } catch (Exception exception) {
+                        return null;
+                    }
+                }
+            };
+        }
+
+        /**
+         * Updates user details locally and in the backend.
+         *
+         * <p>{@link User#getUserId()} must be non-null and non-empty.</p>
+         *
+         * <p>On success, the <i>apiResponse</i> object will be non-null and {@link ApiResponse#isSuccess()} will be true.</p>
+         */
+        public static @NonNull AlAsyncTask<Void, ApiResponse<?>> updateUserDetails(@NonNull Context context, @Nullable User user) {
+            return new AlAsyncTask<Void, ApiResponse<?>>() {
+                @Override
+                protected ApiResponse<?> doInBackground() {
+                    if (user == null) {
+                        return null;
+                    }
+
+                    return UserService.getInstance(context).updateUserWithResponse(user);
+                }
+            };
+        }
+
+        /**
+         * Blocks/unblocks the user with the given userId for the current logged in user.
+         *
+         * <p>On success, the <i>apiResponse</i> object will be non-null and {@link ApiResponse#isSuccess()} will be true.</p>
+         */
+        public static @NonNull AlAsyncTask<Void, ApiResponse<?>> blockUser(@NonNull Context context, @Nullable String userId, boolean block) {
+            return new AlAsyncTask<Void, ApiResponse<?>>() {
+                @Override
+                protected ApiResponse<?> doInBackground() {
+                    if (TextUtils.isEmpty(userId)) {
+                        return null;
+                    }
+
+                    return UserService.getInstance(context).processUserBlock(userId, block);
+                }
+            };
+        }
+
+        /**
+         * Mutes notifications for the given user Id.
+         *
+         * <p>To un-mute, pass 0 for <code>notificationAfterTime</code>.</p>
+         *
+         * <p>On success, the <i>apiResponse</i> object will be non-null and {@link ApiResponse#isSuccess()} will be true.</p>
+         */
+        public static @NonNull AlAsyncTask<Void, ApiResponse<?>> muteUser(@NonNull Context context, @Nullable String userId, @Nullable Long notificationAfterTime) {
+            return new AlAsyncTask<Void, ApiResponse<?>>() {
+                @Override
+                protected ApiResponse<?> doInBackground() {
+                    if (TextUtils.isEmpty(userId) || notificationAfterTime == null) {
+                        return null;
+                    }
+
+                    return UserService.getInstance(context).muteUserNotifications(userId, notificationAfterTime);
+                }
+            };
         }
 
         /**

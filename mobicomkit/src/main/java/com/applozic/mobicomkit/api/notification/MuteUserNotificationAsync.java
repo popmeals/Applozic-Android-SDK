@@ -11,9 +11,12 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Contacts#muteUser(Context, String, Long)}.
+ *
  * Asynchronous task that can be used to mute a user for a given amount of time.
  * See {@link UserService#muteUserNotifications(String, Long)}.
  */
+@Deprecated
 public class MuteUserNotificationAsync extends AlAsyncTask<Void, ApiResponse> {
 
     TaskListener listener;

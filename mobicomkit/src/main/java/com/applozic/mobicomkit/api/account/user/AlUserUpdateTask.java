@@ -9,6 +9,8 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Contacts#updateUserDetails(Context, User)}.
+ *
  * This asynchronous task can be used to update user details. The update will happen remotely as well as locally.
  *
  * <p>Created for async execution of {@link UserService#updateUserWithResponse(User)}.
@@ -35,6 +37,7 @@ import java.lang.ref.WeakReference;
  *
  * Use {@link AlCallback} to get the results.</p>
  */
+@Deprecated
 public class AlUserUpdateTask extends AlAsyncTask<Void, ApiResponse> {
     private WeakReference<Context> context;
     private User user;

@@ -81,26 +81,6 @@ public class ChannelService {
         return channelService;
     }
 
-    @VisibleForTesting
-    public void setChannelClientService(@NonNull ChannelClientService channelClientService) {
-        this.channelClientService = channelClientService;
-    }
-
-    @VisibleForTesting
-    public void setChannelDatabaseService(@NonNull ChannelDatabaseService channelDatabaseService) {
-        this.channelDatabaseService = channelDatabaseService;
-    }
-
-    @VisibleForTesting
-    public void setUserService(@NonNull UserService userService) {
-        this.userService = userService;
-    }
-
-    @VisibleForTesting
-    public void setContactService(@NonNull AppContactService appContactService) {
-        this.baseContactService = appContactService;
-    }
-
     /**
      * Creates a new {@link Channel}.
      *
@@ -546,6 +526,26 @@ public class ChannelService {
 
     //internal methods >>>
 
+    @VisibleForTesting
+    public void setChannelClientService(@NonNull ChannelClientService channelClientService) {
+        this.channelClientService = channelClientService;
+    }
+
+    @VisibleForTesting
+    public void setChannelDatabaseService(@NonNull ChannelDatabaseService channelDatabaseService) {
+        this.channelDatabaseService = channelDatabaseService;
+    }
+
+    @VisibleForTesting
+    public void setUserService(@NonNull UserService userService) {
+        this.userService = userService;
+    }
+
+    @VisibleForTesting
+    public void setContactService(@NonNull AppContactService appContactService) {
+        this.baseContactService = appContactService;
+    }
+
     //Cleanup: private
     /**
      * Internal. Do not use.
@@ -631,40 +631,6 @@ public class ChannelService {
         }
 
         return channelFeedList.getResponse();
-    }
-
-    /**
-     * @deprecated Use {@link #processChannelDeleteConversation(Channel, Context)} instead.
-     *
-     * @param channelKey the channel key
-     * @param updateClientGroupId pass true if you want the client group id to be updated
-     * @param resetCount pass true if you want to reset the unread count for the channel
-     * @return success (ignore case) or failure (ignore case)
-     */
-    @Deprecated
-    public String deleteChannel(Integer channelKey, boolean updateClientGroupId, boolean resetCount) {
-        ApiResponse apiResponse = channelClientService.deleteChannel(channelKey, updateClientGroupId, resetCount);
-        if (apiResponse != null && apiResponse.isSuccess()) {
-            channelDatabaseService.deleteChannel(channelKey);
-            channelDatabaseService.deleteChannelUserMappers(channelKey);
-            BroadcastService.sendConversationDeleteBroadcast(context, BroadcastService.INTENT_ACTIONS.DELETE_CONVERSATION.toString(), null, channelKey, apiResponse.getStatus());
-            return apiResponse.getStatus();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @deprecated Use {@link #processChannelDeleteConversation(Channel, Context)} instead.
-     *
-     * Deletes the channel with the given channel key. Channel messages are not deleted.
-     *
-     * <p>The channel is first deleted from the server and then locally along with it's member mappings.
-     * A broadcast is also sent with intent action {@link BroadcastService.INTENT_ACTIONS#DELETE_CONVERSATION}.</p>
-     */
-    @Deprecated
-    public String deleteChannel(Integer channelKey) {
-        return deleteChannel(channelKey, false, false);
     }
 
     /**
@@ -914,6 +880,40 @@ public class ChannelService {
     }
 
     //deprecated >>>
+
+    /**
+     * @deprecated Use {@link #processChannelDeleteConversation(Channel, Context)} instead.
+     *
+     * @param channelKey the channel key
+     * @param updateClientGroupId pass true if you want the client group id to be updated
+     * @param resetCount pass true if you want to reset the unread count for the channel
+     * @return success (ignore case) or failure (ignore case)
+     */
+    @Deprecated
+    public String deleteChannel(Integer channelKey, boolean updateClientGroupId, boolean resetCount) {
+        ApiResponse apiResponse = channelClientService.deleteChannel(channelKey, updateClientGroupId, resetCount);
+        if (apiResponse != null && apiResponse.isSuccess()) {
+            channelDatabaseService.deleteChannel(channelKey);
+            channelDatabaseService.deleteChannelUserMappers(channelKey);
+            BroadcastService.sendConversationDeleteBroadcast(context, BroadcastService.INTENT_ACTIONS.DELETE_CONVERSATION.toString(), null, channelKey, apiResponse.getStatus());
+            return apiResponse.getStatus();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @deprecated Use {@link #processChannelDeleteConversation(Channel, Context)} instead.
+     *
+     * Deletes the channel with the given channel key. Channel messages are not deleted.
+     *
+     * <p>The channel is first deleted from the server and then locally along with it's member mappings.
+     * A broadcast is also sent with intent action {@link BroadcastService.INTENT_ACTIONS#DELETE_CONVERSATION}.</p>
+     */
+    @Deprecated
+    public String deleteChannel(Integer channelKey) {
+        return deleteChannel(channelKey, false, false);
+    }
 
     /**
      * @deprecated Use {@link ChannelDatabaseService#getChildGroupIds(Integer)} instead.

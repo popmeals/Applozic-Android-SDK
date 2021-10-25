@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.AlUserUpdate;
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
@@ -334,7 +337,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param block true for block/false for unblock
      * @return api response from the server, use {@link ApiResponse#isSuccess()} to check for success
      */
-    public ApiResponse userBlock(String userId, boolean block) {
+    public @Nullable ApiResponse userBlock(@Nullable String userId, boolean block) {
         String response = "";
         ApiResponse apiResponse = null;
         try {
@@ -430,7 +433,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param userIds set of user ids to sync
      * @return api response from the server
      */
-    public String postUserDetailsByUserIds(Set<String> userIds) {
+    public @Nullable String postUserDetailsByUserIds(@Nullable Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
                 List<String> userDetailsList = new ArrayList<>();
@@ -522,7 +525,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param pageSize the number of users to get
      * @return the json api response. convert to {@link com.applozic.mobicomkit.feed.RegisteredUsersApiResponse}
      */
-    public String getRegisteredUsers(Long startTime, int pageSize) {
+    public @Nullable String getRegisteredUsers(@NonNull Long startTime, int pageSize) {
         String response = null;
         try {
             String url = "?pageSize=" + pageSize;
@@ -590,7 +593,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param notificationAfterTime the time (in milliseconds) to mute the user for
      * @return the api response, use {@link ApiResponse#isSuccess()} to check for success
      */
-    public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
+    public @Nullable ApiResponse muteUserNotifications(@Nullable String userId, @Nullable Long notificationAfterTime) {
         if (userId == null || notificationAfterTime == null) {
             return null;
         }
@@ -700,7 +703,7 @@ public class UserClientService extends MobiComKitClientService {
      * to a {@link UserDetail} array to get the list in usable form
      * @throws ApplozicException when the backend returns an error response
      */
-    public ApiResponse getUsersBySearchString(String searchString) throws ApplozicException {
+    public @Nullable ApiResponse getUsersBySearchString(@Nullable String searchString) throws ApplozicException {
         if (TextUtils.isEmpty(searchString)) {
             return null;
         }

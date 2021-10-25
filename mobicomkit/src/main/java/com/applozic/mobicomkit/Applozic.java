@@ -290,7 +290,7 @@ public class Applozic {
      * <p>Before calling this method, make sure that {@link AlAuthService#isTokenValid(Context)} returns true.</p>
      * <p>Otherwise refresh the token first using {@link #refreshAuthToken(Context)}.</p>
      *
-     * <p>MQTT will receive messages only for the <i>application</i> lifecycle. You can alternatively use {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
+     * <p>MQTT will receive messages only for the <i>application</i> lifecycle. You can alternatively use {@link com.applozic.mobicomkit.broadcast.AlEventManager} to receive event while app is killed.</p>
      */
     public static void connectPublish(@NonNull Context context) {
         ApplozicMqttWorker.enqueueWorkSubscribeAndConnectPublishAfter(context, true, 0);

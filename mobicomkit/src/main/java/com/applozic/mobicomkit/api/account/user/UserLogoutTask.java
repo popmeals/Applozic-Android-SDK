@@ -8,7 +8,7 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * @deprecated Use {@link com.applozic.mobicomkit.Applozic#logoutUser(Context)}.
+ * @deprecated Use {@link com.applozic.mobicomkit.Applozic#logoutUser(Context, AlLogoutHandler)}.
  *
  * <p>An asynchronous logout task for the current user.
  * Refer to {@link UserClientService#logout()} for details.</p>

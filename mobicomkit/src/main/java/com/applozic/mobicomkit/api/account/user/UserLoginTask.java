@@ -13,7 +13,7 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#connectUser(Context, User)} instead.
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#connectUser(Context, User, AlLoginHandler)} instead.
  *
  * <p>An asynchronous login/registration task used to authenticate the user.</p>
  *

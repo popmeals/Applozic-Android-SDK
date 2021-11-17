@@ -46,8 +46,6 @@ import java.util.Set;
  *
  * <p>All methods have network calls. Run them asynchronously to avoid blocking the main thread.</p>
  *
- * <p>Refer to {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels} for user-friendly, high-level <i>channel</i> methods.</p>
- *
  * <p>For methods that solely deal with client API calls for channels, see {@link ChannelClientService}.</p>
  * <p>For methods that only handle local channel data, see {@link ChannelDatabaseService}.</p>
  */

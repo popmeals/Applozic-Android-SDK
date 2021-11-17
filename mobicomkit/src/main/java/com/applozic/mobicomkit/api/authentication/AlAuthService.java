@@ -60,7 +60,7 @@ public class AlAuthService {
 
     //Cleanup: default
     /**
-     * Internal. Do Not Use. To check if a token is valid use {@link #isTokenValid(Context)} and to refresh it refer to {@link com.applozic.mobicomkit.Applozic#refreshAuthToken(Context)}.
+     * Internal. Do Not Use. To check if a token is valid use {@link #isTokenValid(Context)} and to refresh it refer to {@link RefreshAuthTokenTask}.
      *
      * Verifies, refreshes, decodes and saves token in local storage.
      */
@@ -94,7 +94,7 @@ public class AlAuthService {
 
     //Cleanup: private
     /**
-     * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#refreshAuthToken(Context)}.
+     * @deprecated Use {@link RefreshAuthTokenTask}.
      *
      * <p>Get a fresh token from the server and replaces the current (invalid) one with it.</p>
      */
@@ -130,9 +130,7 @@ public class AlAuthService {
 
     //Cleanup: private, can get rid of it too
     /**
-     * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#refreshAuthToken(Context)}.
-     *
-     * <p>Runs the {@link RefreshAuthTokenTask} task.</p>
+     * @deprecated Use {@link RefreshAuthTokenTask} directly.
      */
     @Deprecated
     public static void refreshToken(Context context, AlCallback callback) {

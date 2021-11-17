@@ -12,8 +12,6 @@ import com.applozic.mobicommons.task.AlTask;
 import java.lang.ref.WeakReference;
 
 /**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#refreshAuthToken(Context)}.
- *
  * <p>Refreshes the JWT authentication token and saves it locally for future use.
  * This token is used by the SDK to authenticate all future API calls.</p>
  *
@@ -37,7 +35,6 @@ import java.lang.ref.WeakReference;
  *         //refreshAuthTokenTask.execute();
  * </code>
  */
-@Deprecated
 public class RefreshAuthTokenTask extends AlAsyncTask<Void, Boolean> {
     private final String applicationId;
     private final String userId;

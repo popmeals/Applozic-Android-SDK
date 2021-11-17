@@ -13,7 +13,7 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.lang.ref.WeakReference;
 
 /**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#registerForPushNotification(Context, String)}.
+ * @deprecated Use the newer {@link com.applozic.mobicomkit.Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)}.
  *
  * Enables push notifications, for messages and other events.
  *

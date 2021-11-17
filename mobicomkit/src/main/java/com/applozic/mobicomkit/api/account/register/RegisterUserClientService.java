@@ -22,6 +22,7 @@ import com.applozic.mobicomkit.contact.database.ContactDatabase;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicomkit.listners.AlLoginHandler;
+import com.applozic.mobicomkit.listners.AlPushNotificationHandler;
 import com.applozic.mobicommons.ALSpecificSettings;
 import com.applozic.mobicommons.ApplozicService;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -38,8 +39,8 @@ import java.util.TimeZone;
  * <p>Handles registration and authentication for your {@link User} and login session.</p>
  *
  * <ul>
- *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User)}.</li>
- *     <li>To register your login session, see the {@link Applozic#registerForPushNotification(Context, String)}.</li>
+ *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</li>
+ *     <li>To register your login session, see the {@link Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)}.</li>
  * </ul>
  *
  * <p>The <i>user</i></p> need to be registered/authenticated before any of the SDK's methods can be used.
@@ -83,7 +84,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This is an internal method. Use {@link Applozic#connectUser(Context, User)}.
+     * This is an internal method. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
      *
      * <p>Registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.</p>
      *
@@ -300,7 +301,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This is an internal method. Use {@link Applozic#registerForPushNotification(Context, String)} instead.
+     * This is an internal method. Use {@link Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)} instead.
      *
      * Updates the user's account with the registration-id from <i>Firebase Cloud Messaging</i>.
      *

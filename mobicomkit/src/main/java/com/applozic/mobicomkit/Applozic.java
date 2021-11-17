@@ -19,7 +19,6 @@ import com.applozic.mobicomkit.api.account.user.UserClientService;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
 import com.applozic.mobicomkit.api.authentication.AlAuthService;
-import com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask;
 import com.applozic.mobicomkit.api.conversation.ApplozicMqttWorker;
 import com.applozic.mobicomkit.api.conversation.MessageBuilder;
 import com.applozic.mobicomkit.api.notification.MobiComPushReceiver;
@@ -123,48 +122,7 @@ public class Applozic {
         }
     }
 
-    /**
-     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
-     *
-     * <p>Before calling this method, make sure that {@link User#isValidUserId()} returns <i>true</i>.</p>
-     *
-     * <p>If the user (<code>userId</code>) is not present in the servers, a new
-     * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
-     *
-     * <code>
-     *     //this will run in calling thread
-     *     RegistrationResponse registrationResponse = Applozic.connectUser(context, user).executeSync();
-     *
-     *     //this will execute in a background thread
-     *     Applozic.connect(context, user).executeAsync(new BaseAsyncTask.AsyncListener<RegistrationResponse>() {
-     *         @Override
-     *         public void onComplete(RegistrationResponse registrationResponse) { }
-     *
-     *         @Override
-     *         public void onFailed(Throwable t) { }
-     *     });
-     * </code>
-     *
-     * <p><i><b>Note:</b>Check if <code>registrationResponse</code> is non-null and {@link RegistrationResponse#isRegistrationSuccess()} is true to confirm a successful login.</i></p>
-     *
-     * <p>After a successful login, you'll be able to access:
-     * <ul>
-     *     <li>{@link MobiComUserPreference#getUserId() your user-id}.</li>
-     *     <li>{@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String) your contact object}.</li>
-     *     <li>Your messages, contacts, channels and other freshly synced data to your local database for your user.</li>
-     * </ul></p>
-     *
-     * <p>Other users will be able to see your status as "online".</p>
-     *
-     * <p>Next steps:</p>
-     * <ol>
-     *     <li>To set up push notifications - {@link #registerForPushNotification(Context, String)}. This is required for receiving messages.</li>
-     *     <li>To send your first message - {@link com.applozic.mobicomkit.api.conversation.MessageBuilder}</li>
-     * </ol>
-     *
-     * @see RegisterUserClientService#checkLoggedInAndCreateAccount(User)
-     */
-    public static @NonNull AlAsyncTask<Void, RegistrationResponse> connectUser(@NonNull Context context, @NonNull User user) {
+    private static @NonNull AlAsyncTask<Void, RegistrationResponse> connectUser(@NonNull Context context, @NonNull User user) {
         return new AlAsyncTask<Void, RegistrationResponse>() {
             @Override
             protected RegistrationResponse doInBackground() throws Exception {
@@ -173,35 +131,7 @@ public class Applozic {
         };
     }
 
-    /**
-     * Enables push notifications, for messages and other events.
-     *
-     * <p>To set up:</p>
-     * <ol>
-     *     <li>Add <i>Firebase Cloud Messaging</i> to your app if you don't already use it.</li>
-     *     <li>Override <code>FirebaseMessageService.onNewToken(String registrationToken)</code> to get the <i>registration-id</i>.</li>
-     *     <li>Execute this task inside your <code>onNewToken</code> implementation with that <i>registration-id</i>.</li>
-     * </ol>
-     *
-     * <code>
-     *     //this will run in calling thread
-     *     RegistrationResponse registrationResponse = Applozic.updatePushNotificationId(context, firebaseRegistrationToken).executeSync();
-     *
-     *     //this will execute in a background thread
-     *     Applozic.updatePushNotificationId(context, firebaseRegistrationToken).executeAsync(new BaseAsyncTask.AsyncListener<RegistrationResponse>() {
-     *         @Override
-     *         public void onComplete(RegistrationResponse registrationResponse) { }
-     *
-     *         @Override
-     *         public void onFailed(Throwable t) { }
-     *     });
-     * </code>
-     *
-     * <p><i><b>Note:</b>Check if <code>registrationResponse</code> is non-null and {@link RegistrationResponse#isRegistrationSuccess()} is true to confirm a successful registration.</i></p>
-     *
-     * @see RegisterUserClientService#updatePushNotificationId(String)
-     */
-    public static @NonNull AlAsyncTask<Void, RegistrationResponse> registerForPushNotification(@NonNull Context context, @Nullable String firebaseRegistrationToken) {
+    private static @NonNull AlAsyncTask<Void, RegistrationResponse> registerForPushNotification(@NonNull Context context, @Nullable String firebaseRegistrationToken) {
         return new AlAsyncTask<Void, RegistrationResponse>() {
             @Override
             protected RegistrationResponse doInBackground() throws Exception {
@@ -210,28 +140,7 @@ public class Applozic {
         };
     }
 
-    /**
-     * Logout the current user.
-     *
-     * <code>
-     *     //this will run in calling thread
-     *     Boolean success = logoutUser(context).executeSync();
-     *
-     *     //this will execute in a background thread
-     *     logoutUser(context).executeAsync(new BaseAsyncTask.AsyncListener<Boolean>() {
-     *         @Override
-     *         public void onComplete(Boolean aBoolean) { }
-     *
-     *         @Override
-     *         public void onFailed(Throwable t) { }
-     *     });
-     * </code>
-     *
-     * <p><i><b>Note:</b> <code>aBoolean</code> will be true for success.
-     *
-     * @see UserClientService#logout() for details.
-     */
-    public static @NonNull AlAsyncTask<Void, Boolean> logoutUser(@NonNull Context context) {
+    private static @NonNull AlAsyncTask<Void, Boolean> logoutUser(@NonNull Context context) {
         return new AlAsyncTask<Void, Boolean>() {
             @Override
             protected Boolean doInBackground() {
@@ -263,7 +172,7 @@ public class Applozic {
      *
      * <p><i><b>Note:</b> <code>aBoolean</code> will be true for success, false otherwise.
      */
-    public static @NonNull AlAsyncTask<Void, Boolean> refreshAuthToken(@NonNull Context context) {
+    private static @NonNull AlAsyncTask<Void, Boolean> refreshAuthToken(@NonNull Context context) {
         return new AlAsyncTask<Void, Boolean>() {
             @Override
             protected Boolean doInBackground() {
@@ -473,6 +382,81 @@ public class Applozic {
         return LoggerListenerListSingletonHelper.alLoggerListenerList;
     }
 
+    //old api >>>
+
+    /**
+     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
+     *
+     * <p>Before calling this method, make sure that {@link User#isValidUserId()} returns <i>true</i>.</p>
+     *
+     * <p>If the user (<code>userId</code>) is not present in the servers, a new
+     * one will be created and registered. Otherwise the existing user will be authenticated and logged in.</p>
+     *
+     * <p><i><b>Note:</b>Check if <code>registrationResponse</code> is non-null and {@link RegistrationResponse#isRegistrationSuccess()} is true to confirm a successful login.</i></p>
+     *
+     * <p>After a successful login, you'll be able to access:
+     * <ul>
+     *     <li>{@link MobiComUserPreference#getUserId() your user-id}.</li>
+     *     <li>{@link com.applozic.mobicomkit.contact.AppContactService#getContactById(String) your contact object}.</li>
+     *     <li>Your messages, contacts, channels and other freshly synced data to your local database for your user.</li>
+     * </ul></p>
+     *
+     * <p>Other users will be able to see your status as "online".</p>
+     *
+     * <p>Next steps:</p>
+     * <ol>
+     *     <li>To set up push notifications - {@link #registerForPushNotification(Context, String)}. This is required for receiving messages.</li>
+     *     <li>To send your first message - {@link com.applozic.mobicomkit.api.conversation.MessageBuilder}</li>
+     * </ol>
+     */
+    public static void connectUser(@NonNull Context context, @NonNull User user, @Nullable AlLoginHandler loginHandler) {
+        if (isConnected(context)) {
+            RegistrationResponse registrationResponse = new RegistrationResponse();
+            registrationResponse.setMessage("User already Logged in");
+            Contact contact = new ContactDatabase(context).getContactById(MobiComUserPreference.getInstance(context).getUserId());
+            if (contact != null) {
+                registrationResponse.setUserId(contact.getUserId());
+                registrationResponse.setContactNumber(contact.getContactNumber());
+                registrationResponse.setRoleType(contact.getRoleType());
+                registrationResponse.setImageLink(contact.getImageURL());
+                registrationResponse.setDisplayName(contact.getDisplayName());
+                registrationResponse.setStatusMessage(contact.getStatus());
+            }
+            if (loginHandler != null) {
+                loginHandler.onSuccess(registrationResponse, context);
+            }
+        } else {
+            AlTask.execute(new UserLoginTask(user, loginHandler, context));
+        }
+    }
+
+    /**
+     * Logout the current user.
+     *
+     * @see UserClientService#logout() for details.
+     */
+    public static void logoutUser(@NonNull final Context context, @Nullable AlLogoutHandler logoutHandler) {
+        AlTask.execute(new UserLogoutTask(logoutHandler, context));
+    }
+
+    /**
+     * Enables push notifications, for messages and other events.
+     *
+     * <p>To set up:</p>
+     * <ol>
+     *     <li>Add <i>Firebase Cloud Messaging</i> to your app if you don't already use it.</li>
+     *     <li>Override <code>FirebaseMessageService.onNewToken(String registrationToken)</code> to get the <i>registration-id</i>.</li>
+     *     <li>Execute this task inside your <code>onNewToken</code> implementation with that <i>registration-id</i>.</li>
+     * </ol>
+     *
+     * <p><i><b>Note:</b>Check if <code>registrationResponse</code> is non-null and {@link RegistrationResponse#isRegistrationSuccess()} is true to confirm a successful registration.</i></p>
+     *
+     * @see RegisterUserClientService#updatePushNotificationId(String)
+     */
+    public static void registerForPushNotification(Context context, String pushToken, AlPushNotificationHandler handler) {
+        AlTask.execute(new PushNotificationTask(context, pushToken, handler));
+    }
+
     //internal methods >>>
 
     //Cleanup: private
@@ -528,41 +512,6 @@ public class Applozic {
     //deprecated code >>>
 
     /**
-     * @deprecated Use the newer {@link #connectUser(Context, User)}. It supports both sync and async execution.
-     *
-     * Use this method to log-in or register your {@link User}. This must be done before using any other SDK method.
-     */
-    @Deprecated
-    public static void connectUser(@NonNull Context context, @NonNull User user, @Nullable AlLoginHandler loginHandler) {
-        if (isConnected(context)) {
-            RegistrationResponse registrationResponse = new RegistrationResponse();
-            registrationResponse.setMessage("User already Logged in");
-            Contact contact = new ContactDatabase(context).getContactById(MobiComUserPreference.getInstance(context).getUserId());
-            if (contact != null) {
-                registrationResponse.setUserId(contact.getUserId());
-                registrationResponse.setContactNumber(contact.getContactNumber());
-                registrationResponse.setRoleType(contact.getRoleType());
-                registrationResponse.setImageLink(contact.getImageURL());
-                registrationResponse.setDisplayName(contact.getDisplayName());
-                registrationResponse.setStatusMessage(contact.getStatus());
-            }
-            if (loginHandler != null) {
-                loginHandler.onSuccess(registrationResponse, context);
-            }
-        } else {
-            AlTask.execute(new UserLoginTask(user, loginHandler, context));
-        }
-    }
-
-    /**
-     * @deprecated Use the newer {@link Applozic#logoutUser(Context)}. It supports both sync and async execution.
-     */
-    @Deprecated
-    public static void logoutUser(@NonNull final Context context, @Nullable AlLogoutHandler logoutHandler) {
-        AlTask.execute(new UserLogoutTask(logoutHandler, context));
-    }
-
-    /**
      * @deprecated Use {@link Applozic#connectUser(Context, User)}.
      */
     @Deprecated
@@ -615,14 +564,6 @@ public class Applozic {
     @Deprecated
     public static void unSubscribeToSupportGroup(Context context, boolean useEncrypted) {
         ApplozicMqttWorker.enqueueWorkUnSubscribeToSupportGroup(context, useEncrypted);
-    }
-
-    /**
-     * @deprecated Use {@link #registerForPushNotification(Context, String)}.
-     */
-    @Deprecated
-    public static void registerForPushNotification(Context context, String pushToken, AlPushNotificationHandler handler) {
-        AlTask.execute(new PushNotificationTask(context, pushToken, handler));
     }
 
     //Cleanup: private

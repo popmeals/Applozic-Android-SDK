@@ -7,10 +7,6 @@ import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-/**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels#getChannel(Context, String, Integer)}.
- */
-@Deprecated
 public class AlGroupInformationAsyncTask extends AlAsyncTask<Object, Channel> {
     Context context;
     ChannelService channelService;

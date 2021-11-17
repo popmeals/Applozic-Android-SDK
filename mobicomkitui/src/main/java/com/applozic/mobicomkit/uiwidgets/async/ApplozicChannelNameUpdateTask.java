@@ -9,9 +9,6 @@ import com.applozic.mobicomkit.feed.GroupInfoUpdate;
 import com.applozic.mobicomkit.uiwidgets.R;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-/**
- * Created by sunil on 17/5/16.
- */
 public class ApplozicChannelNameUpdateTask extends AlAsyncTask<Void, Boolean> {
 
     Context context;

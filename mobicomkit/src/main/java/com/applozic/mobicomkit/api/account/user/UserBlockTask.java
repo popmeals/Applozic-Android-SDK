@@ -7,8 +7,6 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import com.applozic.mobicommons.task.AlTask;
 
 /**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Contacts#blockUser(Context, String, boolean)}.
- *
  * An asynchronous task that blocks/unblocks the contact/user with the given userId.
  *
  * <code>
@@ -42,7 +40,6 @@ import com.applozic.mobicommons.task.AlTask;
  * Created for async execution of {@link UserService#processUserBlock(String, boolean)}.
  * Use {@link TaskListener} to get the results.</p>
  */
-@Deprecated
 public class UserBlockTask extends AlAsyncTask<Void, Boolean> {
     private final TaskListener taskListener;
     private final Context context;

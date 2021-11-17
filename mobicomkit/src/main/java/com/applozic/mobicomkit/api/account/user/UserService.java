@@ -39,8 +39,6 @@ import java.util.Set;
 /**
  * For working with users/contacts.
  *
- * <p>For methods with asynchronous support, refer to {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Contacts}.</p>
- *
  * <p>All methods of this class run blocking. You will need to run them asynchronously.</p>
  */
 public class UserService {
@@ -340,7 +338,7 @@ public class UserService {
 
     //Cleanup: not needed
     /**
-     * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Contacts#updateUserDetails(Context, User)}.
+     * @deprecated Can cause errors if used improperly.
      */
     @Deprecated
     public void updateUser(User user, AlCallback callback) {

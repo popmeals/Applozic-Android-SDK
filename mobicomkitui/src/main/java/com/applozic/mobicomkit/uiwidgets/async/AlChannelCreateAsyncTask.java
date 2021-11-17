@@ -8,10 +8,6 @@ import com.applozic.mobicomkit.feed.ChannelFeedApiResponse;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-/**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels#createChannel(Context, ChannelInfo)}.
- */
-@Deprecated
 public class AlChannelCreateAsyncTask extends AlAsyncTask<Void, ChannelFeedApiResponse> {
     Context context;
     ChannelService channelService;

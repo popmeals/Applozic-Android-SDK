@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.applozic.mobicomkit.feed.MqttMessageResponse;
 import com.applozic.mobicomkit.listners.AlMqttListener;
+import com.applozic.mobicomkit.listners.AlPushNotificationHandler;
 import com.applozic.mobicomkit.listners.ApplozicUIListener;
 import com.applozic.mobicommons.json.GsonUtils;
 
@@ -21,7 +22,7 @@ import java.util.Map;
  *
  * <p>See {@link ApplozicUIListener} for a list of all supported events.</p>
  *
- * <p><i>Important:</i> To listen to real-time events, you have to set up push-notifications. Refer to {@link com.applozic.mobicomkit.Applozic#registerForPushNotification(Context, String)}.</p>
+ * <p><i>Important:</i> To listen to real-time events, you have to set up push-notifications. Refer to {@link com.applozic.mobicomkit.Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)}.</p>
  *
  * <p>Now you can start listening for events using {@link AlEventManager#registerUIListener(String, ApplozicUIListener)}.
  * Do remember to {@link AlEventManager#unregisterUIListener(String) unregister} the listener when not required.</p>

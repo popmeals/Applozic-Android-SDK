@@ -201,7 +201,7 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * Internal method. Performs logout for the current user.
      *
-     * Use {@link Applozic#logoutUser(Context)}.
+     * Use {@link Applozic#logoutUser(Context, AlLogoutHandler)}.
      *
      * <p>A logout server call will be sent. Along with that:
      * - {@link MobiComUserPreference} shared preference will be cleared.

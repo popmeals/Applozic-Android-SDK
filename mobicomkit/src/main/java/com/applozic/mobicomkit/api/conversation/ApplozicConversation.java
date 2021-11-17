@@ -57,20 +57,7 @@ import java.util.Set;
  */
 public class ApplozicConversation {
 
-    /**
-     * Get the list of all conversations for the current user. Null in case of error or if there are no conversations.
-     *
-     * <p>Each {@link Message} object in the list corresponds to a conversation. It is the latest message for that conversation.</p>
-     *
-     * <code>
-     *     message.getGroupId(); //if this is non-null, the message corresponds to a channel conversation
-     *     message.getTo(); //if group-id is null then the message is for a 1-to-1 conversation, this is the user-id of that user.
-     *     message.getMessage(); //the latest message text for the conversation
-     * </code>
-     *
-     * @param forScroll pass false to get the first batch of 60 conversations. pass true to get the next batch of 60 and the one after that and so on.
-     */
-    public static @NonNull AlAsyncTask<Void, List<Message>> conversationList(@NonNull Context context, boolean forScroll) {
+    private static @NonNull AlAsyncTask<Void, List<Message>> conversationList(@NonNull Context context, boolean forScroll) {
         if (!forScroll) {
             return conversationListFromCustomParameters(context, null, null, null);
         } else {
@@ -78,20 +65,7 @@ public class ApplozicConversation {
         }
     }
 
-    /**
-     * Get the list of conversation for the given search string for the current user. Null in case of error or if there are no conversations.
-     *
-     * <p>Each {@link Message} object in the list corresponds to a conversation. It is the latest message for that conversation.</p>
-     *
-     * <code>
-     *     message.getGroupId(); //if this is non-null, the message corresponds to a channel conversation
-     *     message.getTo(); //if group-id is null then the message is for a 1-to-1 conversation, this is the user-id of that user.
-     *     message.getMessage(); //the latest message text for the conversation
-     * </code>
-     *
-     * @param forScroll pass false to get the first batch of 60 conversations. pass true to get the next batch of 60 and the one after that and so on.
-     */
-    public static @NonNull AlAsyncTask<Void, List<Message>> conversationListForSearch(@NonNull Context context, @Nullable String searchString, boolean forScroll) {
+    private static @NonNull AlAsyncTask<Void, List<Message>> conversationListForSearch(@NonNull Context context, @Nullable String searchString, boolean forScroll) {
         if (!forScroll) {
             return conversationListFromCustomParameters(context, searchString, null, null);
         } else {
@@ -114,7 +88,7 @@ public class ApplozicConversation {
      * @param startTime {@link Message#getCreatedAtTime()} of the message to start the list from
      * @param endTime {@link Message#getCreatedAtTime()} of the message to end the list with
      */
-    public static @NonNull AlAsyncTask<Void, List<Message>> conversationListFromCustomParameters(@NonNull Context context, @Nullable String searchString, @Nullable Long startTime, @Nullable Long endTime) {
+    private static @NonNull AlAsyncTask<Void, List<Message>> conversationListFromCustomParameters(@NonNull Context context, @Nullable String searchString, @Nullable Long startTime, @Nullable Long endTime) {
         return new AlAsyncTask<Void, List<Message>>() {
             @Override
             protected List<Message> doInBackground() {
@@ -123,11 +97,6 @@ public class ApplozicConversation {
         };
     }
 
-    /**
-     * Get the list of messages for the user(one-to-one) with the given user-id.
-     *
-     * @param endTime pass null for first batch of 50 messages. pass the {@link Message#getCreatedAtTime()} of the oldest message in previous list to get the next 50.
-     */
     private static @NonNull AlAsyncTask<Void, List<Message>> messageListForContact(@NonNull Context context, @Nullable Long endTime, @Nullable String userId) {
         return new AlAsyncTask<Void, List<Message>>() {
             @Override
@@ -137,12 +106,7 @@ public class ApplozicConversation {
         };
     }
 
-    /**
-     * Get the list of messages for the channel with the given channel key.
-     *
-     * @param endTime pass null for first batch of 50 messages. pass the {@link Message#getCreatedAtTime()} of the oldest message in previous list to get the next 50.
-     */
-    public static @NonNull AlAsyncTask<Void, List<Message>> messageListForChannel(@NonNull Context context, @Nullable Long endTime, @Nullable Integer channelKey) {
+    private static @NonNull AlAsyncTask<Void, List<Message>> messageListForChannel(@NonNull Context context, @Nullable Long endTime, @Nullable Integer channelKey) {
         return new AlAsyncTask<Void, List<Message>>() {
             @Override
             protected List<Message> doInBackground() {
@@ -177,7 +141,7 @@ public class ApplozicConversation {
      *
      * <p>Will return true for a successful delete.</p>
      */
-    public static @NonNull AlAsyncTask<Void, Boolean> deleteConversation(@NonNull Context context, @Nullable Integer channelKey, @Nullable Contact contact) {
+    private static @NonNull AlAsyncTask<Void, Boolean> deleteConversation(@NonNull Context context, @Nullable Integer channelKey, @Nullable Contact contact) {
         return new AlAsyncTask<Void, Boolean>() {
             @Override
             protected Boolean doInBackground() {
@@ -271,7 +235,7 @@ public class ApplozicConversation {
      *
      * <p>Support offline functionality. In other words, all <i>channel</i> data is also stored locally.</p>
      */
-    public static class Channels {
+    private static class Channels {
         /**
          * Creates a new {@link Channel}.
          *
@@ -489,7 +453,7 @@ public class ApplozicConversation {
     /**
      * For dealing with {@link Contact}s.
      */
-    public static class Contacts {
+    private static class Contacts {
 
         /**
          * Use the {@link AppContactService} to add, update, retrieve contacts.
@@ -517,12 +481,6 @@ public class ApplozicConversation {
          * </code>
          */
         public static @NonNull AppContactService getChannelDatabaseService(@NonNull Context context) {
-            AlAsyncTask<Void, Contact> retrieveContact = new AlAsyncTask<Void, Contact>() {
-                @Override
-                protected Contact doInBackground() throws Exception {
-                    return getChannelDatabaseService(context).getContactById("userid");
-                }
-            };
             return new AppContactService(context);
         }
 
@@ -621,14 +579,34 @@ public class ApplozicConversation {
     //old api >>>
 
     /**
-     * Consider using {@link ApplozicConversation#conversationList(Context, boolean)} instead.
+     * Get the list of all conversations for the current user. Null in case of error or if there are no conversations.
+     *
+     * <p>Each {@link Message} object in the list corresponds to a conversation. It is the latest message for that conversation.</p>
+     *
+     * <code>
+     *     message.getGroupId(); //if this is non-null, the message corresponds to a channel conversation
+     *     message.getTo(); //if group-id is null then the message is for a 1-to-1 conversation, this is the user-id of that user.
+     *     message.getMessage(); //the latest message text for the conversation
+     * </code>
+     *
+     * @param isScroll pass false to get the first batch of 60 conversations. pass true to get the next batch of 60 and the one after that and so on.
      */
     public static void getLatestMessageList(@NonNull Context context, boolean isScroll, @Nullable MessageListHandler handler) {
         getLatestMessageList(context, null, isScroll, handler);
     }
 
     /**
-     * Consider using {@link ApplozicConversation#conversationListForSearch(Context, String, boolean)} instead.
+     * Get the list of conversation for the given search string for the current user. Null in case of error or if there are no conversations.
+     *
+     * <p>Each {@link Message} object in the list corresponds to a conversation. It is the latest message for that conversation.</p>
+     *
+     * <code>
+     *     message.getGroupId(); //if this is non-null, the message corresponds to a channel conversation
+     *     message.getTo(); //if group-id is null then the message is for a 1-to-1 conversation, this is the user-id of that user.
+     *     message.getMessage(); //the latest message text for the conversation
+     * </code>
+     *
+     * @param isScroll pass false to get the first batch of 60 conversations. pass true to get the next batch of 60 and the one after that and so on.
      */
     public static void getLatestMessageList(@NonNull Context context, @Nullable String searchString, boolean isScroll, @Nullable MessageListHandler handler) {
         if (!isScroll) {
@@ -639,21 +617,36 @@ public class ApplozicConversation {
     }
 
     /**
-     * Consider using {@link ApplozicConversation#conversationListFromCustomParameters(Context, String, Long, Long)} instead.
+     * Get the list of all conversations for the current user. Null in case of error or if there are no conversations.
+     *
+     * <p>Each {@link Message} object in the list corresponds to a conversation. It is the latest message for that conversation.</p>
+     *
+     * <code>
+     *     message.getGroupId(); //if this is non-null, the message corresponds to a channel conversation
+     *     message.getTo(); //if group-id is null then the message is for a 1-to-1 conversation, this is the user-id of that user.
+     *     message.getMessage(); //the latest message text for the conversation
+     * </code>
+     *
+     * @param searchString to search messages by
+     * @param startTime {@link Message#getCreatedAtTime()} of the message to start the list from
      */
     public static void getLatestMessageList(@NonNull Context context, @Nullable String searchString, @Nullable Long startTime, @Nullable MessageListHandler handler) {
         AlTask.execute(new MessageListTask(context, searchString, null, null, startTime, null, handler, true));
     }
 
     /**
-     * Consider using {@link ApplozicConversation#messageListForContact(Context, Long, String)} instead.
+     * Get the list of messages for the user(one-to-one) with the given user-id.
+     *
+     * @param endTime pass null for first batch of 50 messages. pass the {@link Message#getCreatedAtTime()} of the oldest message in previous list to get the next 50.
      */
     public static void getMessageListForContact(@NonNull Context context, @NonNull String userId, @Nullable Long endTime, @Nullable MessageListHandler handler) {
         AlTask.execute(new MessageListTask(context, null, new AppContactService(context).getContactById(userId), null, null, endTime, handler, false));
     }
 
     /**
-     * Consider using {@link ApplozicConversation#messageListForChannel(Context, Long, Integer)} instead.
+     * Get the list of messages for the channel with the given channel key.
+     *
+     * @param endTime pass null for first batch of 50 messages. pass the {@link Message#getCreatedAtTime()} of the oldest message in previous list to get the next 50.
      */
     public static void getMessageListForChannel(@NonNull Context context, @NonNull Integer channelKey, @Nullable Long endTime, @Nullable MessageListHandler handler) {
         AlTask.execute(new MessageListTask(context, null, null, ChannelService.getInstance(context).getChannel(channelKey), null, endTime, handler, false));
@@ -678,7 +671,7 @@ public class ApplozicConversation {
     //deprecated >>>
 
     /**
-     * @deprecated Use {@link ApplozicConversation#conversationList(Context, boolean)}. Same functionality.
+     * @deprecated Use {@link ApplozicConversation#getLatestMessageList(Context, String, boolean, MessageListHandler)}. Same functionality.
      */
     @Deprecated
     public static void getConversationList(Context context, String searchString, boolean isScroll, ConversationListHandler handler) {

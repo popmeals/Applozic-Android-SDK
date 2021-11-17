@@ -12,10 +12,6 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @deprecated Use the newer {@link com.applozic.mobicomkit.api.conversation.ApplozicConversation.Channels#updateChannelMetadata(Context, Integer, HashMap)}.
- */
-@Deprecated
 public class ApplozicChannelMetaDataUpdateTask extends AlAsyncTask<Void, Boolean> {
     Context context;
     Integer channelKey;

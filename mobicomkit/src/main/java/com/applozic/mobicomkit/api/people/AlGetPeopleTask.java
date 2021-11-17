@@ -12,6 +12,10 @@ import com.applozic.mobicommons.people.contact.Contact;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
 //Cleanup: remove this class, not used
+/**
+ * @deprecated Use the respective methods instead {@link AppContactService#getContactById(String)}, {@link ChannelService#getChannelByChannelKey(Integer)} and {@link ChannelService#getChannelByClientGroupId(String)}.
+ */
+@Deprecated
 public class AlGetPeopleTask extends AlAsyncTask<Object, Object> {
     private String userId;
     private String clientChannelKey;

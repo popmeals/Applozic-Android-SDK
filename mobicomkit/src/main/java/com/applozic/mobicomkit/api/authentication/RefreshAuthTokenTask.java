@@ -12,8 +12,8 @@ import com.applozic.mobicommons.task.AlTask;
 import java.lang.ref.WeakReference;
 
 /**
- * Refreshes the JWT authentication token and saves it locally for future use.
- * This token is used by the SDK to authenticate all future API calls.
+ * <p>Refreshes the JWT authentication token and saves it locally for future use.
+ * This token is used by the SDK to authenticate all future API calls.</p>
  *
  * <p>To save unnecessary calls, run this task only if {@link AlAuthService#isTokenValid(Context)} returns <code>false</code>.</p>
  *
@@ -36,25 +36,23 @@ import java.lang.ref.WeakReference;
  * </code>
  */
 public class RefreshAuthTokenTask extends AlAsyncTask<Void, Boolean> {
-
     private final String applicationId;
     private final String userId;
     private final WeakReference<Context> context;
     private final AlCallback callback;
 
+    public RefreshAuthTokenTask(Context context, AlCallback callback) {
+        this(context, MobiComKitClientService.getApplicationKey(context), MobiComUserPreference.getInstance(context).getUserId(), callback);
+    }
+
     /**
-     * @deprecated Use {@link #RefreshAuthTokenTask(Context, AlCallback)} instead.
+     * Internal. Use {@link #RefreshAuthTokenTask(Context, AlCallback)} instead.
      */
-    @Deprecated
     public RefreshAuthTokenTask(Context context, String applicationId, String userId, AlCallback callback) {
         this.context = new WeakReference<>(context);
         this.applicationId = applicationId;
         this.userId = userId;
         this.callback = callback;
-    }
-
-    public RefreshAuthTokenTask(Context context, AlCallback callback) {
-        this(context, MobiComKitClientService.getApplicationKey(context), MobiComUserPreference.getInstance(context).getUserId(), callback);
     }
 
     @Override

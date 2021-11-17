@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
@@ -725,7 +728,7 @@ public class MessageClientService extends MobiComKitClientService {
     }
 
     //Cleanup: default
-    public String syncDeleteConversationThreadFromServer(Contact contact, Channel channel) {
+    public String syncDeleteConversationThreadFromServer(@Nullable Contact contact, @Nullable Channel channel) {
         String response = null;
         String parameterString = "";
         try {

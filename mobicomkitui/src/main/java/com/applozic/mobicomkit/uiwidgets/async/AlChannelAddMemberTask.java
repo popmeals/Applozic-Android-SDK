@@ -11,10 +11,6 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 
 import java.util.List;
 
-/**
- * Created by ninu on 13/07/17.
- */
-
 public class AlChannelAddMemberTask extends AlAsyncTask<Void, Boolean> {
     Context context;
     Integer channelKey;

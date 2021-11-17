@@ -139,7 +139,6 @@ public class MobiComUserPreference {
         }
     }
 
-    @Deprecated
     public boolean isRegistered() {
         return !TextUtils.isEmpty(getDeviceKeyString());
     }

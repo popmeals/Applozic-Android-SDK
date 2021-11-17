@@ -12,10 +12,6 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by mihir on 18/04/18.
- */
-
 public class ApplozicChannelMetaDataUpdateTask extends AlAsyncTask<Void, Boolean> {
     Context context;
     Integer channelKey;

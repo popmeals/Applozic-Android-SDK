@@ -41,7 +41,6 @@ import com.applozic.mobicommons.task.AlTask;
  * Use {@link TaskListener} to get the results.</p>
  */
 public class UserBlockTask extends AlAsyncTask<Void, Boolean> {
-
     private final TaskListener taskListener;
     private final Context context;
     private ApiResponse apiResponse;

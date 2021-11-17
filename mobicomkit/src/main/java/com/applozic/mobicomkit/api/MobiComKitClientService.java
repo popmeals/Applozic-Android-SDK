@@ -3,6 +3,8 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 
@@ -44,21 +46,18 @@ public class MobiComKitClientService {
     private static final String KM_PROD_BASE_URL = "https://api.kommunicate.io";
     private static final String KM_TEST_BASE_URL = "https://api-test.kommunicate.io";
 
-    public MobiComKitClientService() {
-
-    }
+    public MobiComKitClientService() { }
 
     public MobiComKitClientService(Context context) {
         this.context = ApplozicService.getContext(context);
     }
 
     //Cleanup: default
+    /**
+     * Internal. Use {@link Applozic#getApplicationKey()} instead.
+     */
     public static String getApplicationKey(Context context) {
-        String applicationKey = Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
-        if (!TextUtils.isEmpty(applicationKey)) {
-            return applicationKey;
-        }
-        return Utils.getMetaDataValue(ApplozicService.getContext(context), APPLICATION_KEY_HEADER_VALUE_METADATA);
+        return Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
     }
 
     //Cleanup: default
@@ -67,7 +66,7 @@ public class MobiComKitClientService {
     }
 
     //Cleanup: protected
-    public String getBaseUrl() {
+    public @NonNull String getBaseUrl() {
         String SELECTED_BASE_URL = MobiComUserPreference.getInstance(context).getUrl();
 
         if (!TextUtils.isEmpty(SELECTED_BASE_URL)) {
@@ -80,7 +79,7 @@ public class MobiComKitClientService {
         }
 
         String BASE_URL = Utils.getMetaDataValue(context.getApplicationContext(), BASE_URL_METADATA);
-        if (!TextUtils.isEmpty(BASE_URL)) {
+        if (BASE_URL != null && !TextUtils.isEmpty(BASE_URL)) {
             return BASE_URL;
         }
 

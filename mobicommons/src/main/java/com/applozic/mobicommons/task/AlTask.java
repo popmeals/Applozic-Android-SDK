@@ -8,6 +8,6 @@ package com.applozic.mobicommons.task;
  */
 public class AlTask {
     public static void execute(BaseAsyncTask<?, ?> baseAsyncTask) {
-        baseAsyncTask.execute();
+        baseAsyncTask.execute(null);
     }
 }

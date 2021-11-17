@@ -8,10 +8,6 @@ import com.applozic.mobicomkit.feed.ChannelFeedApiResponse;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-/**
- * Created by Sunil on 12/26/2016.
- */
-
 public class AlChannelCreateAsyncTask extends AlAsyncTask<Void, ChannelFeedApiResponse> {
     Context context;
     ChannelService channelService;

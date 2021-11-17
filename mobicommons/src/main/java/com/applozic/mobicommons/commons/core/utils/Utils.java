@@ -21,6 +21,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicommons.ALSpecificSettings;
 import com.applozic.mobicommons.ApplozicService;
 import com.applozic.mobicommons.file.ALFileProvider;
@@ -199,9 +202,9 @@ public class Utils {
 
     }
 
-    public static String getMetaDataValue(Context context, String metaDataName) {
+    public static @Nullable String getMetaDataValue(@NonNull Context context, @Nullable String metaDataName) {
         try {
-            PackageManager packageManager = ApplozicService.getContext(context).getPackageManager();
+            PackageManager packageManager = ApplozicService.getContext(context).getPackageManager(); //context passes is non-null. hence no exception
             ApplicationInfo ai = packageManager.getApplicationInfo(ApplozicService.getContext(context).getPackageName(), PackageManager.GET_META_DATA);
             if (ai.metaData != null) {
                 return ai.metaData.getString(metaDataName);

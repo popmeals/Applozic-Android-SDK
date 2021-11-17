@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.AlUserUpdate;
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
@@ -163,10 +166,42 @@ public class UserClientService extends MobiComKitClientService {
         return getBaseUrl() + USER_SEARCH_URL;
     }
 
+    //Cleanup: private
+    //Cleanup: fromLogin is always false
     /**
-     * Performs logout for the current user.
+     * Internal. This methods has a un-necessary parameter.
      *
-     * Use {@link UserLogoutTask} or {@link Applozic#logoutUser(Context, AlLogoutHandler)}. They wrap around this method asynchronously.
+     * @param fromLogin pass false
+     * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
+     */
+    public ApiResponse logout(boolean fromLogin) {
+        Utils.printLog(context, TAG, "Al Logout call !!");
+        ApiResponse apiResponse = userLogoutResponse();
+        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+        final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
+        final String userKeyString = mobiComUserPreference.getSuUserKeyString();
+        String url = mobiComUserPreference.getUrl();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Applozic.Store.setCustomNotificationSound(context, null);
+            new NotificationChannels(context).deleteAllChannels();
+        }
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        mobiComUserPreference.clearAll();
+        ALSpecificSettings.getInstance(context).clearAll();
+        MessageDatabaseService.recentlyAddedMessage.clear();
+        MobiComDatabaseHelper.getInstance(context).delDatabase();
+        mobiComUserPreference.setUrl(url);
+        if (!fromLogin) {
+            ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
+        }
+        return apiResponse;
+    }
+
+    /**
+     * Internal method. Performs logout for the current user.
+     *
+     * Use {@link Applozic#logoutUser(Context, AlLogoutHandler)}.
      *
      * <p>A logout server call will be sent. Along with that:
      * - {@link MobiComUserPreference} shared preference will be cleared.
@@ -202,38 +237,6 @@ public class UserClientService extends MobiComKitClientService {
         mobiComUserPreference.setUrl(url);
 
         ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
-    }
-
-    //Cleanup: private
-    //Cleanup: fromLogin is always false
-    /**
-     * @deprecated This methods has a un-necessary parameter. Use {@link UserClientService#logout()} instead.
-     *
-     * @param fromLogin pass false
-     * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
-     */
-    public ApiResponse logout(boolean fromLogin) {
-        Utils.printLog(context, TAG, "Al Logout call !!");
-        ApiResponse apiResponse = userLogoutResponse();
-        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-        final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
-        final String userKeyString = mobiComUserPreference.getSuUserKeyString();
-        String url = mobiComUserPreference.getUrl();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Applozic.getInstance(context).setCustomNotificationSound(null);
-            new NotificationChannels(context, null).deleteAllChannels();
-        }
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        mobiComUserPreference.clearAll();
-        ALSpecificSettings.getInstance(context).clearAll();
-        MessageDatabaseService.recentlyAddedMessage.clear();
-        MobiComDatabaseHelper.getInstance(context).delDatabase();
-        mobiComUserPreference.setUrl(url);
-        if (!fromLogin) {
-            ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
-        }
-        return apiResponse;
     }
 
     //Cleanup: rename to something more suitable for a public api
@@ -334,7 +337,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param block true for block/false for unblock
      * @return api response from the server, use {@link ApiResponse#isSuccess()} to check for success
      */
-    public ApiResponse userBlock(String userId, boolean block) {
+    public @Nullable ApiResponse userBlock(@Nullable String userId, boolean block) {
         String response = "";
         ApiResponse apiResponse = null;
         try {
@@ -430,7 +433,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param userIds set of user ids to sync
      * @return api response from the server
      */
-    public String postUserDetailsByUserIds(Set<String> userIds) {
+    public @Nullable String postUserDetailsByUserIds(@Nullable Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
                 List<String> userDetailsList = new ArrayList<>();
@@ -522,7 +525,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param pageSize the number of users to get
      * @return the json api response. convert to {@link com.applozic.mobicomkit.feed.RegisteredUsersApiResponse}
      */
-    public String getRegisteredUsers(Long startTime, int pageSize) {
+    public @Nullable String getRegisteredUsers(@NonNull Long startTime, int pageSize) {
         String response = null;
         try {
             String url = "?pageSize=" + pageSize;
@@ -590,7 +593,7 @@ public class UserClientService extends MobiComKitClientService {
      * @param notificationAfterTime the time (in milliseconds) to mute the user for
      * @return the api response, use {@link ApiResponse#isSuccess()} to check for success
      */
-    public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
+    public @Nullable ApiResponse muteUserNotifications(@Nullable String userId, @Nullable Long notificationAfterTime) {
         if (userId == null || notificationAfterTime == null) {
             return null;
         }
@@ -700,7 +703,7 @@ public class UserClientService extends MobiComKitClientService {
      * to a {@link UserDetail} array to get the list in usable form
      * @throws ApplozicException when the backend returns an error response
      */
-    public ApiResponse getUsersBySearchString(String searchString) throws ApplozicException {
+    public @Nullable ApiResponse getUsersBySearchString(@Nullable String searchString) throws ApplozicException {
         if (TextUtils.isEmpty(searchString)) {
             return null;
         }

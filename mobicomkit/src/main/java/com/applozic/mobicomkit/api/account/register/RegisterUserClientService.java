@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
@@ -15,9 +18,11 @@ import com.applozic.mobicomkit.api.conversation.ApplozicMqttWorker;
 import com.applozic.mobicomkit.api.conversation.ConversationWorker;
 import com.applozic.mobicomkit.api.notification.NotificationChannels;
 import com.applozic.mobicomkit.contact.AppContactService;
+import com.applozic.mobicomkit.contact.database.ContactDatabase;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicomkit.listners.AlLoginHandler;
+import com.applozic.mobicomkit.listners.AlPushNotificationHandler;
 import com.applozic.mobicommons.ALSpecificSettings;
 import com.applozic.mobicommons.ApplozicService;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -26,88 +31,68 @@ import com.applozic.mobicommons.people.contact.Contact;
 import com.google.gson.Gson;
 
 import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 /**
- * Handles registration and authentication for your {@link User} and login session.
+ * <p>Handles registration and authentication for your {@link User} and login session.</p>
+ *
+ * <ul>
+ *     <li>To register or authenticate a user, see {@link Applozic#connectUser(Context, User, AlLoginHandler)}.</li>
+ *     <li>To register your login session, see the {@link Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)}.</li>
+ * </ul>
  *
  * <p>The <i>user</i></p> need to be registered/authenticated before any of the SDK's methods can be used.
  * <p>The <i>login session</i> needs to be registered if you want real-time updates to be delivered.</p>
- *
- * <ul>
- *     <li>To register or authenticate a user, see the doc for {@link RegisterUserClientService#createAccount(User)}.</li>
- *     <li>To register your login session, see the doc for {@link RegisterUserClientService#updatePushNotificationId(String)}.</li>
- * </ul>
  */
 public class RegisterUserClientService extends MobiComKitClientService {
+    private static final String TAG = "RegisterUserClient";
+
     private static final String CREATE_ACCOUNT_URL = "/rest/ws/register/client?";
     private static final String UPDATE_ACCOUNT_URL = "/rest/ws/register/update?";
     private static final String CHECK_PRICING_PACKAGE = "/rest/ws/application/pricing/package";
     private static final String REFRESH_TOKEN_URL = "/rest/ws/register/refresh/token";
+
+    private final HttpRequestUtils httpRequestUtils;
+
     /**
-     * This is an internal field. Do not use.
+     * This is an internal field. Do not use. It will be deprecated soon.
      */
     public static final Short MOBICOMKIT_VERSION_CODE = 112;
-    private static final String TAG = "RegisterUserClient";
-    private static final String INVALID_APP_ID = "INVALID_APPLICATIONID"; //Cleanup: can be removed
-    private HttpRequestUtils httpRequestUtils;
 
     /**
      * Constructor. Also stores the application context. You can access later it using {@link ApplozicService#getAppContext()}.
-     *
-     * @param context the context
      */
-    public RegisterUserClientService(Context context) {
+    public RegisterUserClientService(@NonNull Context context) {
         this.context = ApplozicService.getContext(context);
         ApplozicService.initWithContext(context);
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getCreateAccountUrl() {
-        return getBaseUrl() + CREATE_ACCOUNT_URL;
-    }
+    private @NonNull User getLoggedInUserDetailFromSharedPref() {
+        MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
 
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getPricingPackageUrl() {
-        return getBaseUrl() + CHECK_PRICING_PACKAGE;
-    }
-
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getUpdateAccountUrl() {
-        return getBaseUrl() + UPDATE_ACCOUNT_URL;
-    }
-
-    //Cleanup: private
-    /**
-     * This is an internal method. Do not use.
-     */
-    public String getRefreshTokenUrl() {
-        return getBaseUrl() + REFRESH_TOKEN_URL;
+        User user = new User();
+        user.setEmail(pref.getEmailIdValue());
+        user.setUserId(pref.getUserId());
+        user.setContactNumber(pref.getContactNumber());
+        user.setDisplayName(pref.getDisplayName());
+        user.setImageLink(pref.getImageLink());
+        user.setRoleType(pref.getUserRoleType());
+        return user;
     }
 
     /**
-     * This method registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.
+     * This is an internal method. Use {@link Applozic#connectUser(Context, User, AlLoginHandler)}.
      *
-     * Do not use this method directly. Use the <i>asynchronous</i> {@link Applozic#connectUser(Context, User, AlLoginHandler)} instead.
+     * <p>Registers(or logs in) a {@link User} to the Applozic servers. It also initializes the SDK for that user.</p>
      *
      * @param user the user object to register/authenticate
      * @return the {@link RegistrationResponse}, {@link RegistrationResponse#isRegistrationSuccess()} will be true in case of a successful login/register. otherwise {@link RegistrationResponse#getMessage()} will have the error message
      * @throws Exception in case of empty or invalid user-id (see {@link User#isValidUserId()}, and connection errors
      */
-    public RegistrationResponse createAccount(User user) throws Exception {
+    public @NonNull RegistrationResponse createAccount(@NonNull User user) throws Exception {
         if (user.getDeviceType() == null) {
             user.setDeviceType(Short.valueOf("1"));
         }
@@ -215,8 +200,8 @@ public class RegisterUserClientService extends MobiComKitClientService {
             contact.setRoleType(user.getRoleType());
             contact.setStatus(registrationResponse.getStatusMessage());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Applozic.getInstance(context).setNotificationChannelVersion(NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
-                new NotificationChannels(context, Applozic.getInstance(context).getCustomNotificationSound()).prepareNotificationChannels();
+                Applozic.Store.setNotificationChannelVersion(context, NotificationChannels.NOTIFICATION_CHANNEL_VERSION - 1);
+                new NotificationChannels(context).prepareNotificationChannels();
             }
             ApplozicClient.getInstance(context).setChatDisabled(contact.isChatForUserDisabled());
             new AppContactService(context).upsert(contact);
@@ -231,21 +216,15 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This method gets a fresh JWT authentication token from the Applozic servers and saves it locally for application use.
-     *
-     * <p><b>Note:</b> You do not need to use this method and refresh the JWT token manually. All this is handled by the SDK.</p>
-     *
      * <p><i>What is this JWT token?</i></p>
      * <p>The JWT token is used for authentication/authorization of user level server calls.
      * This token is received from the backend after your user has been successfully logged-in or registered.</p>
-     *
-     * @see com.applozic.mobicomkit.api.authentication.RefreshAuthTokenTask
      *
      * @param applicationId the Applozic application id
      * @param userId the user id of the user to get the auth token for
      * @return true if the auth token was successfully retrieved and saved/false otherwise
      */
-    public boolean refreshAuthToken(String applicationId, String userId) {
+    public boolean refreshAuthToken(@Nullable String applicationId, @Nullable String userId) {
         try {
             HttpRequestUtils.isRefreshTokenInProgress = true;
             Map<String, String> tokenRefreshBodyMap = new HashMap<>();
@@ -265,58 +244,78 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return false;
     }
 
-    //Cleanup: can be removed
-    /**
-     * @deprecated Use {@link RegisterUserClientService#createAccount(User)} instead.
-     */
-    @Deprecated
-    public RegistrationResponse createAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
-        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-        String url = mobiComUserPreference.getUrl();
-        mobiComUserPreference.clearAll();
-        mobiComUserPreference.setUrl(url);
+    //internal methods >>>
 
-        return updateAccount(email, userId, phoneNumber, displayName, imageLink, pushNotificationId);
+    //Cleanup: private
+    /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getCreateAccountUrl() {
+        return getBaseUrl() + CREATE_ACCOUNT_URL;
     }
 
-    //Cleanup: can be removed
+    //Cleanup: private
     /**
-     * @deprecated This method is no longer used and will be removed soon.
+     * This is an internal method. Do not use.
      */
-    @Deprecated
-    private RegistrationResponse updateAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
-        User user = new User();
-        user.setUserId(userId);
-        user.setEmail(email);
-        user.setImageLink(imageLink);
-        user.setRegistrationId(pushNotificationId);
-        user.setDisplayName(displayName);
-        user.setContactNumber(phoneNumber);
-
-        final RegistrationResponse registrationResponse = createAccount(user);
-
-        ApplozicMqttWorker.enqueueWorkConnectPublish(context);
-
-        return registrationResponse;
+    public @NonNull String getPricingPackageUrl() {
+        return getBaseUrl() + CHECK_PRICING_PACKAGE;
     }
 
-    //Cleanup: can be removed, is used in just the PushNotificationTask
+    //Cleanup: private
     /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getUpdateAccountUrl() {
+        return getBaseUrl() + UPDATE_ACCOUNT_URL;
+    }
+
+    //Cleanup: private
+    /**
+     * This is an internal method. Do not use.
+     */
+    public @NonNull String getRefreshTokenUrl() {
+        return getBaseUrl() + REFRESH_TOKEN_URL;
+    }
+
+    /**
+     * Internal method. Adds a logged in check to {@link #createAccount(User)}.
+     */
+    public @NonNull RegistrationResponse checkLoggedInAndCreateAccount(@NonNull User user) throws Exception {
+        if (MobiComUserPreference.getInstance(context).isLoggedIn()) {
+            RegistrationResponse registrationResponse = new RegistrationResponse();
+            registrationResponse.setMessage("User already Logged in.");
+            Contact contact = new ContactDatabase(context).getContactById(MobiComUserPreference.getInstance(context).getUserId());
+            if (contact != null) {
+                registrationResponse.setUserId(contact.getUserId());
+                registrationResponse.setContactNumber(contact.getContactNumber());
+                registrationResponse.setRoleType(contact.getRoleType());
+                registrationResponse.setImageLink(contact.getImageURL());
+                registrationResponse.setDisplayName(contact.getDisplayName());
+                registrationResponse.setStatusMessage(contact.getStatus());
+            }
+            return registrationResponse;
+        } else {
+            return createAccount(user);
+        }
+    }
+
+    /**
+     * This is an internal method. Use {@link Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)} instead.
+     *
      * Updates the user's account with the registration-id from <i>Firebase Cloud Messaging</i>.
      *
      * <p>FCM is used for providing real-time updates for messages and other events to your device.</p>
      *
-     * <p>This method will block the main thread. Use the asynchronous {@link com.applozic.mobicomkit.api.account.user.PushNotificationTask} instead.</p>
-     *
      * @param pushNotificationId the <i>registration id/token</i> received from <i>Firebase Cloud Messaging</i>
      * @return the user account update response from the server
      */
-    public RegistrationResponse updatePushNotificationId(final String pushNotificationId) throws Exception {
+    public @Nullable RegistrationResponse updatePushNotificationId(@Nullable final String pushNotificationId) throws Exception {
         MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
         //Note: In case if gcm registration is done before login then only updating in pref
 
         RegistrationResponse registrationResponse = null;
-        User user = getUserDetail();
+        User user = getLoggedInUserDetailFromSharedPref();
 
         if (!TextUtils.isEmpty(pushNotificationId)) {
             pref.setDeviceRegistrationId(pushNotificationId);
@@ -329,15 +328,14 @@ public class RegisterUserClientService extends MobiComKitClientService {
     }
 
     /**
-     * This method updates the user's details in the backend.
+     * This is an internal method. You do not need to use it.
      *
-     * <p>This is an internal method. You do not need to use it.</p>
+     * <p>Updates the user's account details in the backend.</p>
      *
-     * @param user the user data
-     * @return registration response obtained from server
+     * @throws Exception in-case of empty/invalid response
      */
-    public RegistrationResponse updateRegisteredAccount(User user) throws Exception {
-        RegistrationResponse registrationResponse = null;
+    public @NonNull RegistrationResponse updateRegisteredAccount(@NonNull User user) throws Exception {
+        RegistrationResponse registrationResponse;
 
         if (user.getDeviceType() == null) {
             user.setDeviceType(Short.valueOf("1"));
@@ -387,19 +385,7 @@ public class RegisterUserClientService extends MobiComKitClientService {
         return registrationResponse;
     }
 
-    private User getUserDetail() {
-
-        MobiComUserPreference pref = MobiComUserPreference.getInstance(context);
-
-        User user = new User();
-        user.setEmail(pref.getEmailIdValue());
-        user.setUserId(pref.getUserId());
-        user.setContactNumber(pref.getContactNumber());
-        user.setDisplayName(pref.getDisplayName());
-        user.setImageLink(pref.getImageLink());
-        user.setRoleType(pref.getUserRoleType());
-        return user;
-    }
+    //deprecated code >>>
 
     //Cleanup: can be removed
     /**
@@ -418,5 +404,40 @@ public class RegisterUserClientService extends MobiComKitClientService {
         } catch (Exception e) {
             Utils.printLog(context, TAG, "Account status sync call failed");
         }
+    }
+
+    //Cleanup: can be removed
+    /**
+     * @deprecated Use {@link RegisterUserClientService#createAccount(User)} instead.
+     */
+    @Deprecated
+    public RegistrationResponse createAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
+        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+        String url = mobiComUserPreference.getUrl();
+        mobiComUserPreference.clearAll();
+        mobiComUserPreference.setUrl(url);
+
+        return updateAccount(email, userId, phoneNumber, displayName, imageLink, pushNotificationId);
+    }
+
+    //Cleanup: can be removed
+    /**
+     * @deprecated This method is no longer used and will be removed soon.
+     */
+    @Deprecated
+    private RegistrationResponse updateAccount(String email, String userId, String phoneNumber, String displayName, String imageLink, String pushNotificationId) throws Exception {
+        User user = new User();
+        user.setUserId(userId);
+        user.setEmail(email);
+        user.setImageLink(imageLink);
+        user.setRegistrationId(pushNotificationId);
+        user.setDisplayName(displayName);
+        user.setContactNumber(phoneNumber);
+
+        final RegistrationResponse registrationResponse = createAccount(user);
+
+        ApplozicMqttWorker.enqueueWorkConnectPublish(context);
+
+        return registrationResponse;
     }
 }

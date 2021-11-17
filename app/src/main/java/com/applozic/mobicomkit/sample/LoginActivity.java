@@ -29,12 +29,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
+import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.applozic.mobicomkit.contact.AppContactService;
@@ -45,6 +47,7 @@ import com.applozic.mobicomkit.uiwidgets.conversation.ConversationUIService;
 import com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.people.contact.Contact;
+import com.applozic.mobicommons.task.AlTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -249,7 +252,7 @@ public class LoginActivity extends Activity implements ActivityCompat.OnRequestP
 
             Applozic.connectUser(this, user, new AlLoginHandler() {
                 @Override
-                public void onSuccess(RegistrationResponse registrationResponse, final Context context) {
+                public void onSuccess(@NonNull RegistrationResponse registrationResponse, final Context context) {
                     // After successful registration with Applozic server the callback will come here
                     mAuthTask = null;
                     showProgress(false);
@@ -264,7 +267,7 @@ public class LoginActivity extends Activity implements ActivityCompat.OnRequestP
                     buildContactData();
                     //Start FCM registration....
 
-                    Applozic.registerForPushNotification(context, Applozic.getInstance(context).getDeviceRegistrationId(), new AlPushNotificationHandler() {
+                    AlTask.execute(new PushNotificationTask(context, Applozic.Store.getDeviceRegistrationId(context), new AlPushNotificationHandler() {
                         @Override
                         public void onSuccess(RegistrationResponse registrationResponse) {
 
@@ -274,7 +277,7 @@ public class LoginActivity extends Activity implements ActivityCompat.OnRequestP
                         public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
 
                         }
-                    });
+                    }));
 
                     //starting main MainActivity
                     Intent mainActvity = new Intent(context, MainActivity.class);

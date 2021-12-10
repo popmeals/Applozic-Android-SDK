@@ -3,8 +3,9 @@ package com.applozic.mobicomkit.api;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.applozic.mobicomkit.Applozic;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 
 import com.applozic.mobicommons.ALSpecificSettings;
@@ -23,9 +24,9 @@ import java.net.URLConnection;
  *
  * <p>All other client classes for messages, users etc based on this.</p>
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS) //ApplozicInternal: make default if possible (add to root maybe)
+//Cleanup: make default if possible (add to root maybe)
 public class MobiComKitClientService {
-    //ApplozicInternal: all to private
+    //Cleanup: all to private
     public static final String BASE_URL_METADATA = "com.applozic.server.url";
     public static final String KM_BASE_URL_METADATA = "io.kommunicate.server.url";
     public static final String MQTT_BASE_URL_METADATA = "com.applozic.mqtt.server.url";
@@ -33,7 +34,7 @@ public class MobiComKitClientService {
     public static String APPLICATION_KEY_HEADER = "Application-Key";
     public static String APP_MOUDLE_NAME_KEY_HEADER = "App-Module-Name";
     public static String APPLICATION_KEY_HEADER_VALUE_METADATA = "com.applozic.application.key";
-    public @ApplozicInternal static String GIPHY_API_METADATA_KEY = "com.giphy.api.key";
+    public static String GIPHY_API_METADATA_KEY = "com.giphy.api.key";
     public static String APP_MODULE_NAME_META_DATA_KEY = "com.applozic.module.key";
     protected Context context;
     protected String DEFAULT_URL = "https://apps.applozic.com";
@@ -45,30 +46,27 @@ public class MobiComKitClientService {
     private static final String KM_PROD_BASE_URL = "https://api.kommunicate.io";
     private static final String KM_TEST_BASE_URL = "https://api-test.kommunicate.io";
 
-    public MobiComKitClientService() {
-
-    }
+    public MobiComKitClientService() { }
 
     public MobiComKitClientService(Context context) {
         this.context = ApplozicService.getContext(context);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
+    /**
+     * Internal. Use {@link Applozic#getApplicationKey()} instead.
+     */
     public static String getApplicationKey(Context context) {
-        String applicationKey = Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
-        if (!TextUtils.isEmpty(applicationKey)) {
-            return applicationKey;
-        }
-        return Utils.getMetaDataValue(ApplozicService.getContext(context), APPLICATION_KEY_HEADER_VALUE_METADATA);
+        return Applozic.getInstance(ApplozicService.getContext(context)).getApplicationKey();
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public static String getAppModuleName(Context context) {
         return Utils.getMetaDataValue(ApplozicService.getContext(context), APP_MODULE_NAME_META_DATA_KEY);
     }
 
-    //ApplozicInternal: protected
-    public String getBaseUrl() {
+    //Cleanup: protected
+    public @NonNull String getBaseUrl() {
         String SELECTED_BASE_URL = MobiComUserPreference.getInstance(context).getUrl();
 
         if (!TextUtils.isEmpty(SELECTED_BASE_URL)) {
@@ -81,14 +79,14 @@ public class MobiComKitClientService {
         }
 
         String BASE_URL = Utils.getMetaDataValue(context.getApplicationContext(), BASE_URL_METADATA);
-        if (!TextUtils.isEmpty(BASE_URL)) {
+        if (BASE_URL != null && !TextUtils.isEmpty(BASE_URL)) {
             return BASE_URL;
         }
 
         return DEFAULT_URL;
     }
 
-    //ApplozicInternal: protected
+    //Cleanup: protected
     public String getKmBaseUrl() {
         String kmCustomUrl = ALSpecificSettings.getInstance(context).getKmBaseUrl();
 
@@ -116,7 +114,7 @@ public class MobiComKitClientService {
         return DEFAULT_MQTT_URL;
     }
 
-    //ApplozicInternal: protected
+    //Cleanup: protected
     public PasswordAuthentication getCredentials() {
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
         if (!userPreferences.isRegistered()) {
@@ -125,7 +123,7 @@ public class MobiComKitClientService {
         return new PasswordAuthentication(userPreferences.getUserId(), userPreferences.getDeviceKeyString().toCharArray());
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public HttpURLConnection openHttpConnection(String urlString) throws IOException {
         HttpURLConnection httpConn;
 
@@ -147,7 +145,7 @@ public class MobiComKitClientService {
         return httpConn;
     }
 
-    //ApplozicInternal: protected
+    //Cleanup: protected
     public String getFileUrl() {
         String fileDownloadURL = Utils.getMetaDataValue(context.getApplicationContext(), FILE_DOWNLOAD_METADATA_KEY);
         if (!TextUtils.isEmpty(fileDownloadURL)) {
@@ -156,7 +154,7 @@ public class MobiComKitClientService {
         return getFileBaseUrl() + FILE_URL;
     }
 
-    //ApplozicInternal: protected
+    //Cleanup: protected
     public String getFileBaseUrl() {
         String fileURL = Utils.getMetaDataValue(context.getApplicationContext(), FILE_BASE_URL_METADATA_KEY);
         return (TextUtils.isEmpty(fileURL) ? FILE_BASE_URL : fileURL);

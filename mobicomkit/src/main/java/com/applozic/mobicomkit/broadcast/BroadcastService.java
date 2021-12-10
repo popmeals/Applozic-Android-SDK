@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -30,7 +29,6 @@ import java.util.Map;
  * <p>NOTE: If we want to send the broadcast to apps, don't forget to add the Category intent.addCategory(Intent.CATEGORY_DEFAULT);
  * P.S: When creating a new broadcast do not forget to add it's INTENT_ACTIONS to {@link BroadcastService#getIntentFilter()}.</p>
  */
-@ApplozicInternal
 public class BroadcastService {
 
     private static final String TAG = "BroadcastService";
@@ -201,7 +199,7 @@ public class BroadcastService {
         sendBroadcast(context, intentTyping);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static void sendUpdate(Context context, boolean isMetadataUpdate, boolean isMQTTReconnectionBroadcast, final String action) {
         if (INTENT_ACTIONS.MQTT_CONNECTED.toString().equals(action)) {
             postEventData(context, new AlMessageEvent().setAction(AlMessageEvent.ActionType.MQTT_CONNECTED));
@@ -374,7 +372,7 @@ public class BroadcastService {
         return intentFilter;
     }
 
-    //ApplozicInternal: default, see what instructions utils does
+    //Cleanup: default, see what instructions utils does
     public static void sendBroadcast(Context context, Intent intent) {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

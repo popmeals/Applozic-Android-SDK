@@ -7,11 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.database.MobiComDatabaseHelper;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ScheduledMessageUtil {
     Context context = null;
     private Class intentClass;

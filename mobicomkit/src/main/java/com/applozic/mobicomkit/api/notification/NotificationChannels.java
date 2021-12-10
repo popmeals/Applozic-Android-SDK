@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicommons.commons.core.utils.Utils;
@@ -23,7 +22,6 @@ import com.applozic.mobicommons.commons.core.utils.Utils;
  * Please remember to increment the NOTIFICATION_CHANNEL_VERSION if any change is made in this class.
  * It is mandatory to increment the version or the update in the Notification channels will fail.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class NotificationChannels {
 
     //increment this version if changes in notification channel is made
@@ -34,16 +32,19 @@ public class NotificationChannels {
     private String soundFilePath;
     private String TAG = getClass().getSimpleName();
 
-    @ApplozicInternal
     public NotificationChannels(Context context, String soundFilePath) {
         this.context = context;
         this.soundFilePath = soundFilePath;
         this.mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
+    public NotificationChannels(Context context) {
+        this(context, Applozic.Store.getCustomNotificationSound(context));
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void prepareNotificationChannels() {
-        if (Applozic.getInstance(context).getNotificationChannelVersion() < NOTIFICATION_CHANNEL_VERSION) {
+        if (Applozic.Store.getNotificationChannelVersion(context) < NOTIFICATION_CHANNEL_VERSION) {
             if (isNotificationChannelCreated()) {
                 deleteNotificationChannel();
             }
@@ -51,7 +52,7 @@ public class NotificationChannels {
                 deleteSilentNotificationChannel();
             }
             if (isAppChannelCreated()) {
-                Applozic.getInstance(context).setCustomNotificationSound(null);
+                Applozic.Store.setCustomNotificationSound(context, null);
                 soundFilePath = null;
                 deleteAppNotificationChannel();
             }
@@ -70,7 +71,7 @@ public class NotificationChannels {
             createSilentNotificationChannel();
             createCallNotificationChannel();
 
-            Applozic.getInstance(context).setNotificationChannelVersion(NOTIFICATION_CHANNEL_VERSION);
+            Applozic.Store.setNotificationChannelVersion(context, NOTIFICATION_CHANNEL_VERSION);
         }
     }
 
@@ -93,7 +94,7 @@ public class NotificationChannels {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getDefaultChannelId(boolean mute) {
         if (mute) {
             return MobiComKitConstants.AL_SILENT_NOTIFICATION;
@@ -105,7 +106,7 @@ public class NotificationChannels {
         return MobiComKitConstants.AL_APP_NOTIFICATION;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getCallChannelId() {
         return MobiComKitConstants.AL_CALL_NOTIFICATION;
     }

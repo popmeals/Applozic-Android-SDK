@@ -2,7 +2,11 @@ package com.applozic.mobicomkit.api.account.user;
 
 import com.applozic.mobicommons.json.JsonMarker;
 
-//ApplozicInternal: default
+//Cleanup: default
+/**
+ * @deprecated This class is no longer used and will be removed soon.
+ */
+@Deprecated
 public class CustomerPackageDetail extends JsonMarker {
     private String applicationKey;
     private String packageName;

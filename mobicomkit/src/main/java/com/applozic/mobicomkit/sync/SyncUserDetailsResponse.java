@@ -1,12 +1,10 @@
 package com.applozic.mobicomkit.sync;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicomkit.api.account.user.UserDetail;
 
 import java.util.List;
 
-@ApplozicInternal
 public class SyncUserDetailsResponse extends JsonMarker {
 
     private String status;

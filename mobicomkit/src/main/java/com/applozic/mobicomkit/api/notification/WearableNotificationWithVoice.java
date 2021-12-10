@@ -15,12 +15,10 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class WearableNotificationWithVoice {
 
-    public @ApplozicInternal static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
+    public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
     Class<?> notificationHandler;
     Context mContext;
     int actionIconResId;
@@ -46,17 +44,17 @@ public class WearableNotificationWithVoice {
         this.notificationId = notificationId;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void setNotificationHandler(Class<?> replyActivityClass) {
         this.notificationHandler = replyActivityClass;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void setCurrentContext(Context currentContext) {
         this.mContext = currentContext;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void setPendingIntent(PendingIntent pendingIntent) {
         this.pendingIntent = pendingIntent;
     }
@@ -67,7 +65,7 @@ public class WearableNotificationWithVoice {
      *
      * @throws RuntimeException
      */
-    //ApplozicInternal: defalut
+    //Cleanup: defalut
     public void sendNotification() throws Exception {
         if (pendingIntent == null && notificationHandler == null) {
             throw new RuntimeException("Either pendingIntent or handler class requires.");

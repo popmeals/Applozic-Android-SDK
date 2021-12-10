@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
@@ -53,9 +55,9 @@ import java.util.UUID;
  * It also includes some methods for user/contact handling.
  * It's a party here.</p>
  */
-//ApplozicInternal: This entire class can be given package visibility with a little work
+//Cleanup: This entire class can be given package visibility with a little work
 public class MessageClientService extends MobiComKitClientService {
-    //ApplozicInternal: all to private unless specified
+    //Cleanup: all to private unless specified
     public static final int SMS_SYNC_BATCH_SIZE = 5;
     public static final String DEVICE_KEY = "deviceKey";
     public static final String LAST_SYNC_KEY = "lastSyncTime";
@@ -104,27 +106,27 @@ public class MessageClientService extends MobiComKitClientService {
         this.contactDatabase = new ContactDatabase(context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMtextDeliveryUrl() {
         return getBaseUrl() + MTEXT_DELIVERY_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getServerSyncUrl() {
         return getBaseUrl() + SERVER_SYNC_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getSendMessageUrl() {
         return getBaseUrl() + SEND_MESSAGE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getSyncSmsUrl() {
         return getBaseUrl() + SYNC_SMS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageListUrl() {
         return getBaseUrl() + MESSAGE_LIST_URL;
     }
@@ -133,77 +135,77 @@ public class MessageClientService extends MobiComKitClientService {
         return getBaseUrl() + GET_CONVERSATION_LIST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageDeleteUrl() {
         return getBaseUrl() + MESSAGE_DELETE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUpdateDeliveryFlagUrl() {
         return getBaseUrl() + UPDATE_DELIVERY_FLAG_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageThreadDeleteUrl() {
         return getBaseUrl() + MESSAGE_THREAD_DELETE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUpdateReadStatusUrl() {
         return getBaseUrl() + UPDATE_READ_STATUS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserDetailUrl() {
         return getBaseUrl() + USER_DETAILS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserDetailsListUrl() {
         return getBaseUrl() + USER_DETAILS_LIST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getProductConversationUrl() {
         return getBaseUrl() + PRODUCT_CONVERSATION_ID_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getProductTopicIdUrl() {
         return getBaseUrl() + PRODUCT_TOPIC_ID_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageInfoUrl() {
         return getBaseUrl() + MESSAGE_INFO_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getSingleMessageReadUrl() {
         return getBaseUrl() + UPDATE_READ_STATUS_FOR_SINGLE_MESSAGE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageDeleteForAllUrl() {
         return getBaseUrl() + MESSAGE_DELETE_FOR_ALL_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getAllGroupsUrl() {
         return getBaseUrl() + GET_ALL_GROUPS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageByMessageKeysUrl() {
         return getBaseUrl() + MESSAGE_BY_MESSAGE_KEYS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageReportUrl() {
         return getBaseUrl() + MESSAGE_REPORT_URL;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String reportMessage(String messageKey) {
         try {
             if (!TextUtils.isEmpty(messageKey)) {
@@ -215,7 +217,7 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void updateDeliveryStatus(String messageKeyString, String userId, String receiverNumber) {
         try {
             //Note: messageKeyString comes as null for the welcome message as it is inserted directly.
@@ -229,12 +231,11 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessageMetadataUpdateUrl() {
         return getBaseUrl() + UPDATE_MESSAGE_METADATA_URL;
     }
 
-    @ApplozicInternal
     public synchronized void syncPendingMessages(boolean broadcast) {
         List<Message> pendingMessages = messageDatabaseService.getPendingMessages();
         Utils.printLog(context, TAG, "Found " + pendingMessages.size() + " pending messages to sync.");
@@ -244,7 +245,6 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public synchronized void syncDeleteMessages(boolean deleteMessage) {
         List<Message> pendingDeleteMessages = messageDatabaseService.getPendingDeleteMessages();
         Utils.printLog(context, TAG, "Found " + pendingDeleteMessages.size() + " pending messages for Delete.");
@@ -253,7 +253,7 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void deletePendingMessages(Message message, boolean deleteMessage) {
 
         String contactNumberParameter = "";
@@ -274,7 +274,7 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public boolean syncMessagesWithServer(List<Message> messageList) {
         Utils.printLog(context, TAG, "Total messages to sync: " + messageList.size());
         List<Message> messages = new ArrayList<Message>(messageList);
@@ -315,7 +315,7 @@ public class MessageClientService extends MobiComKitClientService {
         return true;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void sendPendingMessageToServer(Message message, boolean broadcast) {
 
         try {
@@ -368,12 +368,11 @@ public class MessageClientService extends MobiComKitClientService {
 
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void sendMessageToServer(Message message, Handler handler) throws Exception {
         sendMessageToServer(message, handler, null, null);
     }
 
-    @ApplozicInternal
     public void sendMessageToServer(Message message, Handler handler, Class intentClass, String userDisplayName) throws Exception {
         processMessage(message, handler, userDisplayName);
         if (message.getScheduledAt() != null && message.getScheduledAt() != 0 && intentClass != null) {
@@ -381,7 +380,7 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getMessageDeleteForAllResponse(String messageKey, boolean deleteForAll) throws Exception {
         if (TextUtils.isEmpty(messageKey)) {
             throw new ApplozicException("Message key cannot be empty");
@@ -393,7 +392,7 @@ public class MessageClientService extends MobiComKitClientService {
         return httpRequestUtils.getResponseWithException(urlBuilder.toString(), "application/json", "application/json", false, null);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public FileMeta uploadVideoThumbnail(String filePath, Long createdAtTimeForSuffix, String oldMessageKey) {
         FileMeta thumbnailFileMeta = null;
         try {
@@ -425,7 +424,7 @@ public class MessageClientService extends MobiComKitClientService {
         return thumbnailFileMeta;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void processMessage(Message message, Handler handler, String userDisplayName) throws Exception {
         boolean isBroadcast = (message.getMessageId() == null);
 
@@ -669,13 +668,13 @@ public class MessageClientService extends MobiComKitClientService {
         }*/
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String syncMessages(SmsSyncRequest smsSyncRequest) throws Exception {
         String data = GsonUtils.getJsonFromObject(smsSyncRequest, SmsSyncRequest.class);
         return httpRequestUtils.postData(getSyncSmsUrl(), "application/json", null, data);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String sendMessage(Message message) {
         try {
             String jsonFromObject = GsonUtils.getJsonFromObject(message, message.getClass());
@@ -686,7 +685,7 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: private (needs to be removed)
+    //Cleanup: private (needs to be removed)
     public String getMessageSearchResult(String searchText) throws Exception {
         if (!TextUtils.isEmpty(searchText)) {
             return httpRequestUtils.getResponseWithException(getAlConversationListUrl() + "?search=" + searchText, "application/json", "application/json", false, null);
@@ -694,7 +693,7 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public SyncMessageFeed getMessageFeed(String lastSyncTime, boolean isMetadataUpdate) {
         String url;
 
@@ -714,7 +713,7 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: private, needs to be removed
+    //Cleanup: private, needs to be removed
     public void deleteConversationThreadFromServer(Contact contact) {
         if (TextUtils.isEmpty(contact.getContactIds())) {
             return;
@@ -728,8 +727,8 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    //ApplozicInternal: default
-    public String syncDeleteConversationThreadFromServer(Contact contact, Channel channel) {
+    //Cleanup: default
+    public String syncDeleteConversationThreadFromServer(@Nullable Contact contact, @Nullable Channel channel) {
         String response = null;
         String parameterString = "";
         try {
@@ -747,7 +746,7 @@ public class MessageClientService extends MobiComKitClientService {
         return response;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String deleteMessage(Message message, Contact contact) {
         String contactNumberParameter = "";
         String response = "";
@@ -765,7 +764,7 @@ public class MessageClientService extends MobiComKitClientService {
         return response;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getMessageByMessageKeys(List<String> messageKeys) {
         if (messageKeys != null && messageKeys.size() > 0) {
             String messageKeyUrlBuild = "";
@@ -782,7 +781,7 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateReadStatus(Contact contact, Channel channel) {
         String contactNumberParameter = "";
         String response = "";
@@ -795,7 +794,6 @@ public class MessageClientService extends MobiComKitClientService {
         Utils.printLog(context, TAG, "Read status response is " + response);
     }
 
-    @ApplozicInternal
     public void updateReadStatusForSingleMessage(String pairedmessagekey) {
         String singleReadMessageParm = "";
         String response = "";
@@ -811,12 +809,12 @@ public class MessageClientService extends MobiComKitClientService {
 
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getMessages(Contact contact, Channel channel, Long startTime, Long endTime, Integer conversationId) throws UnsupportedEncodingException {
         return getMessages(contact, channel, startTime, endTime, conversationId, false);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getMessages(Contact contact, Channel channel, Long startTime, Long endTime, Integer conversationId, boolean isSkipRead) throws UnsupportedEncodingException {
         String params = "";
         if (contact != null || channel != null) {
@@ -850,7 +848,7 @@ public class MessageClientService extends MobiComKitClientService {
                 , "application/json", "application/json");
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getAlConversationList(int[] statusArray, String assigneeId, int pageSize, Long lastFetchTime) throws Exception {
         StringBuilder urlBuilder = new StringBuilder(getAlConversationListUrl());
         if (!TextUtils.isEmpty(assigneeId)) {
@@ -868,24 +866,24 @@ public class MessageClientService extends MobiComKitClientService {
         return httpRequestUtils.getResponseWithException(urlBuilder.toString(), "application/json", "application/json", false, null);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public String getAlConversationList(int status, int pageSize, Long lastFetchTime) throws Exception {
         return getAlConversationList(status == Channel.CLOSED_CONVERSATIONS ? new int[]{2} : new int[]{0, 6},
                 status == Channel.ASSIGNED_CONVERSATIONS ? MobiComUserPreference.getInstance(context).getUserId() : null,
                 pageSize, lastFetchTime);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String deleteMessage(Message message) {
         return deleteMessage(message.getKeyString());
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String deleteMessage(String keyString) {
         return httpRequestUtils.getResponse(getMessageDeleteUrl() + "?key=" + keyString, "text/plain", "text/plain");
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public SyncUserDetailsResponse getUserDetailsList(String lastSeenAt) {
         try {
             String url = getUserDetailsListUrl() + "?lastSeenAt=" + lastSeenAt;
@@ -903,7 +901,6 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public String[] getConnectedUsers() {
         try {
             String response = getMessages(null, null, null, null, null);
@@ -920,7 +917,7 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public UserDetail[] getUserDetails(String userId) {
         try {
             String contactNumberParameter = "";
@@ -948,25 +945,22 @@ public class MessageClientService extends MobiComKitClientService {
         MobiComUserPreference.getInstance(context).setLoggedUserDeletedFromDashboard(true);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void processUserStatus(Contact contact) {
         if (contact != null && contact.getContactIds() != null) {
             processUserStatus(contact.getUserId(), false);
         }
     }
 
-    @ApplozicInternal
     public void processUserStatus(String userId) {
         processUserStatus(userId, false);
     }
 
-    @ApplozicInternal
     public void processLoggedUserDeletedFromServer() {
         setLoggedInUserDeletedSharedPrefEntry();
         BroadcastService.sendLoggedUserDeletedBroadcast(context);
     }
 
-    @ApplozicInternal
     public void processUserStatus(String userId, boolean isProfileImageUpdated) {
         try {
             UserDetail[] userDetails = getUserDetails(userId);
@@ -1002,7 +996,6 @@ public class MessageClientService extends MobiComKitClientService {
         }
     }
 
-    @ApplozicInternal
     public String getTopicId(Integer conversationId) {
         try {
             String topicId = null;
@@ -1023,7 +1016,6 @@ public class MessageClientService extends MobiComKitClientService {
         return null;
     }
 
-    @ApplozicInternal
     public MessageInfoResponse getMessageInfoList(String messageKey) {
 
         String url = getMessageInfoUrl() + "?key=" + messageKey;
@@ -1037,7 +1029,7 @@ public class MessageClientService extends MobiComKitClientService {
         return messageInfoResponse;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public ApiResponse updateMessageMetadata(String key, Map<String, String> metadata) {
         MessageMetadataUpdate metadataUpdate = new MessageMetadataUpdate();
         metadataUpdate.setKey(key);

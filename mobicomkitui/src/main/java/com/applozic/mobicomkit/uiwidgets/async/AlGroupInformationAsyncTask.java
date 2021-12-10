@@ -7,10 +7,6 @@ import com.applozic.mobicomkit.channel.service.ChannelService;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-/**
- * Created by ninu on 02/08/17.
- */
-
 public class AlGroupInformationAsyncTask extends AlAsyncTask<Object, Channel> {
     Context context;
     ChannelService channelService;

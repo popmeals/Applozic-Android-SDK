@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MessageBuilder;
+import com.applozic.mobicomkit.broadcast.AlEventManager;
 import com.applozic.mobicomkit.contact.AppContactService;
 import com.applozic.mobicomkit.listners.ApplozicUIListener;
 import com.applozic.mobicomkit.uiwidgets.uikit.AlAttachmentOptions;
@@ -22,6 +23,7 @@ import com.applozic.mobicomkit.uiwidgets.uikit.AlMessageSenderView;
 import com.applozic.mobicomkit.uiwidgets.uikit.AlTypingIndicator;
 
 public class SampleActivity extends AppCompatActivity implements AlMessageSenderView.AlMessageViewEvents, ApplozicUIListener {
+    private static final String UI_LISTENER_ID = "SampleActivity";
 
     AlTypingIndicator typingIndicator;
     AlMessageSenderView messageSenderView;
@@ -43,7 +45,7 @@ public class SampleActivity extends AppCompatActivity implements AlMessageSender
 
         messageSenderView.createView(new AppContactService(this).getContactById("reytum6"), null, this);
         attachmentView.createView();
-        Applozic.getInstance(this).registerUIListener(this);
+        AlEventManager.getInstance().registerUIListener(UI_LISTENER_ID, this);
     }
 
     @Override
@@ -112,12 +114,13 @@ public class SampleActivity extends AppCompatActivity implements AlMessageSender
 
     @Override
     protected void onDestroy() {
-        Applozic.getInstance(this).unregisterUIListener();
+        AlEventManager.getInstance().unregisterUIListener(UI_LISTENER_ID);
         super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         AlAttachmentOptions.handleAttachmentOptionsResult(requestCode, resultCode, data, this, "reytum6", null);
     }
 

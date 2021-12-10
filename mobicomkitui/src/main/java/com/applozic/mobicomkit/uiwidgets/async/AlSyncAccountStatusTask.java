@@ -7,11 +7,11 @@ import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicommons.task.AlAsyncTask;
 
-
+//Cleanup: can be removed
 /**
- * Created by sunil on 19/12/2016.
+ * @deprecated This class is no longer used and will be removed soon.
  */
-
+@Deprecated
 public class AlSyncAccountStatusTask extends AlAsyncTask<Void, Boolean> {
     Context context;
     RegisterUserClientService registerUserClientService;

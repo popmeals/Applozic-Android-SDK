@@ -38,14 +38,13 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 /**
- * This task downloads bytes from a resource addressed by a URL.  When the task
- * has finished, it calls handleState to report its results.
- * <p/>
- * Objects of this class are instantiated and managed by instances of PhotoTask, which
+ * This task downloads bytes from a resource addressed by a URL. When the task has finished, it calls handleState to report its results.
+
+ * <p>Objects of this class are instantiated and managed by instances of PhotoTask, which
  * implements the methods of TaskRunnableDecodeMethods. PhotoTask objects call
  * {@link #AttachmentDownloader(AttachmentDownloader.TaskRunnableDownloadMethods) PhotoDownloadRunnable()} with
  * themselves as the argument. In effect, an PhotoTask object and a
- * PhotoDownloadRunnable object communicate through the fields of the PhotoTask.
+ * PhotoDownloadRunnable object communicate through the fields of the PhotoTask.</p>
  */
 class AttachmentDownloader extends MobiComKitClientService implements Runnable {
 

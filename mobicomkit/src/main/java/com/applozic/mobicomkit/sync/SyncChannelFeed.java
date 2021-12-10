@@ -1,12 +1,10 @@
 package com.applozic.mobicomkit.sync;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 import com.applozic.mobicomkit.feed.ChannelFeed;
 
 import java.util.List;
 
-@ApplozicInternal
 public class SyncChannelFeed extends JsonMarker {
 
 

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.people.ChannelInfo;
 import com.applozic.mobicomkit.channel.service.ChannelService;
@@ -15,7 +14,6 @@ import com.applozic.mobicommons.task.AlAsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplozicInternal
 public class AlGroupOfTwoCreateTask extends AlAsyncTask<Integer, Channel> {
     private final ChannelService channelService;
     private final String loggedInUserId;

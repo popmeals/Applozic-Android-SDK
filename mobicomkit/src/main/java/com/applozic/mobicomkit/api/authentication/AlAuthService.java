@@ -6,25 +6,23 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.listners.AlCallback;
 import com.applozic.mobicommons.task.AlTask;
 
-@ApplozicInternal
+/**
+ * Contains methods for working with the JWT authentication token.
+ */
 public class AlAuthService {
-    //ApplozicInternal: private
-    public static boolean isTokenValid(long createdAtTime, int validUptoMins) {
-        return (System.currentTimeMillis() - createdAtTime) / 60000 < validUptoMins;
-    }
-
-    //ApplozicInternal: private
-    public static void refreshToken(Context context, AlCallback callback) {
-        AlTask.execute(new RefreshAuthTokenTask(context, callback));
-    }
-
-    //ApplozicInternal: default
-    public static boolean isTokenValid(Context context) {
+    /**
+     * Checks if token in valid or not. A token expires after it's {@link MobiComUserPreference#getTokenValidUptoMins()} elapses.
+     *
+     * <p>Note: Passing context as null will return <i>true</i>.</p>
+     */
+    public static boolean isTokenValid(@Nullable Context context) {
         if (context == null) {
             return true;
         }
@@ -48,8 +46,25 @@ public class AlAuthService {
         return true;
     }
 
-    //ApplozicInternal: default
-    public static void verifyToken(Context context, String loadingMessage, AlCallback callback) {
+    //internal methods >>>
+
+    //Cleanup: private
+    /**
+     * Internal.
+     *
+     * Checks the validity of the JWT token.
+     */
+    public static boolean isTokenValid(long createdAtTime, int validUptoMins) {
+        return (System.currentTimeMillis() - createdAtTime) / 60000 < validUptoMins;
+    }
+
+    //Cleanup: default
+    /**
+     * Internal. Do Not Use. To check if a token is valid use {@link #isTokenValid(Context)} and to refresh it refer to {@link RefreshAuthTokenTask}.
+     *
+     * Verifies, refreshes, decodes and saves token in local storage.
+     */
+    public static void verifyToken(@Nullable Context context, @Nullable String loadingMessage, @Nullable AlCallback callback) {
         if (context == null) {
             return;
         }
@@ -75,8 +90,16 @@ public class AlAuthService {
         }
     }
 
-    //ApplozicInternal: private
-    public static void refreshToken(Context context, String loadingMessage, final AlCallback callback) {
+    //deprecated >>>
+
+    //Cleanup: private
+    /**
+     * @deprecated Use {@link RefreshAuthTokenTask}.
+     *
+     * <p>Get a fresh token from the server and replaces the current (invalid) one with it.</p>
+     */
+    @Deprecated
+    public static void refreshToken(@NonNull Context context, @Nullable String loadingMessage, @Nullable final AlCallback callback) {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity(context));
         progressDialog.setMessage(loadingMessage);
         progressDialog.setCancelable(false);
@@ -105,8 +128,23 @@ public class AlAuthService {
         });
     }
 
-    //ApplozicInternal: private
-    public static Activity getActivity(Context context) {
+    //Cleanup: private, can get rid of it too
+    /**
+     * @deprecated Use {@link RefreshAuthTokenTask} directly.
+     */
+    @Deprecated
+    public static void refreshToken(Context context, AlCallback callback) {
+        AlTask.execute(new RefreshAuthTokenTask(context, callback));
+    }
+
+    //Cleanup: private
+    /**
+     * @deprecated Used in deprecated code.
+     *
+     * Gets the activity from the context.
+     */
+    @Deprecated
+    public static @Nullable Activity getActivity(@NonNull Context context) {
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {
                 return (Activity) context;

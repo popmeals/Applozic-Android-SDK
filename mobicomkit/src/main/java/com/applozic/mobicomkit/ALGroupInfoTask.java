@@ -3,7 +3,6 @@ package com.applozic.mobicomkit;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.channel.database.ChannelDatabaseService;
@@ -158,7 +157,7 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
         void onFailure(String response, Exception e, Context context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ChannelModel getChannelInfoByParameters(String parameters) {
         String response = "";
         HttpRequestUtils httpRequestUtils = new HttpRequestUtils(context);
@@ -226,7 +225,6 @@ public class ALGroupInfoTask extends AlAsyncTask<Void, ALGroupInfoTask.ChannelMo
         }
     }
 
-    @ApplozicInternal
     class ChannelModel {
         private ChannelFeedApiResponse channelFeedApiResponse;
         private Exception exception;

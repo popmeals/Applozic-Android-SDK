@@ -5,9 +5,11 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.AlUserUpdate;
 import com.applozic.mobicomkit.Applozic;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.MobiComKitConstants;
@@ -21,6 +23,7 @@ import com.applozic.mobicomkit.exception.ApplozicException;
 import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicomkit.feed.SyncBlockUserApiResponse;
 import com.applozic.mobicomkit.feed.UserDetailListFeed;
+import com.applozic.mobicomkit.listners.AlLogoutHandler;
 import com.applozic.mobicommons.ALSpecificSettings;
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
@@ -39,12 +42,20 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Wraps around all the user related server calls.
+ * The <code>UserClientService</code> class provides methods that perform requests to the Applozic servers for everything
+ * {@link User} and {@link com.applozic.mobicommons.people.contact.Contact} related.
  *
- * <p>Methods of this class do not affect persisted/local/database data.</p>
+ * <p>Methods of this class simply perform the required API call and return a response string or object when required.
+ * They do not affect the SDKs persisted/local database data. The only exception are the {@link UserClientService#logout()}, {@link UserClientService#logout(boolean)}, {@link UserClientService#postUserDetailsByUserIds(Set)}
+ * and {@link UserClientService#clearDataAndPreference()} methods.</p>
+ *
+ * <p>All methods of this class run blocking. You will need to run them asynchronously.</p>
+ *
+ * <p>Note: This class has multiple public variables. All of them are for internal use and you will
+ * never need to work with any of them.</p>
  */
 public class UserClientService extends MobiComKitClientService {
-    //ApplozicInternal: all need to be private
+    //Cleanup: all need to be private
     public static final String APP_VERSION_UPDATE_URL = "/rest/ws/register/version/update";
     public static final String USER_INFO_URL = "/rest/ws/user/info?";
     public static final Short MOBICOMKIT_VERSION_CODE = 109;
@@ -72,73 +83,73 @@ public class UserClientService extends MobiComKitClientService {
         this.httpRequestUtils = new HttpRequestUtils(context);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserProfileUpdateUrl() {
         return getBaseUrl() + USER_PROFILE_UPDATE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getAppVersionUpdateUrl() {
         return getBaseUrl() + APP_VERSION_UPDATE_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUpdateUserDisplayNameUrl() {
         return getBaseUrl() + USER_DISPLAY_NAME_UPDATE;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserInfoUrl() {
         return getBaseUrl() + USER_INFO_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getBlockUserUrl() {
         return getBaseUrl() + BLOCK_USER_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getBlockUserSyncUrl() {
         return getBaseUrl() + BLOCK_USER_SYNC_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     //Cleanup: the name says sync but the url isn't for sync
     public String getUnBlockUserSyncUrl() {
         return getBaseUrl() + UNBLOCK_USER_SYNC_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserDetailsListUrl() {
         return getBaseUrl() + USER_DETAILS_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getOnlineUserListUrl() {
         return getBaseUrl() + ONLINE_USER_LIST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getRegisteredUserListUrl() {
         return getBaseUrl() + REGISTERED_USER_LIST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserDetailsListPostUrl() {
         return getBaseUrl() + USER_DETAILS_LIST_POST_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserReadUrl() {
         return getBaseUrl() + USER_READ_URL;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUpdateUserPasswordUrl() {
         return getBaseUrl() + UPDATE_USER_PASSWORD;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public String getUserLogout() {
         return getBaseUrl() + USER_LOGOUT;
     }
@@ -155,18 +166,63 @@ public class UserClientService extends MobiComKitClientService {
         return getBaseUrl() + USER_SEARCH_URL;
     }
 
+    //Cleanup: private
+    //Cleanup: fromLogin is always false
     /**
-     * Performs logout.
+     * Internal. This methods has a un-necessary parameter.
+     *
+     * @param fromLogin pass false
+     * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
+     */
+    public ApiResponse logout(boolean fromLogin) {
+        Utils.printLog(context, TAG, "Al Logout call !!");
+        ApiResponse apiResponse = userLogoutResponse();
+        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
+        final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
+        final String userKeyString = mobiComUserPreference.getSuUserKeyString();
+        String url = mobiComUserPreference.getUrl();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Applozic.Store.setCustomNotificationSound(context, null);
+            new NotificationChannels(context).deleteAllChannels();
+        }
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        mobiComUserPreference.clearAll();
+        ALSpecificSettings.getInstance(context).clearAll();
+        MessageDatabaseService.recentlyAddedMessage.clear();
+        MobiComDatabaseHelper.getInstance(context).delDatabase();
+        mobiComUserPreference.setUrl(url);
+        if (!fromLogin) {
+            ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
+        }
+        return apiResponse;
+    }
+
+    /**
+     * Internal method. Performs logout for the current user.
+     *
+     * Use {@link Applozic#logoutUser(Context, AlLogoutHandler)}.
+     *
+     * <p>A logout server call will be sent. Along with that:
+     * - {@link MobiComUserPreference} shared preference will be cleared.
+     * Everything except {@link MobiComUserPreference#getUrl()}.
+     * - {@link ALSpecificSettings} shared preference will be cleared.
+     * - All notification channel will be deleted.
+     * - The local database will be deleted.
+     * - All unsent messages will be removed.
+     * - All notifications will be cancelled.</p>
      *
      * @see UserClientService#logout(boolean)
-     *
-     * @return logout backend api response
+     * @return logout backend api response, use {@link ApiResponse#isSuccess()} to check for success
      */
     public ApiResponse logout() {
         return logout(false);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
+    /**
+     * This method wipes all local data. Calling it will make the SDK falsely believe that the user has logged out.
+     */
     public void clearDataAndPreference() {
         MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
         final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
@@ -183,52 +239,13 @@ public class UserClientService extends MobiComKitClientService {
         ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
     }
 
-    //ApplozicInternal: private
-    //Cleanup: fromLogin is always false
-    /**
-     * Performs logout for the current user.
-     *
-     * <p>A logout server call will be sent. Along with that:
-     * - {@link MobiComUserPreference} shared preference will be cleared.
-     * Everything except {@link MobiComUserPreference#getUrl()}.
-     * - {@link ALSpecificSettings} shared preference will be cleared.
-     * - All notification channel will be deleted.
-     * - The local database will be deleted.
-     * - All unsent messages will be removed.
-     * - All notifications will be cancelled.</p>
-     *
-     * @param fromLogin pass false
-     * @return logout backend api response
-     */
-    public ApiResponse logout(boolean fromLogin) {
-        Utils.printLog(context, TAG, "Al Logout call !!");
-        ApiResponse apiResponse = userLogoutResponse();
-        MobiComUserPreference mobiComUserPreference = MobiComUserPreference.getInstance(context);
-        final String deviceKeyString = mobiComUserPreference.getDeviceKeyString();
-        final String userKeyString = mobiComUserPreference.getSuUserKeyString();
-        String url = mobiComUserPreference.getUrl();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Applozic.getInstance(context).setCustomNotificationSound(null);
-            new NotificationChannels(context, null).deleteAllChannels();
-        }
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        mobiComUserPreference.clearAll();
-        ALSpecificSettings.getInstance(context).clearAll();
-        MessageDatabaseService.recentlyAddedMessage.clear();
-        MobiComDatabaseHelper.getInstance(context).delDatabase();
-        mobiComUserPreference.setUrl(url);
-        if (!fromLogin) {
-            ApplozicMqttWorker.enqueueWorkDisconnectPublish(context, deviceKeyString, userKeyString, false);
-        }
-        return apiResponse;
-    }
-
     //Cleanup: rename to something more suitable for a public api
     /**
-     * Sends a logout server call for the logged user.
+     * Simply sends a logout server call for the logged user.
      *
-     * @return logout backend api response
+     * <p>Note: This is a network method. Run it asynchronously.</p>
+     *
+     * @return logout backend api response. use {@link ApiResponse#isSuccess()} to check for success
      */
     public ApiResponse userLogoutResponse() {
         String response = "";
@@ -244,7 +261,6 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    @ApplozicInternal
     public void updateCodeVersion(final String deviceKeyString) {
         String url = getAppVersionUpdateUrl() + "?appVersionCode=" + MOBICOMKIT_VERSION_CODE + "&deviceKey=" + deviceKeyString;
         String response = httpRequestUtils.getResponse(url, "text/plain", "text/plain");
@@ -252,7 +268,11 @@ public class UserClientService extends MobiComKitClientService {
 
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * @deprecated This method is no longer used and will be removed soon. Use {@link #getUserDetails(Set)} instead.
+     */
+    @Deprecated
     public Map<String, String> getUserInfo(Set<String> userIds) throws JSONException, UnsupportedEncodingException {
 
         if (userIds == null && userIds.isEmpty()) {
@@ -283,9 +303,11 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * Sends a server request to update the display name for the given userId.
      *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
+     *
      * @param userId the user id of the user
      * @param displayName the new display name
-     * @return api response from the server
+     * @return api response from the server, use {@link ApiResponse#isSuccess()} to check for success
      */
     public ApiResponse updateUserDisplayName(final String userId, final String displayName) {
         String parameters = "";
@@ -305,13 +327,17 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     /**
-     * Sends a server request to block/unblock the passed userId for the current(logged) user.
+     * Sends a server request to block/unblock the given userId for the current(logged) user.
+     *
+     * <p>You do not need to pass the current user's user-id, it is taken from the local shared preferences({@link MobiComUserPreference}).</p>
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
      *
      * @param userId the userId of the user to block/unblock
      * @param block true for block/false for unblock
-     * @return api response from the server
+     * @return api response from the server, use {@link ApiResponse#isSuccess()} to check for success
      */
-    public ApiResponse userBlock(String userId, boolean block) {
+    public @Nullable ApiResponse userBlock(@Nullable String userId, boolean block) {
         String response = "";
         ApiResponse apiResponse = null;
         try {
@@ -325,7 +351,11 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * @deprecated This method has been replaced with {@link #userBlock(String, boolean)}. Pass "false" in the second parameter.
+     */
+    @Deprecated
     public ApiResponse userUnBlock(String userId) {
         String response = "";
         ApiResponse apiResponse = null;
@@ -340,7 +370,12 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
+    /**
+     * This is an internal method. Syncing is handled by the SDK internally.
+     *
+     * <p>Returns the users that were blocked since the last sync time.</p>
+     */
     public SyncBlockUserApiResponse getSyncUserBlockList(String lastSyncTime) {
         try {
             String url = getBlockUserSyncUrl() + "?lastSyncTime=" + lastSyncTime;
@@ -357,10 +392,17 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     /**
-     * Retrieves the user data from the server for the given set of userIds.
+     * Retrieves data of users from the server for the given set of userIds.
+     *
+     * Convert the string response to {@link UserDetail}:
+     * <code>
+     *     UserDetail[] userDetails = (UserDetail[]) GsonUtils.getObjectFromJson(response, UserDetail[].class);
+     * </code>
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
      *
      * @param userIds the set of userIds to get details for
-     * @return the json api response. convert to {@link UserDetail} using {@link GsonUtils#getObjectFromJson(String, Type)}
+     * @return string json api response. will be empty in case of error. convert to {@link UserDetail} using {@link GsonUtils#getObjectFromJson(String, Type)}
      */
     public String getUserDetails(Set<String> userIds) {
         try {
@@ -384,16 +426,14 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
-     * Syncs user data for the given users from the server.
-     *
-     * <p>Updated user data is retrieved from the server and local database is updated.</p>
+     * Retrieves data of users for the given user-ids from the backend and updates it locally.
      *
      * @param userIds set of user ids to sync
      * @return api response from the server
      */
-    public String postUserDetailsByUserIds(Set<String> userIds) {
+    public @Nullable String postUserDetailsByUserIds(@Nullable Set<String> userIds) {
         try {
             if (userIds != null && userIds.size() > 0) {
                 List<String> userDetailsList = new ArrayList<>();
@@ -440,13 +480,14 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
-
+    //Cleanup: default
     /**
-     * Gets list of online users from the server.
+     * Gets a list of online users from the server.
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
      *
      * @param numberOfUser the number of users to get
-     * @return a map with key = userId, value = connectedStatus of the online users
+     * @return a map with key = userId, value = connectedStatus of the online users. ignore the value (connectedStatus)
      */
     public Map<String, String> getOnlineUserList(int numberOfUser) {
         Map<String, String> info = new HashMap<String, String>();
@@ -472,12 +513,19 @@ public class UserClientService extends MobiComKitClientService {
     /**
      * Gets list of registered users from the server.
      *
+     * Convert string response to {@link com.applozic.mobicomkit.feed.RegisteredUsersApiResponse}:
+     * <code>
+     *     RegisteredUsersApiResponse apiResponse = (RegisteredUsersApiResponse) GsonUtils.getObjectFromJson(response, RegisteredUsersApiResponse.class);
+     * </code>
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
+     *
      * @param startTime the time in milliseconds to get the registered users from. eg: a start
      *                  time of X will get all the registered users that were registered after time X
      * @param pageSize the number of users to get
      * @return the json api response. convert to {@link com.applozic.mobicomkit.feed.RegisteredUsersApiResponse}
      */
-    public String getRegisteredUsers(Long startTime, int pageSize) {
+    public @Nullable String getRegisteredUsers(@NonNull Long startTime, int pageSize) {
         String response = null;
         try {
             String url = "?pageSize=" + pageSize;
@@ -491,9 +539,15 @@ public class UserClientService extends MobiComKitClientService {
         return response;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     /**
-     * This method updates more than just the display name or image link. See the parameters.
+     * Updates details of the current user.
+     *
+     * Use {@link UserService#updateDisplayNameORImageLink(String, String, String, String, String, String, Map, String)} instead.
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
+     *
+     * <p>Despite the name, this method updates more than just the display name or image link. See the parameters.</p>
      */
     public ApiResponse updateDisplayNameORImageLink(String displayName, String profileImageLink, String status, String contactNumber, String emailId, Map<String, String> metadata, String userId) {
         AlUserUpdate userUpdate = new AlUserUpdate();
@@ -533,11 +587,13 @@ public class UserClientService extends MobiComKitClientService {
      *
      * <p>The current user will be taken from the user shared preferences.</p>
      *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
+     *
      * @param userId the user id of the user to mute
      * @param notificationAfterTime the time (in milliseconds) to mute the user for
-     * @return the api response
+     * @return the api response, use {@link ApiResponse#isSuccess()} to check for success
      */
-    public ApiResponse muteUserNotifications(String userId, Long notificationAfterTime) {
+    public @Nullable ApiResponse muteUserNotifications(@Nullable String userId, @Nullable Long notificationAfterTime) {
         if (userId == null || notificationAfterTime == null) {
             return null;
         }
@@ -560,10 +616,11 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     /**
-     * Gets the list of users muted by the current user.
+     * Gets the list of all the users that have been muted by the current(logged) user.
      *
-     * <p>The muted user ids can be accessed from the array items
-     * by using {@link MuteUserResponse#getUserId()}.</p>
+     * <p>The muted user ids can be accessed from the array returned by using {@link MuteUserResponse#getUserId()}.</p>
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
      *
      * @return an array of {@link MuteUserResponse}
      */
@@ -582,7 +639,11 @@ public class UserClientService extends MobiComKitClientService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
+    /**
+     * @deprecated This method is not longer used and will be removed soon.
+     */
+    @Deprecated
     public ApiResponse getUserReadServerCall() {
         String response = null;
         ApiResponse apiResponse = null;
@@ -598,7 +659,11 @@ public class UserClientService extends MobiComKitClientService {
         return apiResponse;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
+    /**
+     * @deprecated This method is not longer used and will be removed soon.
+     */
+    @Deprecated
     public String updateUserPassword(String oldPassword, String newPassword) {
         if (TextUtils.isEmpty(oldPassword) || TextUtils.isEmpty(newPassword)) {
             return null;
@@ -621,14 +686,24 @@ public class UserClientService extends MobiComKitClientService {
     }
 
     /**
-     * Will return a list of contacts matching the search term, from the server.
+     * Will return a list of contacts matching the search term , from the server. Search happens by user-id.
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
+     *
+     * To get result use:
+     * <code>
+     *     String userDetails = apiResponse.getResponse();
+     *     UserDetail[] userDetails = (UserDetail[]) GsonUtils.getObjectFromJson(GsonUtils.getJsonFromObject(userDetails, List.class), UserDetail[].class);
+     * </code>
+     *
+     * <p>Note: This is a network method. Run it asynchronously.</p>
      *
      * @param searchString the search term
-     * @return the api response. cast the result from {@link ApiResponse#getResponse()}
+     * @return the api response. use {@link ApiResponse#isSuccess()} to check for success. cast the result from {@link ApiResponse#getResponse()}
      * to a {@link UserDetail} array to get the list in usable form
      * @throws ApplozicException when the backend returns an error response
      */
-    public ApiResponse getUsersBySearchString(String searchString) throws ApplozicException {
+    public @Nullable ApiResponse getUsersBySearchString(@Nullable String searchString) throws ApplozicException {
         if (TextUtils.isEmpty(searchString)) {
             return null;
         }

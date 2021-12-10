@@ -1,11 +1,9 @@
 package com.applozic.mobicomkit.api.conversation.stat;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 
 import java.io.Serializable;
 
-@ApplozicInternal
 public class Stat implements Serializable {
     private Short sourceId = Message.Source.DEVICE_NATIVE_APP.getValue();
     private Short smsTypeId;

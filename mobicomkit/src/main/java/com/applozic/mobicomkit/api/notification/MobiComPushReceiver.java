@@ -7,7 +7,9 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
@@ -29,10 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class MobiComPushReceiver {
 
-    //ApplozicInternal: private all
+    //Cleanup: private all
     public static final String MTCOM_PREFIX = "APPLOZIC_";
     public static final List<String> notificationKeyList = new ArrayList<String>();
     public static final String BLOCKED_TO = "BLOCKED_TO";
@@ -78,7 +79,7 @@ public class MobiComPushReceiver {
         notificationKeyList.add("APPLOZIC_39");//34 for group mute notification
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static boolean isMobiComPushNotification(Intent intent) {
         Log.d(TAG, "checking for Applozic notification.");
         if (intent == null) {
@@ -87,7 +88,7 @@ public class MobiComPushReceiver {
         return isMobiComPushNotification(intent.getExtras());
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static boolean isMobiComPushNotification(Bundle bundle) {
         //This is to identify collapse key sent in notification..
         if (bundle == null) {
@@ -166,7 +167,7 @@ public class MobiComPushReceiver {
     }
 
     //the MqttMessageResponse objects used in this class are not actual MQTT responses, but just their data model is used
-    public static void processMessage(Context context, Bundle bundle, Map<String, String> data) {
+    public static void processMessage(@NonNull Context context, @Nullable Bundle bundle, @Nullable Map<String, String> data) {
 
         try {
             String payloadForDelivered = null, userConnected = null,
@@ -524,7 +525,7 @@ public class MobiComPushReceiver {
         processMessageAsync(context, intent.getExtras());
     }
 
-    public static void processMessageAsync(final Context context, final Map<String, String> data) {
+    public static void processMessageAsync(@NonNull final Context context, @Nullable final Map<String, String> data) {
         try {
             if (MobiComUserPreference.getInstance(context).isLoggedIn()) {
 
@@ -542,11 +543,11 @@ public class MobiComPushReceiver {
         }
     }
 
-    public static void processMessage(Context context, Map<String, String> data) {
+    public static void processMessage(@NonNull Context context, @Nullable Map<String, String> data) {
         processMessage(context, null, data);
     }
 
-    public static void processMessage(Context context, Bundle bundle) {
+    public static void processMessage(@NonNull Context context, @Nullable Bundle bundle) {
         processMessage(context, bundle, null);
     }
 

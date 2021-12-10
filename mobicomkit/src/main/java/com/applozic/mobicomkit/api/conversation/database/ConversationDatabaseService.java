@@ -16,10 +16,11 @@ import com.applozic.mobicommons.people.contact.Contact;
 import java.util.ArrayList;
 import java.util.List;
 
+//Cleanup: default
 /**
- * Created by sunil on 12/2/16.
+ * @deprecated This class has been deprecated. Conversations will be merged with {@link Channel}s in the future.
  */
-//ApplozicInternal: default
+@Deprecated
 public class ConversationDatabaseService {
 
     private static final String TAG = "ConversationDatabase";
@@ -39,7 +40,7 @@ public class ConversationDatabaseService {
         return conversationDatabaseService;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static List<Conversation> getConversationList(Cursor cursor) {
         List<Conversation> conversationList = new ArrayList<Conversation>();
         cursor.moveToFirst();
@@ -51,7 +52,7 @@ public class ConversationDatabaseService {
         return conversationList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public static Conversation getConversation(Cursor cursor) {
         Conversation conversation = new Conversation();
         conversation.setId(cursor.getInt(cursor.getColumnIndex(MobiComDatabaseHelper.KEY)));
@@ -72,7 +73,7 @@ public class ConversationDatabaseService {
         return conversation;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void addConversation(Conversation conversation) {
         try {
             ContentValues contentValues = prepareConversationValue(conversation);
@@ -84,7 +85,7 @@ public class ConversationDatabaseService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public ContentValues prepareConversationValue(Conversation conversation) {
         ContentValues contentValues = new ContentValues();
         if (conversation != null) {
@@ -110,7 +111,7 @@ public class ConversationDatabaseService {
         return contentValues;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public Conversation getConversationByConversationId(final Integer conversationId) {
         Conversation conversation = null;
         SQLiteDatabase database = dbHelper.getReadableDatabase();
@@ -132,7 +133,7 @@ public class ConversationDatabaseService {
         return conversation;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public Conversation getConversationByTopicId(final String topicId, Context context) {
         if (TextUtils.isEmpty(topicId)) {
             return null;
@@ -158,7 +159,7 @@ public class ConversationDatabaseService {
         return conversation;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public List<Conversation> getConversationList(final Channel channel, final Contact contact) {
         List<Conversation> conversation = null;
         SQLiteDatabase database = dbHelper.getReadableDatabase();
@@ -184,7 +185,7 @@ public class ConversationDatabaseService {
         return conversation;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public boolean isConversationPresent(Integer conversationId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         Cursor cursor = database.rawQuery(
@@ -198,7 +199,7 @@ public class ConversationDatabaseService {
         return present;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateConversation(Conversation conversation) {
         try {
             ContentValues contentValues = prepareConversationValue(conversation);
@@ -209,13 +210,13 @@ public class ConversationDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void deleteConversation(String userId) {
         int deletedRows = dbHelper.getWritableDatabase().delete(MobiComDatabaseHelper.CONVERSATION, MobiComDatabaseHelper.USERID + "=?", new String[]{userId});
         Utils.printLog(context,TAG, "Delete no of conversation:" + deletedRows);
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public Integer isConversationExit(String userId, String topicId) {
         Conversation conversation = null;
         SQLiteDatabase database = dbHelper.getReadableDatabase();
@@ -242,7 +243,7 @@ public class ConversationDatabaseService {
         return null;
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public void updateTopicLocalImageUri(String imageUri, Integer conversationId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MobiComDatabaseHelper.TOPIC_LOCAL_IMAGE_URL, imageUri);

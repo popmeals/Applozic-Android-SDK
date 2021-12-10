@@ -3,7 +3,6 @@ package com.applozic.mobicomkit.api.conversation.schedule;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
 import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
@@ -11,7 +10,6 @@ import com.applozic.mobicomkit.api.conversation.database.MessageDatabaseService;
 import java.util.Calendar;
 import java.util.List;
 
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class ScheduleMessageService extends IntentService {
 
     public ScheduleMessageService() {

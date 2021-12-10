@@ -7,7 +7,9 @@ import com.applozic.mobicommons.json.JsonMarker;
 import java.util.Map;
 
 /**
- * Model class for the registration response returned from a register/login/update request.
+ * This is the model class for the registration response returned from a register/login/update request.
+ *
+ * <p>You will rarely need to use fields in this object.</p>
  */
 public class RegistrationResponse extends JsonMarker {
 
@@ -33,6 +35,9 @@ public class RegistrationResponse extends JsonMarker {
     private Long notificationAfter;
     private boolean deactivate;
 
+    /**
+     * This is the response message.
+     */
     public String getMessage() {
         return message;
     }
@@ -41,6 +46,9 @@ public class RegistrationResponse extends JsonMarker {
         this.message = message;
     }
 
+    /**
+     * This is the identification used for a user's device.
+     */
     public String getDeviceKey() {
         return deviceKey;
     }
@@ -49,6 +57,9 @@ public class RegistrationResponse extends JsonMarker {
         this.deviceKey = deviceKeyString;
     }
 
+    /**
+     * The user identification.
+     */
     public String getUserKey() {
         return userKey;
     }
@@ -57,6 +68,9 @@ public class RegistrationResponse extends JsonMarker {
         this.userKey = suUserKeyString;
     }
 
+    /**
+     * Gets is the contact number for the concerned user.
+     */
     public String getContactNumber() {
         return contactNumber;
     }
@@ -65,14 +79,25 @@ public class RegistrationResponse extends JsonMarker {
         this.contactNumber = contactNumber;
     }
 
+    /**
+     * @deprecated This method and concerning field is no longer used and will be removed soon.
+     */
+    @Deprecated
     public Long getLastSyncTime() {
         return lastSyncTime == null ? 0L : lastSyncTime;
     }
 
+    /**
+     * @deprecated This method and concerning field is no longer used and will be removed soon.
+     */
+    @Deprecated
     public void setLastSyncTime(Long lastSyncTime) {
         this.lastSyncTime = lastSyncTime;
     }
 
+    /**
+     * Gets the timestamp of the last sync that took place.
+     */
     public Long getCurrentTimeStamp() {
         return currentTimeStamp == null ? 0L : currentTimeStamp;
     }
@@ -81,6 +106,9 @@ public class RegistrationResponse extends JsonMarker {
         this.currentTimeStamp = currentTimeStamp;
     }
 
+    /**
+     * Used internally.
+     */
     public String getNotificationResponse() {
         return notificationResponse;
     }
@@ -89,6 +117,10 @@ public class RegistrationResponse extends JsonMarker {
         this.notificationResponse = notificationResponse;
     }
 
+    /**
+     * Used internally.
+     * Gets the URL for the MQTT broker, used for the web-socket connection.
+     */
     public String getBrokerUrl() {
         return brokerUrl;
     }
@@ -97,10 +129,18 @@ public class RegistrationResponse extends JsonMarker {
         this.brokerUrl = brokerUrl;
     }
 
+    /**
+     * @deprecated Backend changes can cause this method to return a wrong result.
+     * You can use the {@link RegistrationResponse#message} field to get response details.
+     */
+    @Deprecated
     public boolean isPasswordInvalid() {
         return (!TextUtils.isEmpty(message) && ("PASSWORD_INVALID".equals(message) || "PASSWORD_REQUIRED".equals(message)));
     }
 
+    /**
+     * The pricing of your Applozic account.
+     */
     public Short getPricingPackage() {
         return pricingPackage;
     }
@@ -109,6 +149,9 @@ public class RegistrationResponse extends JsonMarker {
         this.pricingPackage = pricingPackage;
     }
 
+    /**
+     * User-id of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public String getUserId() {
         return userId;
     }
@@ -117,6 +160,9 @@ public class RegistrationResponse extends JsonMarker {
         this.userId = userId;
     }
 
+    /**
+     * Display name of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public String getDisplayName() {
         return displayName;
     }
@@ -125,6 +171,9 @@ public class RegistrationResponse extends JsonMarker {
         this.displayName = displayName;
     }
 
+    /**
+     * Display profile image link of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public String getImageLink() {
         return imageLink;
     }
@@ -157,6 +206,9 @@ public class RegistrationResponse extends JsonMarker {
         this.enableEncryption = enableEncryption;
     }
 
+    /**
+     * Get the role type of the concerned {@link com.applozic.mobicomkit.api.account.user.User}.
+     */
     public Short getRoleType() {
         return roleType;
     }
@@ -173,6 +225,9 @@ public class RegistrationResponse extends JsonMarker {
         this.userEncryptionKey = userEncryptionKey;
     }
 
+    /**
+     * Gets the metadata sent with the response, if any.
+     */
     public Map<String, String> getMetadata() {
         return metadata;
     }
@@ -181,6 +236,9 @@ public class RegistrationResponse extends JsonMarker {
         this.metadata = metadata;
     }
 
+    /**
+     * Gets the time (milliseconds) after which notifications are set to be received by the concerned user.
+     */
     public Long getNotificationAfter() {
         return notificationAfter;
     }
@@ -189,6 +247,10 @@ public class RegistrationResponse extends JsonMarker {
         this.notificationAfter = notificationAfter;
     }
 
+    /**
+     * Gets the JWT authentication token. This token is passed in the API call header to
+     * authenticate the requests.
+     */
     public String getAuthToken() {
         return authToken;
     }
@@ -197,6 +259,9 @@ public class RegistrationResponse extends JsonMarker {
         this.authToken = authToken;
     }
 
+    /**
+     * Returns true if the concerned user has been deactivated.
+     */
     public boolean isDeactivate() {
         return deactivate;
     }
@@ -235,6 +300,8 @@ public class RegistrationResponse extends JsonMarker {
     }
 
     /**
+     * These constants are used internally.
+     *
      * Registration success response constants (that will be received from server).
      */
     public static enum SuccessResponse {

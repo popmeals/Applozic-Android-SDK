@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.attachment.FileClientService;
 import com.applozic.mobicomkit.api.people.AlGetPeopleTask;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
@@ -23,17 +25,17 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Class for all Contact related operations.
+ * For {@link Contact} related operations.
  */
 public class AppContactService implements BaseContactService {
-
-    //ApplozicInternal: private all
+    //Cleanup: private all
     private static final String TAG = "AppContactService";
+
     ContactDatabase contactDatabase;
     Context context;
     FileClientService fileClientService;
 
-    public AppContactService(Context context) {
+    public AppContactService(@NonNull Context context) {
         this.context = ApplozicService.getContext(context);
         this.contactDatabase = new ContactDatabase(context);
         this.fileClientService = new FileClientService(context);
@@ -45,7 +47,7 @@ public class AppContactService implements BaseContactService {
      * @param contact the contact object
      */
     @Override
-    public void add(Contact contact) {
+    public void add(@NonNull Contact contact) {
         contactDatabase.addContact(contact);
     }
 
@@ -55,40 +57,24 @@ public class AppContactService implements BaseContactService {
      * @param contactList a list of contact objects
      */
     @Override
-    public void addAll(List<Contact> contactList) {
+    public void addAll(@NonNull List<Contact> contactList) {
         for (Contact contact : contactList) {
             upsert(contact);
         }
     }
 
     /**
-     * Deletes the contact entry with the given {@link Contact#getUserId()} in the local database.
+     * Add or updated the contact object in the local database.
      *
-     * @param contact the contact object to delete. the contact will be identified by the user id
+     * @param contact the contact object
      */
     @Override
-    public void deleteContact(Contact contact) {
-        contactDatabase.deleteContact(contact);
-    }
-
-    /**
-     * Deletes the contact entry with the given user id in the local database.
-     *
-     * @param contactId the contact user id
-     */
-    @Override
-    public void deleteContactById(String contactId) {
-        contactDatabase.deleteContactById(contactId);
-    }
-
-    /**
-     * Gets the list of all contacts save in the local database.
-     *
-     * @return the list of {@link Contact} objects
-     */
-    @Override
-    public List<Contact> getAll() {
-        return contactDatabase.getAllContact();
+    public void upsert(@NonNull Contact contact) {
+        if (contactDatabase.getContactById(contact.getUserId()) == null) {
+            contactDatabase.addContact(contact);
+        } else {
+            contactDatabase.updateContact(contact);
+        }
     }
 
     /**
@@ -101,7 +87,7 @@ public class AppContactService implements BaseContactService {
      * @return the {@link Contact} object
      */
     @Override
-    public Contact getContactById(String contactId) {
+    public @NonNull Contact getContactById(@NonNull String contactId) {
         Contact contact;
         contact = MessageSearchCache.getContactById(contactId);
         if (contact == null) {
@@ -115,30 +101,43 @@ public class AppContactService implements BaseContactService {
     }
 
     /**
-     * Updates the contact object in the local database.
+     * Gets the list of all contacts save in the local database.
      *
-     * <p>Non-null/non-empty/non-zero data is taken from the passed contact object and updated.</p>
-     *
-     * @param contact the {@link Contact} object
+     * @return the list of {@link Contact} objects
      */
     @Override
-    public void updateContact(Contact contact) {
-        contactDatabase.updateContact(contact);
+    public @NonNull List<Contact> getAll() {
+        return contactDatabase.getAllContact();
     }
 
     /**
-     * Add or updated the contact object in the local database.
+     * Gets the list of contacts save in the local database, excluding the current logged user.
      *
-     * @param contact the contact object
+     * @return the list of {@link Contact} objects
      */
     @Override
-    public void upsert(Contact contact) {
-        if (contactDatabase.getContactById(contact.getUserId()) == null) {
-            contactDatabase.addContact(contact);
-        } else {
-            contactDatabase.updateContact(contact);
-        }
+    public @NonNull List<Contact> getAllContactListExcludingLoggedInUser() {
+        return contactDatabase.getAllContactListExcludingLoggedInUser();
+    }
 
+    /**
+     * Deletes the contact entry with the given {@link Contact#getUserId()} in the local database.
+     *
+     * @param contact the contact object to delete. the contact will be identified by the user id
+     */
+    @Override
+    public void deleteContact(@NonNull Contact contact) {
+        contactDatabase.deleteContact(contact);
+    }
+
+    /**
+     * Deletes the contact entry with the given user id in the local database.
+     *
+     * @param contactId the contact user id
+     */
+    @Override
+    public void deleteContactById(@NonNull String contactId) {
+        contactDatabase.deleteContactById(contactId);
     }
 
     /**
@@ -148,32 +147,31 @@ public class AppContactService implements BaseContactService {
      * @return the list of contacts
      */
     @Override
-    public List<Contact> getContacts(Contact.ContactType contactType) {
+    public @NonNull List<Contact> getContacts(@NonNull Contact.ContactType contactType) {
         return contactDatabase.getContacts(contactType);
     }
 
     /**
-     * Add the given key-value pair to the contacts metadata in the local database.
+     * Checks if contact information for the given userId exists in the local database.
      *
-     * <p>This value is not sent to the server.</p>
-     *
-     * @param userId the user id of the contact to update the metadata for
-     * @param key the key
-     * @param value the value
+     * @param contactId the user-id
+     * @return true/false
      */
     @Override
-    public void updateMetadataKeyValueForUserId(String userId, String key, String value) {
-        contactDatabase.updateMetadataKeyValueForUserId(userId, key, value);
+    public boolean isContactExists(@Nullable String contactId) {
+        return contactDatabase.getContactById(contactId) != null;
     }
 
     /**
-     * Gets the list of contacts save in the local database, excluding the current logged user.
+     * Updates the contact object in the local database.
      *
-     * @return the list of {@link Contact} objects
+     * <p>Non-null/non-empty/non-zero data is taken from the passed contact object and updated.</p>
+     *
+     * @param contact the {@link Contact} object
      */
     @Override
-    public List<Contact> getAllContactListExcludingLoggedInUser() {
-        return contactDatabase.getAllContactListExcludingLoggedInUser();
+    public void updateContact(@NonNull Contact contact) {
+        contactDatabase.updateContact(contact);
     }
 
     /**
@@ -187,8 +185,12 @@ public class AppContactService implements BaseContactService {
      * @return the bitmap of downloaded image
      */
     @Override
-    public Bitmap downloadContactImage(Context context, Contact contact) {
-        if (contact != null && TextUtils.isEmpty(contact.getImageURL())) {
+    public @Nullable Bitmap downloadContactImage(@NonNull Context context, @Nullable Contact contact) {
+        if (contact == null) {
+            return null;
+        }
+
+        if (TextUtils.isEmpty(contact.getImageURL())) {
             return null;
         }
 
@@ -220,8 +222,12 @@ public class AppContactService implements BaseContactService {
      * @return the bitmap of downloaded image
      */
     @Override
-    public Bitmap downloadGroupImage(Context context, Channel channel) {
-        if (channel != null && TextUtils.isEmpty(channel.getImageUrl())) {
+    public @Nullable Bitmap downloadGroupImage(@NonNull Context context, @Nullable Channel channel) {
+        if (channel == null) {
+            return null;
+        }
+
+        if (TextUtils.isEmpty(channel.getImageUrl())) {
             return null;
         }
 
@@ -243,7 +249,25 @@ public class AppContactService implements BaseContactService {
         return bitmap;
     }
 
-    @ApplozicInternal
+    //internal methods >>>
+
+    /**
+     * Internal. Do not use.
+     *
+     * Add the given key-value pair to the contacts metadata in the local database.
+     *
+     * <p>This value is not sent to the server.</p>
+     *
+     * @param userId the user id of the contact to update the metadata for
+     * @param key the key
+     * @param value the value
+     */
+    @Override
+    public void updateMetadataKeyValueForUserId(String userId, String key, String value) {
+        contactDatabase.updateMetadataKeyValueForUserId(userId, key, value);
+    }
+
+    /** Internal. Do not use **/
     public Contact getContactReceiver(List<String> items, List<String> userIds) {
         if (userIds != null && !userIds.isEmpty()) {
             return getContactById(userIds.get(0));
@@ -254,19 +278,8 @@ public class AppContactService implements BaseContactService {
         return null;
     }
 
-    /**
-     * Checks if contact information for the given userId exists in the local database.
-     *
-     * @param contactId the user id
-     * @return true/false
-     */
+    /** Internal. Do not use **/
     @Override
-    public boolean isContactExists(String contactId) {
-        return contactDatabase.getContactById(contactId) != null;
-    }
-
-    @Override
-    @ApplozicInternal
     public void updateConnectedStatus(String contactId, Date date, boolean connected) {
         Contact contact = contactDatabase.getContactById(contactId);
         if (contact != null && contact.isConnected() != connected) {
@@ -275,8 +288,8 @@ public class AppContactService implements BaseContactService {
         }
     }
 
+    /** Internal. Do not use **/
     @Override
-    @ApplozicInternal
     public void updateUserBlocked(String userId, boolean userBlocked) {
         if (!TextUtils.isEmpty(userId)) {
             contactDatabase.updateUserBlockStatus(userId, userBlocked);
@@ -284,8 +297,8 @@ public class AppContactService implements BaseContactService {
         }
     }
 
+    /** Internal. Do not use **/
     @Override
-    @ApplozicInternal
     public void updateUserBlockedBy(String userId, boolean userBlockedBy) {
         if (!TextUtils.isEmpty(userId)) {
             contactDatabase.updateUserBlockByStatus(userId, userBlockedBy);
@@ -293,39 +306,52 @@ public class AppContactService implements BaseContactService {
         }
     }
 
+    /** Internal. Do not use **/
+    @Override
+    public void updateLocalImageUri(Contact contact) {
+        contactDatabase.updateLocalImageUri(contact);
+    }
+
+    //deprecated >>>
+
     /**
+     * @deprecated Duplicate of {@link #isContactExists(String)}.
+     *
      * Checks if contact information for the given userId exists in the local database.
      *
      * @param userId the user id
      * @return true/false
      */
+    @Deprecated
     @Override
     public boolean isContactPresent(String userId) {
         return contactDatabase.isContactPresent(userId);
     }
 
-    @Override
-    @ApplozicInternal
-    public int getChatConversationCount() {
-        return contactDatabase.getChatUnreadCount();
-    }
-
-    @Override
-    @ApplozicInternal
-    public int getGroupConversationCount() {
-        return contactDatabase.getGroupUnreadCount();
-    }
-
-    @Override
-    @ApplozicInternal
-    public void updateLocalImageUri(Contact contact) {
-        contactDatabase.updateLocalImageUri(contact);
-    }
-
-    //ApplozicInternal: private
-    @ApplozicInternal
+    //Cleanup: private
+    /**
+     * @deprecated Run {@link #getContactById(String)} asynchronously instead.
+     */
+    @Deprecated
     public void getContactByIdAsync(String userId, AlContactListener contactListener) {
         AlTask.execute(new AlGetPeopleTask(context, userId, null, null, null, contactListener, this, null));
     }
 
+    /**
+     * @deprecated Does not always give accurate value.
+     */
+    @Deprecated
+    @Override
+    public int getChatConversationCount() {
+        return contactDatabase.getChatUnreadCount();
+    }
+
+    /**
+     * @deprecated Does not always give accurate value.
+     */
+    @Deprecated
+    @Override
+    public int getGroupConversationCount() {
+        return contactDatabase.getGroupUnreadCount();
+    }
 }

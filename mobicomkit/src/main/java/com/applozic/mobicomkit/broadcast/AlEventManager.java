@@ -1,11 +1,16 @@
 package com.applozic.mobicomkit.broadcast;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.feed.MqttMessageResponse;
 import com.applozic.mobicomkit.listners.AlMqttListener;
+import com.applozic.mobicomkit.listners.AlPushNotificationHandler;
 import com.applozic.mobicomkit.listners.ApplozicUIListener;
 import com.applozic.mobicommons.json.GsonUtils;
 
@@ -13,28 +18,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles real-time update events.
- * These include but not limited to callbacks for events like message sent, received, user online etc.
+ * Handles real-time chat events including but not limited to <i>receiving messages</i>.
  *
- * <p>The listener can be registered for using {@link AlEventManager#registerUIListener(String, ApplozicUIListener)}.
- * Callbacks will be sent for all registered listeners.
- * Do unregister the listener when not required.</p>
+ * <p>See {@link ApplozicUIListener} for a list of all supported events.</p>
+ *
+ * <p><i>Important:</i> To listen to real-time events, you have to set up push-notifications. Refer to {@link com.applozic.mobicomkit.Applozic#registerForPushNotification(Context, String, AlPushNotificationHandler)}.</p>
+ *
+ * <p>Now you can start listening for events using {@link AlEventManager#registerUIListener(String, ApplozicUIListener)}.
+ * Do remember to {@link AlEventManager#unregisterUIListener(String) unregister} the listener when not required.</p>
+ *
+ * @see com.applozic.mobicomkit.Applozic#connectPublish(Context)
  */
 public class AlEventManager {
-    public static final String AL_EVENT = "AL_EVENT"; //ApplozicInternal: protected
     private static AlEventManager eventManager;
     private Map<String, ApplozicUIListener> listenerMap;
     private Map<String, AlMqttListener> mqttListenerMap;
     private Handler uiHandler;
 
-    public static AlEventManager getInstance() {
+    /**
+     * Internal. Do not use.
+     */
+    public static final String AL_EVENT = "AL_EVENT"; //Cleanup: protected
+
+    public static @NonNull AlEventManager getInstance() {
         if (eventManager == null) {
             eventManager = new AlEventManager();
         }
         return eventManager;
     }
 
-    public void registerUIListener(String id, ApplozicUIListener listener) {
+    /**
+     * Register to start listening for real-time chat events.
+     *
+     * @param id pass an id of your choice. this will be needed to unregister the listener.
+     */
+    public void registerUIListener(@NonNull String id, @Nullable ApplozicUIListener listener) {
         if (listenerMap == null) {
             listenerMap = new HashMap<>();
         }
@@ -52,50 +70,18 @@ public class AlEventManager {
         }
     }
 
-    public void unregisterUIListener(String id) {
+    /**
+     * Call this to stop listening for real-time chat events.
+     *
+     * @param id the id you registered the listener with.
+     */
+    public void unregisterUIListener(@NonNull String id) {
         if (listenerMap != null) {
             listenerMap.remove(id);
         }
     }
 
-    //ApplozicInternal: private
-    public void registerMqttListener(String id, AlMqttListener mqttListener) {
-        if (mqttListenerMap == null) {
-            mqttListenerMap = new HashMap<>();
-        }
-
-        if (!mqttListenerMap.containsKey(id)) {
-            mqttListenerMap.put(id, mqttListener);
-        }
-    }
-
-    //ApplozicInternal: private
-    public void unregisterMqttListener(String id) {
-        if (mqttListenerMap != null) {
-            mqttListenerMap.remove(id);
-        }
-    }
-
-    void postEventData(AlMessageEvent messageEvent) {
-        if (uiHandler != null) {
-            Message message = new Message();
-            Bundle bundle = new Bundle();
-            bundle.putString(AL_EVENT, GsonUtils.getJsonFromObject(messageEvent, AlMessageEvent.class));
-            message.setData(bundle);
-            uiHandler.sendMessage(message);
-        }
-    }
-
-    //ApplozicInternal: default
-    public void postMqttEventData(MqttMessageResponse messageResponse) {
-        if (mqttListenerMap != null && !mqttListenerMap.isEmpty()) {
-            for (AlMqttListener alMqttListener : mqttListenerMap.values()) {
-                alMqttListener.onMqttMessageReceived(messageResponse);
-            }
-        }
-    }
-
-    private void handleState(Message message) {
+    private void handleState(@Nullable Message message) {
         if (message != null && listenerMap != null && !listenerMap.isEmpty()) {
             Bundle bundle = message.getData();
             AlMessageEvent messageEvent = null;
@@ -174,6 +160,53 @@ public class AlEventManager {
                         listener.onGroupMute(messageEvent.getGroupId());
                 }
             }
+        }
+    }
+
+    //internal methods >>>
+
+    /** Internal. Do not use. **/
+    void postEventData(AlMessageEvent messageEvent) {
+        if (uiHandler != null) {
+            Message message = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putString(AL_EVENT, GsonUtils.getJsonFromObject(messageEvent, AlMessageEvent.class));
+            message.setData(bundle);
+            uiHandler.sendMessage(message);
+        }
+    }
+
+    //Cleanup: default
+    /** Internal. Do not use. */
+    public void postMqttEventData(MqttMessageResponse messageResponse) {
+        if (mqttListenerMap != null && !mqttListenerMap.isEmpty()) {
+            for (AlMqttListener alMqttListener : mqttListenerMap.values()) {
+                alMqttListener.onMqttMessageReceived(messageResponse);
+            }
+        }
+    }
+
+    //Cleanup: private
+    /**
+     * Internal. Not required.
+     */
+    public void registerMqttListener(String id, AlMqttListener mqttListener) {
+        if (mqttListenerMap == null) {
+            mqttListenerMap = new HashMap<>();
+        }
+
+        if (!mqttListenerMap.containsKey(id)) {
+            mqttListenerMap.put(id, mqttListener);
+        }
+    }
+
+    //Cleanup: private
+    /**
+     * Internal. Not required.
+     */
+    public void unregisterMqttListener(String id) {
+        if (mqttListenerMap != null) {
+            mqttListenerMap.remove(id);
         }
     }
 }

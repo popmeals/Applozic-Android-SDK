@@ -4,17 +4,43 @@ import android.content.Context;
 
 import com.applozic.mobicomkit.feed.ApiResponse;
 import com.applozic.mobicommons.task.AlAsyncTask;
+import com.applozic.mobicommons.task.AlTask;
 
 /**
- * Task that wraps around {@link UserService#processUserBlock(String, boolean)}.
+ * An asynchronous task that blocks/unblocks the contact/user with the given userId.
  *
- * <p>Blocks the contact/user with the given userId. Remotely as well as locally.
+ * <code>
+ *     TaskListener taskListener = new TaskListener() {
+ *             @Override
+ *             public void onSuccess(ApiResponse apiResponse) {
+ *                 //apiResponse.getResponse();
+ *             }
  *
- * Created for async execution of the above mentioned method.
+ *             @Override
+ *             public void onFailure(ApiResponse apiResponse, Exception exception) {
+ *                 //if (apiResponse != null) {
+ *                     //apiResponse.getErrorResponse();
+ *                 //} else if (exception != null) {
+ *                     //exception.printStackTrace();
+ *                 //}
+ *             }
+ *
+ *             @Override
+ *             public void onCompletion() { }
+ *         };
+ *
+ *         UserBlockTask userBlockTask = new UserBlockTask(context, taskListener, "userId", true);
+ *         AlTask.execute(userBlockTask);
+ *
+ *         //for versions prior to v5.95 use:
+ *         //userBlockTask.execute();
+ * </code>
+ *
+ * <p>This task sends a block user API call and updates the local database on success.
+ * Created for async execution of {@link UserService#processUserBlock(String, boolean)}.
  * Use {@link TaskListener} to get the results.</p>
  */
 public class UserBlockTask extends AlAsyncTask<Void, Boolean> {
-
     private final TaskListener taskListener;
     private final Context context;
     private ApiResponse apiResponse;
@@ -23,6 +49,12 @@ public class UserBlockTask extends AlAsyncTask<Void, Boolean> {
     private Exception mException;
     private Integer groupId;
 
+    /**
+     * @param context the context
+     * @param listener the callback
+     * @param userId the user-id of the user to block/unblock
+     * @param block true to block/false to unblock
+     */
     public UserBlockTask(Context context, TaskListener listener, String userId, boolean block) {
         this.context = context;
         this.taskListener = listener;

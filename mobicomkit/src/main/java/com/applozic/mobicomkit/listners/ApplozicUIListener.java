@@ -1,99 +1,84 @@
 package com.applozic.mobicomkit.listners;
 
+import androidx.annotation.Nullable;
+
 import com.applozic.mobicomkit.api.conversation.Message;
 
 import java.util.Set;
 
 /**
- * This class contains callbacks for all major Applozic events.
+ * Callbacks for real-time chat events such as <i>incoming messages</i> etc.
  *
- * <p>These are used when working with capturing Applozic events using {@link com.applozic.mobicomkit.broadcast.AlEventManager}.</p>
+ * @see com.applozic.mobicomkit.broadcast.AlEventManager
  */
 public interface ApplozicUIListener {
     /**
-     * Will be called whenever an Applozic {@link Message} is sent to the server by the current user.
-     *
-     * @param message the message object.
+     * Called whenever the current user sends a message.
      */
-    void onMessageSent(Message message);
+    void onMessageSent(@Nullable Message message);
 
     /**
-     * Will be called whenever an Applozic {@link Message} is received from the server for the current user.
-     *
-     * @param message the message object.
+     * Called whenever the current user receives a message.
      */
-    void onMessageReceived(Message message);
+    void onMessageReceived(@Nullable Message message);
 
     /**
-     * Not used. Please ignore.
-     */
-    void onLoadMore(boolean loadMore);
-
-    /**
-     * Will be called whenever a new message is synced from the server.
+     * Called whenever a new message is synced from the server.
+     * This will happen whenever a message is received, sent or updated in any way.
      *
-     * <p>This includes a new message being received, sent or updated.</p>
-     *
-     * @param message the message object
      * @param key the key of the synced message
      */
-    void onMessageSync(Message message, String key);
+    void onMessageSync(@Nullable Message message, @Nullable String key);
 
     /**
-     * Will be called whenever a message is deleted.
-     *
-     * @param messageKey the key of the message deleted.
-     * @param userId null
+     * @param messageKey {@link Message#getKeyString()}
+     * @param userId ignore. will be null.
      */
-    void onMessageDeleted(String messageKey, String userId);
+    void onMessageDeleted(@Nullable String messageKey, @Nullable String userId);
 
     /**
-     * Will be called whenever a message is delivered.
-     *
-     * @param message the message object
-     * @param userId the user that got the message delivered to it
+     * @param userId the user that the successfully received the message
      */
-    void onMessageDelivered(Message message, String userId);
+    void onMessageDelivered(@Nullable Message message, @Nullable String userId);
 
     /**
-     * Will be called when all message sent to a contact have been delivered.
+     * Called when all messages sent to a user(/contact) have been delivered.
      *
-     * @param userId the id of the user to which all the messages have been delivered.
+     * @param userId user-id of the receiver.
      */
-    void onAllMessagesDelivered(String userId);
+    void onAllMessagesDelivered(@Nullable String userId);
 
     /**
-     * Will be called when all message sent to a contact have been read.
+     * Called when all message sent to a user(/contact) have been read.
      *
-     * @param userId the id of the user by which all the messages have been read.
+     * @param userId user-id of the receiver.
      */
-    void onAllMessagesRead(String userId);
+    void onAllMessagesRead(@Nullable String userId);
 
     /**
-     * Will be called whenever a conversation(group or 1-to-1 chat) is deleted.
+     * Called whenever a conversation(group or 1-to-1 chat) is deleted.
      *
-     * @param userId the 1-to-1 chat that was deleted. null/empty if channel was deleted
-     * @param channelKey the channel that was deleted. null/0 if 1-to-1 chat was deleted
-     * @param response status of the api response
+     * @param userId for one-to-one conversation. null/empty if a group was deleted
+     * @param channelKey for group conversation. null/0 if a 1-to-1 conversation was deleted
      */
-    void onConversationDeleted(String userId, Integer channelKey, String response);
+    void onConversationDeleted(@Nullable String userId, @Nullable Integer channelKey, @Nullable String response);
 
     /**
-     * Will be called whenever the typing status of a user is changed.
+     * Called whenever the typing status of contacts (in conversation) with changes.
      *
      * @param userId the user the typing status corresponds to
      * @param isTyping true if user is typing
      */
-    void onUpdateTypingStatus(String userId, String isTyping);
+    void onUpdateTypingStatus(@Nullable String userId, @Nullable String isTyping);
 
     /**
-     * Will be called whenever the last scene of a user is updated.
+     * Called whenever the last seen of contacts (in conversation) is updated.
      *
-     * <p>Use {@link com.applozic.mobicomkit.api.account.user.UserClientService#getUserDetails(Set)}.</p>
+     * <p>To get the updated last seen, use {@link com.applozic.mobicomkit.api.account.user.UserClientService#getUserDetails(Set)}.</p>
      *
-     * @param userId the user id of the user whose last seen was updated
+     * @param userId user whose last seen was updated
      */
-    void onUpdateLastSeen(String userId);
+    void onUpdateLastSeen(@Nullable String userId);
 
     /**
      * Called when MQTT is disconnected.
@@ -106,7 +91,7 @@ public interface ApplozicUIListener {
     void onMqttConnected();
 
     /**
-     * Called when the user comes online.
+     * Called when the current user comes online.
      */
     void onUserOnline();
 
@@ -116,52 +101,55 @@ public interface ApplozicUIListener {
     void onUserOffline();
 
     /**
-     * Called when the user is activated.
-     * @param isActivated true if activated
+     * Called when the current user is activated/deactivated.
+     *
+     * <p>User activation/deactivation can be done from the <i>applozic dashboard</i>.</p>
      */
     void onUserActivated(boolean isActivated);
 
     /**
-     * Called when channels are synced with the server.
+     * Called when new and existing channel data is synced with the server.
      */
     void onChannelUpdated();
 
     /**
-     * Called when a conversation is fully read/unread count is 0.
+     * Called when all messages of a conversation have been read.
      *
-     * @param userId the id of the group/user chat that is read (it's group id in case of isGroup = true)
-     * @param isGroup is the conversation read for a group or 1-to-1 chat. true for group.
+     * @param userId stores the user-id if <code>isGroup</code> is false or group-id if <code>isGroup</code> is true.
+     * @param isGroup true if the conversation read is a group. false otherwise.
      */
-    void onConversationRead(String userId, boolean isGroup);
+    void onConversationRead(@Nullable String userId, @Nullable boolean isGroup);
 
     /**
-     * Called when a user's details are updated and synced with the server.
+     * Called when a details of contacts (in conversation) are updated and synced with the server.
      *
-     * <p>Use {@link com.applozic.mobicomkit.api.account.user.UserClientService#getUserDetails(Set)}.</p>
-     *
-     * @param userId the user id of the user whose details have been updated
+     * <p>Use {@link com.applozic.mobicomkit.api.account.user.UserClientService#getUserDetails(Set)} to get the fresh user details.</p>
      */
-    void onUserDetailUpdated(String userId);
+    void onUserDetailUpdated(@Nullable String userId);
 
     /**
-     * Called when a message metadata ia updated and synced with the server.
+     * Called when the metadata for any message is updated.
      *
-     * @param keyString the key of the message
+     * @param keyString {@link Message#getKeyString()}
      */
-    void onMessageMetadataUpdated(String keyString);
+    void onMessageMetadataUpdated(@Nullable String keyString);
 
     /**
-     * Called when a user is muted/un-muted for the current user.
+     * Called when a contact is muted/un-muted for the current user.
      *
-     * @param mute muted/un-muted true/false
      * @param userId the user muted/un-muted
      */
-    void onUserMute(boolean mute, String userId);
+    void onUserMute(boolean mute, @Nullable String userId);
 
     /**
      * Called when a channel/group is muted for the current user.
      *
      * @param groupId the channel muted
      */
-    void onGroupMute(Integer groupId);
+    void onGroupMute(@Nullable Integer groupId);
+
+    /**
+     * Not used. Please ignore.
+     */
+    void onLoadMore(boolean loadMore);
 }

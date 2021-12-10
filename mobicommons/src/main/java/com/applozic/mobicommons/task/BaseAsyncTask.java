@@ -1,5 +1,7 @@
 package com.applozic.mobicommons.task;
 
+import androidx.annotation.Nullable;
+
 /**
  * implement this interface to create a background thread running task
  * for proper working follow the comments written on each function
@@ -19,6 +21,11 @@ public abstract class BaseAsyncTask<Progress, Result> {
     protected void onPostExecute(Result result) { } //call this in UI thread after call()
     protected void onProgress(Progress progress) { } //call this in the UI thread; make your own implementation for it
     protected void publishProgress(Progress progress) { } //add implementation to call onProgress in UI thread
-    public abstract void execute(); //the code for execution of all the above listed functions
+    public abstract void execute(AsyncListener<Result> asyncListener); //the code for execution of all the above listed functions
     protected void onCancelled() { } //this code will be run if task is cancelled
+
+    public interface AsyncListener<Result> {
+        void onComplete(@Nullable Result result);
+        void onFailed(Throwable throwable);
+    }
 }

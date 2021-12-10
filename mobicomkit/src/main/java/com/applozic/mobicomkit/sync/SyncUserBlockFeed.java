@@ -1,10 +1,8 @@
 package com.applozic.mobicomkit.sync;
 
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicommons.json.JsonMarker;
 
-@ApplozicInternal
 public class SyncUserBlockFeed extends JsonMarker {
 
     private String blockedTo;

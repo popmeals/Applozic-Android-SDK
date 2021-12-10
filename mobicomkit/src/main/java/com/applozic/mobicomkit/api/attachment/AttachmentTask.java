@@ -21,7 +21,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.listners.MediaDownloadProgressHandler;
 import com.applozic.mobicommons.commons.image.PhotoDecodeRunnable;
@@ -31,14 +30,13 @@ import com.applozic.mobicommons.file.FileUtils;
 import java.lang.ref.WeakReference;
 
 /**
- * This class manages PhotoDownloadRunnable and PhotoDownloadRunnable objects.  It does't perform
+ * This class manages AttachmentDownloadRunnable and PhotoDownloadRunnable objects.  It does't perform
  * the download or decode; instead, it manages persistent storage for the tasks that do the work.
  * It does this by implementing the interfaces that the download and decode classes define, and
  * then passing itself as an argument to the constructor of a download or decode object. In effect,
  * this allows PhotoTask to start on a Thread, run a download in a delegate object, then
  * run a decode, and then start over again. This class can be pooled and reused as necessary.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class AttachmentTask implements
         AttachmentDownloader.TaskRunnableDownloadMethods, TaskRunnableDecodeMethods {
 

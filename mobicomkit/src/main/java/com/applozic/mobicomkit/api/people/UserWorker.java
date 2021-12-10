@@ -10,7 +10,6 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.UserDetail;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -28,7 +27,6 @@ import static com.applozic.mobicomkit.api.conversation.ApplozicConversation.isMe
 /**
  * Worker for processing user related data (including contacts and channels) such as read, syncing user details etc.
  */
-@ApplozicInternal(appliesTo = ApplozicInternal.AppliesTo.ALL_MEMBERS)
 public class UserWorker extends Worker {
     private static final String TAG = "UserWorker";
 
@@ -43,7 +41,6 @@ public class UserWorker extends Worker {
     MobiComConversationService mobiComConversationService;
     MessageDatabaseService messageDatabaseService;
 
-    @ApplozicInternal
     public UserWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         messageClientService = new MessageClientService(getApplicationContext());
@@ -75,7 +72,7 @@ public class UserWorker extends Worker {
         WorkManager.getInstance(context).enqueue(messageWorkerRequest);
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
     public void checkAndSaveLoggedUserDeletedDataToSharedPref() {
         String userId = MobiComUserPreference.getInstance(getApplicationContext()).getUserId();
         if(TextUtils.isEmpty(userId)) {

@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import androidx.annotation.VisibleForTesting;
 
 import com.applozic.mobicomkit.ApplozicClient;
-import com.applozic.mobicomkit.annotations.ApplozicInternal;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.attachment.FileMeta;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -23,25 +22,39 @@ import com.applozic.mobicommons.json.GsonUtils;
 import com.applozic.mobicommons.people.channel.Channel;
 import com.applozic.mobicommons.people.contact.Contact;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This class contains methods for {@link Message} related database operations.
+ * The <code>MessageDatabaseService</code> class contains methods for all {@link Message} related database operations.
+ *
+ * <p>It uses the {@link MobiComDatabaseHelper} class to perform the related database operation.</p>
+ *
+ * <p>Note: You will most probably, never need to perform write/edit operation to the database using this class. Instead, when working with a<code>Message</code>, you
+ * should use {@link com.applozic.mobicomkit.api.conversation.MobiComMessageService} and {@link com.applozic.mobicomkit.api.conversation.MobiComConversationService}.</p>
+ *
+ * <p><i>Example:</i>To retrieve a {@link Message} object from the database for the given <code>messageKeyString</code>(id):
+ * <code>
+ *     MessageDatabaseService messageDatabaseService = new MessageDatabaseService(context);
+ *     Message message = messageDatabaseService.getMessage("messageKeyString");
+ * </code></p>
  */
 public class MessageDatabaseService {
     private static final String TAG = "MessageDatabaseService";
 
-    //ApplozicInternal: default
+    //Cleanup: default
     public static List<Message> recentlyAddedMessage = new ArrayList<Message>();
     private Context context = null;
     private MobiComDatabaseHelper dbHelper;
     private boolean hideActionMessages = false;
     private boolean skipDeletedGroups;
 
-    @ApplozicInternal
+    /**
+     * Creates a <code>MessageDatabaseService</code> that can then be used to perform message database operations.
+     */
     public MessageDatabaseService(Context context) {
         this.context = ApplozicService.getContext(context);
         this.dbHelper = MobiComDatabaseHelper.getInstance(context);
@@ -49,6 +62,11 @@ public class MessageDatabaseService {
         skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
     }
 
+    /**
+     * Creates a <code>MessageDatabaseService</code> with you custom <code>dbHelper</code> that can then be used to perform message database operations.
+     *
+     * <p>This is used for testing.</p>
+     */
     @VisibleForTesting
     public MessageDatabaseService(Context context, MobiComDatabaseHelper dbHelper) {
         this.context = ApplozicService.getContext(context);
@@ -57,7 +75,10 @@ public class MessageDatabaseService {
         skipDeletedGroups = ApplozicClient.getInstance(context).isSkipDeletedGroups();
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * Gets the message object from the query's {@link Cursor}.
+     */
     public static Message getMessage(Cursor cursor) {
         Message message = new Message();
         message.setMessageId(cursor.getLong(cursor.getColumnIndex("id")));
@@ -136,7 +157,10 @@ public class MessageDatabaseService {
         return message;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * Gets the message list from the query's {@link Cursor}.
+     */
     public static List<Message> getMessageList(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
         try {
@@ -163,7 +187,10 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * Gets the message list from the query's (for most recent message for each channel/contact) {@link Cursor}.
+     */
     public static List<Message> getLatestMessageList(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
         try {
@@ -188,7 +215,10 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * Gets the message list from the query's (for most recent notification message for each channel/contact) {@link Cursor}.
+     */
     public static List<Message> getLatestMessageListForNotification(Cursor cursor) {
         List<Message> messageList = new ArrayList<Message>();
         try {
@@ -214,12 +244,28 @@ public class MessageDatabaseService {
     }
 
     /**
-     * Get message from the database based on the given parameters.
+     * Gets messages from the database based on the given parameters.
      *
      * <p>This method will not return deleted and hidden messages as well as notification messages for calls.</p>
      *
-     * @param startTime a non-null startTime will return messages created after the given value in milliseconds
-     * @param endTime a non-null endTime will return messages created before the given value in milliseconds
+     * <p><i>Example:</i>To get all the messages for a user with the user-id "applozic-user" after some random time.
+     * <code>
+     *     //get time for startTime
+     *     String myDate = "2014/10/29 18:10:45";
+     *     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+     *     Date date = sdf.parse(myDate);
+     *     long timeInMillis = date.getTime();
+     *
+     *     //get the contact
+     *     AppContactService appContactService = new AppContactService(context);
+     *     Contact contact = appContactService.getContactById("applozic-user");
+     *
+     *     MessageDatabaseService messageDatabaseService = new MessageDatabaseService(context);
+     *     List<Message> messagesList = messageDatabaseService.getMessages(timeInMillis, null, contact, null, null);
+     * </code></p>
+     *
+     * @param startTime a non-null startTime will return messages created after that value (in milliseconds)
+     * @param endTime a non-null endTime will return messages created before that value (in milliseconds)
      * @param contact use this to filter the messages for a particular {@link Contact}/user
      * @param channel use this to filter the messages for a particular {@link Channel}
      * @param conversationId use this to filter the messages for a particular conversationId
@@ -229,6 +275,7 @@ public class MessageDatabaseService {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
 
+        new SimpleDateFormat();
         if (channel != null && channel.getKey() != null) {
             structuredNameWhere += "channelKey = ? AND ";
             structuredNameParamsList.add(String.valueOf(channel.getKey()));
@@ -282,7 +329,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Gets the count of unread messages. This may not correctly synced with the server.
+     */
     public List<Message> getUnreadMessages() {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -295,7 +344,9 @@ public class MessageDatabaseService {
         return MessageDatabaseService.getLatestMessageListForNotification(cursor);
     }
 
-    @ApplozicInternal
+    /**
+     * Gets the list of messages added to the database but not yet sent for some reason.
+     */
     public List<Message> getPendingMessages() {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -309,7 +360,9 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    @ApplozicInternal
+    /**
+     * Gets a list of messages that are supposed to be deleted.
+     */
     public List<Message> getPendingDeleteMessages() {
         String structuredNameWhere = "";
         List<String> structuredNameParamsList = new ArrayList<String>();
@@ -321,7 +374,11 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * @deprecated This method is not longer used and will be removed soon.
+     */
+    @Deprecated
     public long getMinCreatedAtFromMessageTable() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         final Cursor cursor = db.rawQuery("select min(createdAt) as createdAt from sms", null);
@@ -340,7 +397,10 @@ public class MessageDatabaseService {
         }
     }
 
-    //ApplozicInternal: private
+    //Cleanup: private
+    /**
+     * Gets message by the contact number and message string associated with it.
+     */
     public Message getMessage(String contactNumber, String message) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String structuredNameWhere = "";
@@ -367,7 +427,13 @@ public class MessageDatabaseService {
         }
     }
 
-    //ApplozicInternal: default
+    //Cleanup: default
+    /**
+     * Checks if the message with the given <code>keystring</code> is present in the database.
+     *
+     * @param key the message id ({@link Message#getKeyString()})
+     * @return true if the message is present/false otherwise
+     */
     public boolean isMessagePresent(String key) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.rawQuery(
@@ -387,7 +453,7 @@ public class MessageDatabaseService {
     /**
      * Returns the message with the given key-string(id).
      *
-     * @param keyString the message key-string(id)
+     * @param keyString the message key-string(id) ({@link Message#getKeyString()})
      * @return the message object
      */
     public Message getMessage(String keyString) {
@@ -418,7 +484,12 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Gets a list of messages scheduled for the given time (in milliseconds).
+     *
+     * @deprecated The schedule message functionality will be removed soon.
+     */
+    @Deprecated
     public List<Message> getScheduledMessages(Long time) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if (!DBUtils.isTableExists(db, MobiComDatabaseHelper.SCHEDULE_SMS_TABLE_NAME)) {
@@ -476,14 +547,20 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated The schedule message functionality will be removed soon.
+     */
+    @Deprecated
     public void deleteScheduledMessages(long time) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(MobiComDatabaseHelper.SCHEDULE_SMS_TABLE_NAME, MobiComDatabaseHelper.TIMESTAMP + " <= ? ", new String[]{time + ""});
         dbHelper.close();
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated The schedule message functionality will be removed soon.
+     */
+    @Deprecated
     public boolean deleteScheduledMessage(String messageKeyString) {
         SQLiteDatabase db = dbHelper.getInstance(context).getWritableDatabase();
         boolean deleted = db.delete(MobiComDatabaseHelper.SCHEDULE_SMS_TABLE_NAME, MobiComDatabaseHelper.SMS_KEY_STRING + "='" + messageKeyString + "'", null) > 0;
@@ -509,7 +586,6 @@ public class MessageDatabaseService {
      * @param messageId the message id ({@link Message#getMessageId()})
      * @param message the message object with the new file-metas, key-string must not be null
      */
-    @ApplozicInternal
     public synchronized void updateMessageFileMetas(long messageId, final Message message) {
         ContentValues values = new ContentValues();
         values.put("keyString", message.getKeyString());
@@ -533,7 +609,9 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
-    @ApplozicInternal
+    /**
+     * Adds the given message object to the database. Adds multiple if the given message is {@link Message#isSentToMany()}. If the message already exists (keystring), it is not replaced.
+     */
     public synchronized long createMessage(final Message message) {
         long id = -1;
         if (message.getMessageId() != null) {
@@ -555,7 +633,9 @@ public class MessageDatabaseService {
         return id;
     }
 
-    @ApplozicInternal
+    /**
+     * Adds the given message object to the database. If the message already exists (keystring), it is not replaced.
+     */
     public synchronized long createSingleMessage(final Message message) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ApplozicClient applozicClient = ApplozicClient.getInstance(context);
@@ -671,6 +751,10 @@ public class MessageDatabaseService {
         return id;
     }
 
+    /**
+     * @deprecated This message is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public void updateSmsType(String smsKeyString, Message.MessageType messageType) {
         ContentValues values = new ContentValues();
         values.put("type", messageType.getValue());
@@ -678,7 +762,9 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
-    @ApplozicInternal
+    /**
+     * Set all messages to delivered or delivered and read for the given contact.
+     */
     public int updateMessageDeliveryReportForContact(String contactId, boolean markRead) {
         try {
             SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -702,7 +788,9 @@ public class MessageDatabaseService {
         return 0;
     }
 
-    @ApplozicInternal
+    /**
+     * Set a particular message (with the given keystring) to delivered or delivered and read for the given contact.
+     */
     public void updateMessageDeliveryReportForContact(String messageKeyString, String contactNumber, boolean markRead) {
         try {
             SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -724,7 +812,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Set <code>sentToServer</code> true for the given message.
+     */
     public void updateMessageSyncStatus(Message message, String keyString) {
         try {
             ContentValues values = new ContentValues();
@@ -739,7 +829,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Set <code>deleted</code> true for the given message.
+     */
     public void updateDeleteSyncStatus(Message message, String deleteStatus) {
         try {
             ContentValues values = new ContentValues();
@@ -752,7 +844,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Update the message attachments local filepath for the message with the given key-string.
+     */
     public void updateInternalFilePath(String keyString, String filePath) {
         ContentValues values = new ContentValues();
         values.put("filePaths", filePath);
@@ -761,7 +855,9 @@ public class MessageDatabaseService {
 
     }
 
-    @ApplozicInternal
+    /**
+     * Update the passed values for the message with the given local <code>id</code>.
+     */
     public void updateMessage(Long id, Long createdAt, String KeyString, boolean isSentToServer) {
         ContentValues values = new ContentValues();
         values.put("createdAt", createdAt);
@@ -771,7 +867,9 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
-    @ApplozicInternal
+    /**
+     * Set the message to cancelled.
+     */
     public void updateCanceledFlag(long smsId, int value) {
         ContentValues values = new ContentValues();
         values.put("canceled", value);
@@ -779,7 +877,9 @@ public class MessageDatabaseService {
         dbHelper.close();
     }
 
-    @ApplozicInternal
+    /**
+     * Set the status of the message to read/unread.
+     */
     public void updateMessageReadFlag(long smsId, boolean read) {
         ContentValues values = new ContentValues();
         values.put("read", read ? 1 : 0);
@@ -850,7 +950,10 @@ public class MessageDatabaseService {
         return 0;
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public int getUnreadConversationCount() {
         Cursor cursor = null;
         try {
@@ -873,7 +976,10 @@ public class MessageDatabaseService {
         return 0;
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public int getUnreadMessageCount() {
         Cursor cursor = null;
         try {
@@ -913,7 +1019,10 @@ public class MessageDatabaseService {
         return messages;
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public List<Message> getLatestMessageByClientGroupId(String clientGroupId) {
         return getLatestMessageForChannel(null, clientGroupId);
     }
@@ -969,7 +1078,6 @@ public class MessageDatabaseService {
      * @param replyMessageType the reply message type {@link Message.ReplyMessage}
      * @return true if present
      */
-    @ApplozicInternal
     public boolean isMessagePresent(String key, Integer replyMessageType) {
         Cursor cursor = null;
         boolean present = false;
@@ -991,12 +1099,18 @@ public class MessageDatabaseService {
         return present;
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public List<Message> getChannelCustomMessagesByClientGroupId(String clientGroupId) {
         return getChannelCustomMessageList(null, clientGroupId);
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public List<Message> getChannelCustomMessagesByChannelKey(Integer channelKey) {
         return getChannelCustomMessageList(channelKey, null);
     }
@@ -1018,7 +1132,10 @@ public class MessageDatabaseService {
         return getMessageList(cursor);
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public int updateReadStatus(String contactNumbers) {
         ContentValues values = new ContentValues();
         values.put("read", 1);
@@ -1027,7 +1144,9 @@ public class MessageDatabaseService {
         return read;
     }
 
-    @ApplozicInternal
+    /**
+     * Update the status to read for the message with the given <code>keystring</code>.
+     */
     public int updateReadStatusForKeyString(String keyString) {
         ContentValues values = new ContentValues();
         values.put("read", 1);
@@ -1037,7 +1156,9 @@ public class MessageDatabaseService {
         return read;
     }
 
-    @ApplozicInternal
+    /**
+     * Update the status to read for all the messages of the contact with the given <code>userId</code>.
+     */
     public int updateReadStatusForContact(String userId) {
         ContentValues values = new ContentValues();
         values.put(MobiComDatabaseHelper.UNREAD_COUNT, 0);
@@ -1046,7 +1167,9 @@ public class MessageDatabaseService {
         return read;
     }
 
-    @ApplozicInternal
+    /**
+     * Update the status to read for all the messages of the channel with the given <code>channelKey</code>.
+     */
     public int updateReadStatusForChannel(String channelKey) {
         ContentValues values = new ContentValues();
         values.put(MobiComDatabaseHelper.UNREAD_COUNT, 0);
@@ -1118,7 +1241,9 @@ public class MessageDatabaseService {
         return new ArrayList<>();
     }
 
-    @ApplozicInternal
+    /**
+     * Gets a list of messages created before the given time (in milliseconds).
+     */
     public List<Message> getMessages(Long createdAt) {
         return getMessages(createdAt, null, null);
     }
@@ -1127,7 +1252,9 @@ public class MessageDatabaseService {
         return getMessages(createdAt, searchText, null);
     }
 
-    @ApplozicInternal
+    /**
+     * Gets a list of messages created before the given time (in milliseconds), or for the search term or for the given <code>parentGroupKey</code>.
+     */
     public List<Message> getMessages(Long createdAt, String searchText, Integer parentGroupKey) {
 
         if (parentGroupKey != null && parentGroupKey != 0) {
@@ -1193,7 +1320,10 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public List<Message> getAlConversationList(int status, Long lastFetchTime) {
         Cursor cursor = null;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -1240,7 +1370,10 @@ public class MessageDatabaseService {
         return messageList;
     }
 
-    @ApplozicInternal
+    /**
+     * @deprecated This method is no longer used and will be deprecated soon.
+     */
+    @Deprecated
     public int getTotalUnreadCountForSupportGroup(int status) {
         Cursor cursor = null;
         int count = 0;
@@ -1268,7 +1401,9 @@ public class MessageDatabaseService {
     }
 
     //Cleanup: remove 2nd parameter
-    @ApplozicInternal
+    /**
+     * Deletes the given message (and hides reply messages). Pass <code>contactNumber</code> as <i>null</i>.
+     */
     public String deleteMessage(Message message, String contactNumber) {
         if (!message.isSentToServer()) {
             deleteMessageFromDb(message);
@@ -1280,7 +1415,9 @@ public class MessageDatabaseService {
         return null;
     }
 
-    @ApplozicInternal
+    /**
+     * Simply deleted the given message from the database.
+     */
     public void deleteMessageFromDb(Message message) {
         try {
             SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -1291,7 +1428,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Deletes the messages of the one-to-one chat with the given <code>contactNumber</code>.
+     */
     public void deleteConversation(String contactNumber) {
         Utils.printLog(context, TAG, "Deleting conversation for contactNumber: " + contactNumber);
         int deletedRows = dbHelper.getWritableDatabase().delete("sms", "contactNumbers=? AND channelKey = 0", new String[]{contactNumber});
@@ -1300,7 +1439,9 @@ public class MessageDatabaseService {
         Utils.printLog(context, TAG, "Delete " + deletedRows + " messages.");
     }
 
-    @ApplozicInternal
+    /**
+     * Deletes all messages of the channel with the given <code>channelKey</code>.
+     */
     public void deleteChannelConversation(Integer channelKey) {
         Utils.printLog(context, TAG, "Deleting  Conversation for channel: " + channelKey);
         int deletedRows = dbHelper.getWritableDatabase().delete("sms", "channelKey=?", new String[]{String.valueOf(channelKey)});
@@ -1309,7 +1450,9 @@ public class MessageDatabaseService {
         Utils.printLog(context, TAG, "Delete " + deletedRows + " messages.");
     }
 
-    @ApplozicInternal
+    /**
+     * Increments the unread count for the contact with the given user-id by 1.
+     */
     public synchronized void updateContactUnreadCount(String userId) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1319,7 +1462,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Increments the unread count for the channel with the given channel-key by 1.
+     */
     public synchronized void updateChannelUnreadCount(Integer channelKey) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1329,7 +1474,9 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Sets the unread count for the channel with the give channel-key to 0.
+     */
     public synchronized void updateChannelUnreadCountToZero(Integer channelKey) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1339,13 +1486,17 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
+    /**
+     * Replaces the passed message in the database. The message <code>keystring</code> is used to identify the message.
+     */
     public synchronized void replaceExistingMessage(Message message) {
         deleteMessageFromDb(message);
         createMessage(message);
     }
 
-    @ApplozicInternal
+    /**
+     * Sets the unread count for the contact with the give user-id to 0.
+     */
     public synchronized void updateContactUnreadCountToZero(String userId) {
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -1355,14 +1506,12 @@ public class MessageDatabaseService {
         }
     }
 
-    @ApplozicInternal
     public void updateReplyFlag(String messageKey, int isReplyMessage) {
         ContentValues values = new ContentValues();
         values.put("replyMessage", isReplyMessage);
         int updatedMessage = dbHelper.getWritableDatabase().update("sms", values, " keyString = '" + messageKey + "'", null);
     }
 
-    @ApplozicInternal
     public void updateMessageReplyType(String messageKey, Integer replyMessage) {
         try {
             ContentValues values = new ContentValues();
@@ -1416,7 +1565,6 @@ public class MessageDatabaseService {
         return totalCount;
     }
 
-    @ApplozicInternal
     public List<Message> getAttachmentMessages(String contactId, Integer groupId, boolean downloadedOnly) {
 
         if (contactId == null && (groupId == null || groupId == 0)) {
@@ -1441,7 +1589,6 @@ public class MessageDatabaseService {
 
     }
 
-    @ApplozicInternal
     public void updateMessageMetadata(String keyString, Map<String, String> metadata) {
         ContentValues values = new ContentValues();
 

@@ -1,5 +1,7 @@
 package com.applozic.mobicommons.json;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -20,7 +22,7 @@ public class GsonUtils {
         return gson.toJson(object, type);
     }
 
-    public static String getJsonFromObject(Object object, Type type) {
+    public static String getJsonFromObject(@NonNull Object object, @NonNull Type type) {
         return new GsonBuilder().setPrettyPrinting().create().toJson(object, type);
     }
 

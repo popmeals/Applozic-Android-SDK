@@ -72,7 +72,7 @@ Before getting started with installation. We recommend to go through some basic 
 * Make sure you open your app's build.gradle (*hint: Gradle Scripts ➙ build.grade(Module: \<your-app-name>.app)*) add the below line in **```dependencies{}```**.
 
 ```bash
-implementation 'com.applozic.communication.uiwidget:mobicomkitui:5.102.0' 
+implementation 'com.applozic.communication.uiwidget:mobicomkitui:5.103.0' 
 ```
 
 **Note: Versions from *v5.99.0* and onwards will be hosted at Jfrog Artifactory.**

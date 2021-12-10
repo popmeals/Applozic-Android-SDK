@@ -75,6 +75,18 @@ Before getting started with installation. We recommend to go through some basic 
 implementation 'com.applozic.communication.uiwidget:mobicomkitui:5.103.0' 
 ```
 
+**Note: Versions from *v5.99.0* and onwards will be hosted at Jfrog Artifactory.**
+
+Add the following repo to you project level *build.gradle* inside *allProjects { repositories { ... }}*:
+```bash
+maven {
+    url 'https://applozic.jfrog.io/artifactory/applozic-android-sdk'
+}
+```
+
+Older versions can still be consumed from Jcenter.
+
+
 * Add the below code in your gradle **```android{}```** target:      
 
 ```java
@@ -89,11 +101,10 @@ implementation 'com.applozic.communication.uiwidget:mobicomkitui:5.103.0'
          }    
 ```
 
-### Step 2: Add Permissions,Activities, Services and Receivers in androidmanifest.xml:
+### Step 2: Add Activities, Services and Receivers in androidmanifest.xml:
         
 **Note:**<br>
   * Add meta-data, Activities, Services and Receivers within application Tag ``` <application> </application> ```<br>
-  * Make sure to add Permissions outside the application Tag ``` <application>  ```
 
 ```xml
 
@@ -386,21 +397,22 @@ If you are interested in the future direction of this project, please take a loo
 * Image capture
 * Photo sharing
 * File attachment
-* Locationsharing
-* Pushnotifications
-* In Appnotifications
-* Onlinepresence
-* Lastseenat
-* Unreadmessagecount
-* Typingindicator
-* Messagesent,ReadRecipientsandDeliveryreport
-* Offlinemessaging
-* Userblock/unblock
-* MultiDevicesync
-* Applicationtousermessaging
-* Customizedchatbubble
-* UICustomizationToolkit
-* CrossPlatformSupport(iOS,Android&Web)
+* Location sharing
+* Push notifications
+* In App notifications
+* Online presence
+* Last seen at
+* Unread message count
+* Typing indicator
+* Message sent
+* Read Recipients and Delivery report
+* Offline messaging
+* User block/unblock
+* Multi Device sync
+* Application to user messaging
+* Customized chat bubble
+* UI Customization Toolkit
+* Cross Platform Support(iOS,Android&Web)
 
 
 <a name="about"></a>

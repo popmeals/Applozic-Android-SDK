@@ -1,6 +1,45 @@
 
 ## Changelog
 
+**Version  5.102.0** - Thursday, 20 August 2021
+
+* MQTT Client Retry Policy Change:
+- The MQTT client now will retry 3 times per connection session. Each will happen after a random interval between 1-40 minutes.
+* Public API reference updated.
+* Some refactoring.
+
+**Version  5.101.0** - Tuesday, 29 June 2021
+
+Features🔥:
+* Added Gif/Sticker support 🎉
+* Added utility logger class
+
+Bugs/Fixes🔨:
+* Fix Link Preview bug
+
+**Version  5.100.0** - Friday, 11 June 2021
+
+Features🔥:
+* Update to Android API Level 30 🎉
+* Added Mentions support❕
+* Migrate JobIntentService classes to WorkerManager
+* Video attachments will now show thumbnails
+
+Bugs/Fixes🔨:
+* UI Kit: Sender cannot interact suggested replies and submit button rich message
+
+**Version  5.99.0** - Sunday, 9 May 2021
+
+* Added client SDK side channel descriptions support.
+* Data for channel decription goes in the channel metadata and is recognized by the UIKit.
+* Added client SDK side support for admin only chat functionality in channel.
+* Flag for request goes in the Channel metadata.
+* Added config files for Jfrog Artifactory.
+* Added support for custom fragment transitions.
+
+Bug Fixes:
+* Fixed bug with contact profile images dissapearing.
+
 **Version  5.98** - Friday, 26 Feb 2021
 
 * Deletion of logged in user will now be detected and appropriate message will be displayed.

@@ -7,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "5.102.0"
+        versionName "5.103.0"
         consumerProguardFiles 'proguard-rules.txt'
     }
     lintOptions {

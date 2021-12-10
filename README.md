@@ -72,7 +72,7 @@ Before getting started with installation. We recommend to go through some basic 
 * Make sure you open your app's build.gradle (*hint: Gradle Scripts ➙ build.grade(Module: \<your-app-name>.app)*) add the below line in **```dependencies{}```**.
 
 ```bash
-implementation 'com.applozic.communication.uiwidget:mobicomkitui:5.98' 
+implementation 'com.applozic.communication.uiwidget:mobicomkitui:5.103.0' 
 ```
 
 * Add the below code in your gradle **```android{}```** target:      

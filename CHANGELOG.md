@@ -1,6 +1,10 @@
 
 ## Changelog
 
+**Version  5.103.0** - Friday, 10 December 2021
+
+* Internal cleanup and refactoring. 
+
 **Version  5.102.0** - Thursday, 20 August 2021
 
 * MQTT Client Retry Policy Change:

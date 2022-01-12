@@ -6,6 +6,7 @@ buildscript {
             url 'https://maven.google.com'
             // Alternative URL is 'https://dl.google.com/dl/android/maven2/'
         }
+        mavenCentral()
         jcenter()
         google()
     }
@@ -34,6 +35,7 @@ allprojects {
             url 'https://maven.google.com'
             // Alternative URL is 'https://dl.google.com/dl/android/maven2/'
         }
+        mavenCentral()
         jcenter()
         google()
     }
